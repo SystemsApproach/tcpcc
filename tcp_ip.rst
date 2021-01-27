@@ -6,7 +6,7 @@ sense. Includes both header field details and abstract models of
 behavior. The following is still in cut-and-paste; to be adapted for
 our purposes.]*
 
-2.1  Best-Effort Packet Delivery (IP)
+2.1  Best-Effort Packet Delivery
 -------------------------------------
 
 *[This needs way more set-up, but the aspect of IP that is most
@@ -493,7 +493,7 @@ allocation mechanism.
    mechanism in a later section.
 
 
-2.2 End-to-End Byte-Stream (TCP)
+2.2 Reliable Byte-Stream
 --------------------------------
 
 *[I've removed connection setup, but the following needs needs
