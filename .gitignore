@@ -1,0 +1,12 @@
+*.pdf
+*.tex
+.DS_Store
+*/.DS_Store
+*.sh
+private/
+local/
+scripts/
+onosproject.github.io/
+_build/
+doc_venv/
+cover.docx
