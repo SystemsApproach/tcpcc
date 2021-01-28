@@ -44,9 +44,9 @@ these new approaches are discussed below.
 3.1 Adaptive Retransmission
 ---------------------------
 
-*[Although technically independent of congestion control, it came out
-of the same effort, so is probably best discussed here (as opposed to
-Chapter 2).]*
+*[Although arguably independent of congestion control, this topic
+is probably best discussed here (as opposed to Chapter 2), although we
+could move the original approach there.]*
 
 Because TCP guarantees the reliable delivery of data, it retransmits
 each segment if an ACK is not received in a certain period of time. TCP
