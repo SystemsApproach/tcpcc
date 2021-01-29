@@ -1,5 +1,5 @@
 Chapter 3:  Design Space
-======================
+==========================
 
 This chapter scopes the design space, by both sketching a taxonomy for
 congestion control mechanisms and defining the criteria by which
@@ -81,7 +81,7 @@ Reservations do not have to be made by end hosts. It is possible for a
 network administrator to allocate resources to flows or to larger
 aggregates of traffic, as we will see in a later section.
 
-Window Based versus Rate Based
+Window-Based versus Rate-Based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A third way to characterize resource allocation mechanisms is according
@@ -112,13 +112,17 @@ many bits per second, and each router along the path determines if it
 can support that rate, given the other flows it has made commitments
 to.
 
-Congestion Control versus Congestion Avoidance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Control-Based versus Avoidance-Based
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Call out the distinction between “congestion control” mechanisms that
+purposely cause congestion (e.g. Reno, Cubic) because they primarily
+respond to packet drops, and "congestion avoidance" mechanisms that
+try to prevent queue buildup in the first place (e.g., Vegas).
 
 
-
-Summary of Resource Allocation Taxonomy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Discussion
+~~~~~~~~~~~~~~
 
 *[Redo to account for control vs avoidance.]*
 

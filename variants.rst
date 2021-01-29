@@ -4,20 +4,12 @@ Chapter 5:  Alternative Algorithms
 This chapter describes many variations of the original TCP congestion
 control algorithm have evolved over the years. One common theme is
 that there is a rich design space (and range of use cases), with each
-variant focused on a different combination of factors. We start by
-sketching the dimensions of the design space as a way of framing these
-algorithms.
+variant focused on a different combination of factors.
 
 *[The following is cut-and-pasted: the order still needs attenion, and
 the treatment is uneven.]*
 
-5.1  Framing
-------------
-
-*[Among other things, this is a good place to contrast congestion
-control with congestion avoidance.]*
-
-5.2 TCP Vegas
+5.1 TCP Vegas
 -------------
 
 The mechanism we are going to describe looks at changes in the
@@ -173,7 +165,7 @@ decrease just described is an *early* decrease in the congestion window
 that should happen before congestion occurs and packets start being
 dropped.
 
-5.3 TCP BBR
+5.2 TCP BBR
 -----------
 
 BBR (Bottleneck Bandwidth and RTT) is a new TCP congestion control
@@ -204,7 +196,7 @@ unfairness among BBR flows is even possible. Another major focus is
 avoiding high retransmission rates, where in some cases as many as 10%
 of packets are retransmitted.
 
-5.4 DCTCP
+5.3 DCTCP
 ---------------
 
 We conclude with an example of a situation where a variant of the TCP
@@ -260,7 +252,7 @@ window in exactly the same way as the standard algorithm, but it reduces
 the window in proportion to how many bytes encountered congestion during
 the last observation window.
 
-5.5 TCP CUBIC 
+5.4 TCP CUBIC 
 --------------
 
 A variant of the standard TCP algorithm, called CUBIC, is the default
@@ -321,3 +313,5 @@ that standard TCP uses. Looking back at :numref:`Figure %s
 function to being convex (whereas standard TCP’s additive function is 
 only convex). 
 
+5.5 Other Flavors
+-----------------
