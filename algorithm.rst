@@ -1,4 +1,4 @@
-Chapter 3:  Original Algorithm
+Chapter 4:  Original Algorithm
 ==============================
 
 This chapter describes the predominant example of end-to-end
@@ -41,7 +41,7 @@ variants of TCP congestion control in use today, and researchers
 continue to explore new approaches to addressing this problem. Some of
 these new approaches are discussed below.
 
-3.1 Adaptive Retransmission
+4.1 Adaptive Retransmission
 ---------------------------
 
 *[Although arguably independent of congestion control, this topic
@@ -260,7 +260,7 @@ section.
    receed in importance.
 
 
-3.2 Additive Increase/Multiplicative Decrease
+4.2 Additive Increase/Multiplicative Decrease
 ---------------------------------------------
 
 TCP maintains a new state variable for each connection, called
@@ -386,7 +386,7 @@ to the cost of measuring each transmission with an accurate clock, TCP
 only samples the round-trip time once per RTT (rather than once per
 packet) using a coarse-grained (500-ms) clock.
 
-3.3 Slow Start
+4.3 Slow Start
 --------------
 
 The additive increase mechanism just described is the right approach to
@@ -597,7 +597,7 @@ could be a long time before these types of enhancements could make it
 into the Internet; for now, they are more likely to be used in
 controlled network environments (e.g., research networks).
 
-3.4 Fast Retransmit and Fast Recovery
+4.4 Fast Retransmit and Fast Recovery
 -------------------------------------
 
 The mechanisms described so far were part of the original proposal to

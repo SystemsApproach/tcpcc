@@ -1,4 +1,4 @@
-Chapter 5:  Active Queue Management
+Chapter 6:  Active Queue Management
 ===================================
 
 We now look at *Active Queue Management* (AQM), an approach that
@@ -11,7 +11,7 @@ fill up—there has not been a consensus on exactly what the best
 algorithm is. The following describes two of the classic mechanisms,
 and concludes with a brief discussion of where things stand today.
 
-5.1 DECbit
+6.1 DECbit
 ----------
 
 The first mechanism was developed for use on the Digital Network
@@ -63,7 +63,7 @@ the power curve. The “increase by 1, decrease by 0.875” rule was
 selected because additive increase/multiplicative decrease makes the
 mechanism stable.
 
-5.2 Random Early Detection
+6.2 Random Early Detection
 --------------------------
 
 A second mechanism, called *random early detection* (RED), is similar to
@@ -310,7 +310,7 @@ traffic from others. There is also the possibility that a variant of RED
 could drop more heavily from flows that are unresponsive to the initial
 hints that it sends.
 
-5.3 Explicit Congestion Notification
+6.3 Explicit Congestion Notification
 ------------------------------------
 
 RED is the most extensively studied AQM mechanism, but it has not been

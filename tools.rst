@@ -1,4 +1,4 @@
-Chapter 6:  Software Tools
+Chapter 7:  Software Tools
 ============================
 
 *[Describe software tools available to analyze TCP performance.

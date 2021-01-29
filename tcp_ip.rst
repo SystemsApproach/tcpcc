@@ -1,74 +1,32 @@
 Chapter 2:  Background
 ======================
 
-*[Enough information about TCP/IP for the subsequent chapters to make
-sense. Includes both header field details and abstract models of
-behavior. The following is still in cut-and-paste; to be adapted for
-our purposes.]*
+To understand the Internet's approach to congestion, it's necessary to
+first talk about the assumptions and design decisions built into the
+Internet architecture. This chapter does that, which includes giving
+enough detail about the TCP/IP protocol stack to understand the
+specifics of the congestion control mechanisms introduced in later
+chapters. For more complete coverage of TCP and IP, we recommend
 
-2.1  Best-Effort Packet Delivery
+.. _reading_tcpip:
+.. admonition:: Further Reading 
+
+      `Computer Networks: A Systems Approach
+      <https://book.systemsapproach.org>`__, 2020.
+		
+2.1  Best-Effort Packet Delivery (IP)
 -------------------------------------
 
-*[This needs way more set-up, but the aspect of IP that is most
-relevant (apart from a straightforward statement about its best-effort
-service model) is an introduction to how packets are queued at
-routers. The following in mostly a cut-and-paste from 6.2.]*
-
-Best-Effort Service Model
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A good place to start when you build an internetwork is to define its
-*service model*, that is, the host-to-host services you want to provide.
-The main concern in defining a service model for an internetwork is that
-we can provide a host-to-host service only if this service can somehow
-be provided over each of the underlying physical networks. For example,
-it would be no good deciding that our internetwork service model was
-going to provide guaranteed delivery of every packet in 1 ms or less if
-there were underlying network technologies that could arbitrarily delay
-packets. The philosophy used in defining the IP service model,
-therefore, was to make it undemanding enough that just about any network
-technology that might turn up in an internetwork would be able to
-provide the necessary service.
-
-The IP service model can be thought of as having two parts: an
-addressing scheme, which provides a way to identify all hosts in the
-internetwork, and a datagram (connectionless) model of data delivery.
-This service model is sometimes called *best effort* because, although
-IP makes every effort to deliver datagrams, it makes no guarantees. We
-postpone a discussion of the addressing scheme for now and look first at
-the data delivery model.
-
-The IP datagram is fundamental to the Internet Protocol. Recall from
-an earlier section that a datagram is a packet sent in a
-connectionless manner over a network. Every datagram carries enough
-information to let the network forward the packet to its correct
-destination; there is no need for any advance setup mechanism to tell
-the network what to do when the packet arrives. You just send it, and
-the network makes its best effort to get it to the desired
-destination.  The “best-effort” part means that if something goes
-wrong and the packet gets lost, corrupted, misdelivered, or in any way
-fails to reach its intended destination, the network does nothing—it
-made its best effort, and that is all it has to do. It does not make
-any attempt to recover from the failure. This is sometimes called an
-*unreliable* service.
-
-Best-effort, connectionless service is about the simplest service you
-could ask for from an internetwork, and this is its great strength. For
-example, if you provide best-effort service over a network that provides
-a reliable service, then that’s fine—you end up with a best-effort
-service that just happens to always deliver the packets. If, on the
-other hand, you had a reliable service model over an unreliable network,
-you would have to put lots of extra functionality into the routers to
-make up for the deficiencies of the underlying network. Keeping the
-routers as simple as possible was one of the original design goals
-of IP.
-
-The ability of IP to “run over anything” is frequently cited as one of
-its most important characteristics. It is noteworthy that many of the
-technologies over which IP runs today did not exist when IP was
-invented. So far, no networking technology has been invented that has
-proven too bizarre for IP. In principle, IP can run over a network that
-transports messages using carrier pigeons.
+The Internet assumes a *connectionless, best-effort* packet delivery
+service model, as specified by the Internet Protocol (IP) and
+implemented by switches and routers. Being *connectionless* means
+every IP packet carries enough information for the network ot forward
+it to its correct destination; there is no need for any advance setup
+mechanism to tell the network what to do when the packet arrives.
+Being *best-effort* means that if something goes wrong and the packet
+gets lost, corrupted, or misdelivered while enroute, the network does
+nothing to recover from the failure. This approach was intentionally
+designed to keep routers as simple as possible.
 
 Best-effort delivery does not just mean that packets can get lost.
 Sometimes they can get delivered out of order, and sometimes the same
@@ -76,93 +34,52 @@ packet can get delivered more than once. The higher-level protocols or
 applications that run above IP need to be aware of all these possible
 failure modes.
 
-*[The following is likely repetative. It comes from the Issues Section
-of Chapter 6.]*
+One consequence of this design is that a given source may have more
+than enough capacity on the immediate outgoing link to send a packet,
+but somewhere in the middle of a network its packets encounter a link
+that is being used by many different traffic sources. :numref:`Figure
+%s <fig-congestion>` illustrates this situation—two high-speed links
+are feeding a low-speed link. This is the fundamental definition of
+congestion.
 
-We begin by defining three salient features of the network architecture.
-For the most part, this is a summary of material presented in the
-previous chapters that is relevant to the problem of resource
-allocation.
-
-Packet-Switched Network
-~~~~~~~~~~~~~~~~~~~~~~~
-
-We consider resource allocation in a packet-switched network (or
-internet) consisting of multiple links and switches (or routers). Since
-most of the mechanisms described in this chapter were designed for use
-on the Internet, and therefore were originally defined in terms of
-routers rather than switches, we use the term *router* throughout our
-discussion. The problem is essentially the same, whether on a network or
-an internetwork.
-
-In such an environment, a given source may have more than enough
-capacity on the immediate outgoing link to send a packet, but somewhere
-in the middle of a network its packets encounter a link that is being
-used by many different traffic sources. :numref:`Figure %s <fig-congestion>`
-illustrates this situation—two high-speed links are feeding a low-speed
-link. This is in contrast to shared-access networks like Ethernet and
-wireless networks, where the source can directly observe the traffic on
-the network and decide accordingly whether or not to send a packet. We
-have already seen the algorithms used to allocate bandwidth on
-shared-access networks (e.g., Ethernet and Wi-Fi). These access-control
-algorithms are, in some sense, analogous to congestion-control
-algorithms in a switched network.
-
-.. _key-congestion:
-.. admonition:: Key Takeaway
-
-   Note that congestion control is a different problem than routing.
-   While it is true that a congested link could be assigned a large edge
-   weight by the routing protocol, and, as a consequence, routers would
-   route around it, “routing around” a congested link does not generally
-   solve the congestion problem. To see this, we need look no further
-   than the simple network depicted in :numref:`Figure %s <fig-congestion>`,
-   where all traffic has to flow through the same router to reach the
-   destination. Although this is an extreme example, it is common to
-   have a certain router that it is not possible to route around. This
-   router can become congested, and there is nothing the routing
-   mechanism can do about it. This congested router is sometimes called
-   the *bottleneck* router.
-
-Connectionless Flows
-~~~~~~~~~~~~~~~~~~~~
-
-For much of our discussion, we assume that the network is essentially
-connectionless, with any connection-oriented service implemented in the
-transport protocol that is running on the end hosts. (We explain the
-qualification “essentially” in a moment.) This is precisely the model of
-the Internet, where IP provides a connectionless datagram delivery
-service and TCP implements an end-to-end connection abstraction. Note
-that this assumption does not hold in virtual circuit networks such as
-ATM and X.25. In such networks, a connection setup message traverses the
-network when a circuit is established. This setup message reserves a set
-of buffers for the connection at each router, thereby providing a form
-of congestion control—a connection is established only if enough buffers
-can be allocated to it at each router. The major shortcoming of this
-approach is that it leads to an underutilization of resources—buffers
-reserved for a particular circuit are not available for use by other
-traffic even if they were not currently being used by that circuit. The
-focus of this chapter is on resource allocation approaches that apply in
-an internetwork, and thus we focus mainly on connectionless networks.
-   
 .. _fig-congestion:
 .. figure:: figures/f06-01-9780123850591.png
    :width: 500px
    :align: center
 
-   A potential bottleneck router.
+   Congestion at a bottleneck router.
 
-We need to qualify the term *connectionless* because our classification
-of networks as being either connectionless or connection oriented is a
-bit too restrictive; there is a gray area in between. In particular, the
-assumption that all datagrams are completely independent in a
-connectionless network is too strong. The datagrams are certainly
-switched independently, but it is usually the case that a stream of
-datagrams between a particular pair of hosts flows through a particular
-set of routers. This idea of a *flow*—a sequence of packets sent between
-a source/destination pair and following the same route through the
-network—is an important abstraction in the context of resource
-allocation; it is one that we will use in this chapter.
+Note that congestion control is a different problem than routing.
+While it is true that a congested link could be assigned a large edge
+weight by the routing protocol, and, as a consequence, routers would
+route around it, “routing around” a congested link does not generally
+solve the congestion problem. To see this, we need look no further
+than the simple network depicted in :numref:`Figure %s
+<fig-congestion>`, where all traffic has to flow through the same
+router to reach the destination. Although this is an extreme example,
+it is common to have a certain router that it is not possible to route
+around. This router can become congested, and there is nothing the
+routing mechanism can do about it. This congested router is sometimes
+called the *bottleneck* router.
+
+Flows and Soft State
+~~~~~~~~~~~~~~~~~~~~
+
+Because the Internet assumes a connectionless model, any
+connection-oriented service is implemented by an end-to-end transport
+protocol running on the end hosts. There is no connection setup phase
+implemented within the network (corresponding, for example, to
+establishing a virtual circuit), and as a consequence, there is not
+way for individual routers to pre-allocate buffer space to active connections.
+
+However, the lack of an explicit connection setup phase does not imply
+that routers must be completely unaware of end-to-end connections. IP
+packets are switched independently, but it is usually the case that a
+stream of packets between a particular pair of hosts flows through a
+particular set of routers. This idea of a *flow*—a sequence of packets
+sent between a source/destination pair and following the same route
+through the network—is an important abstraction in the context of
+resource allocation; it is one that we will use in later chapters.
 
 One of the powers of the flow abstraction is that flows can be defined
 at different granularities. For example, a flow can be host-to-host
@@ -212,45 +129,48 @@ ordered delivery of a virtual circuit. It simply exists for the purpose
 of resource allocation. We will see examples of both implicit and
 explicit flows in this chapter.
 
-Service Model
-~~~~~~~~~~~~~
+.. sidebar:: Quality-of-Service
 
-In the early part of this chapter, we will focus on mechanisms that
-assume the best-effort service model of the Internet. With best-effort
-service, all packets are given essentially equal treatment, with end
-hosts given no opportunity to ask the network that some packets or flows
-be given certain guarantees or preferential service. Defining a service
-model that supports some kind of preferred service or guarantee—for
-example, guaranteeing the bandwidth needed for a video stream—is the
-subject of a later section. Such a service model is said to provide
-multiple *qualities of service* (QoS). As we will see, there is actually
-a spectrum of possibilities, ranging from a purely best-effort service
-model to one in which individual flows receive quantitative guarantees
-of QoS. One of the greatest challenges is to define a service model that
-meets the needs of a wide range of applications and even allows for the
-applications that will be invented in the future.
+	*With best-effort service, all packets are given essentially
+        equal treatment, with end hosts given no opportunity to ask
+        the network that some packets or flows be given certain
+        guarantees or preferential service. Defining a service model
+        that supports some kind of preferred service or guarantee—for
+        example, guaranteeing the bandwidth needed for a video
+        stream—results in an architecture that supports multiple
+        qualities of service (QoS).*
 
+	*There is actually a spectrum of possibilities, ranging from a
+        purely best-effort service model to one in which individual
+        flows receive quantitative guarantees of QoS. There are
+        extensions to the Internet's service model that includes
+        additional levels of service, but (1) they are not widely
+        deployed throughout the Internet, and (2) even when they are
+        deployed, they still allow for best-effort traffic, which
+        operates according to the congestion contol algorithms
+        described in the book.*
 
-Packet Format
-~~~~~~~~~~~~~
+IP Packet Format
+~~~~~~~~~~~~~~~~
 
-Clearly, a key part of the IP service model is the type of packets
-that can be carried. The IP datagram, like most packets, consists of a
-header followed by a number of bytes of data. The format of the header
-is shown in :numref:`Figure %s <fig-iphead>`. Note that we have
-adopted a different style of representing packets than the one we used
-in previous chapters. This is because packet formats at the
-internetworking layer and above, where we will be focusing our
-attention for the next few chapters, are almost invariably designed to
-align on 32-bit boundaries to simplify the task of processing them in
-software. Thus, the common way of representing them (used in Internet
-Requests for Comments, for example) is to draw them as a succession of
-32-bit words. The top word is the one transmitted first, and the
-leftmost byte of each word is the one transmitted first. In this
-representation, you can easily recognize fields that are a multiple of
-8 bits long. On the odd occasion when fields are not an even multiple
-of 8 bits, you can determine the field lengths by looking at the bit
-positions marked at the top of the packet.
+The format of the IP packet is shown in :numref:`Figure %s
+<fig-iphead>`. Looking at each field in the header, we see that the
+“simple” model of best-effort datagram delivery still has some subtle
+features. The ``Version`` field specifies the version of IP. The
+still-assumed version of IP is 4, which is typically called
+*IPv4*. Observe that putting this field right at the start of the
+datagram makes it easy for everything else in the packet format to be
+redefined in subsequent versions; the header processing software
+starts off by looking at the version and then branches off to process
+the rest of the packet according to the appropriate format. The next
+field, ``HLen``, specifies the length of the header in 32-bit
+words. When there are no options, which is most of the time, the
+header is 5 words (20 bytes) long. The 8-bit ``TOS`` (type of service)
+field has had a number of different definitions over the years, but
+its basic function is to allow packets to be treated differently based
+on application needs. We will see how various congestion control
+mechanisms have applied different meanings to the ``TOS`` field over
+time.
 
 .. _fig-iphead:
 .. figure:: figures/f03-16-9780123850591.png
@@ -258,23 +178,6 @@ positions marked at the top of the packet.
    :align: center
 
    IPv4 packet header.
-
-Looking at each field in the IP header, we see that the “simple” model
-of best-effort datagram delivery still has some subtle features. The
-``Version`` field specifies the version of IP. The still-assumed version
-of IP is 4, which is typically called *IPv4*. Observe that putting this
-field right at the start of the datagram makes it easy for everything
-else in the packet format to be redefined in subsequent versions; the
-header processing software starts off by looking at the version and then
-branches off to process the rest of the packet according to the
-appropriate format. The next field, ``HLen``, specifies the length of
-the header in 32-bit words. When there are no options, which is most of
-the time, the header is 5 words (20 bytes) long. The 8-bit ``TOS`` (type
-of service) field has had a number of different definitions over the
-years, but its basic function is to allow packets to be treated
-differently based on application needs. For example, the ``TOS`` value
-might determine whether or not a packet should be placed in a special
-queue that receives low delay.
 
 The next 16 bits of the header contain the ``Length`` of the datagram,
 including the header. Unlike the ``HLen`` field, the ``Length`` field
@@ -419,154 +322,148 @@ Internet.
 One situation in which priority queuing is used in the Internet is to
 protect the most important packets—typically, the routing updates that
 are necessary to stabilize the routing tables after a topology change.
-Often there is a special queue for such packets, which can be identified
-by the Differentiated Services Code Point (formerly the TOS field) in
-the IP header. This is in fact a simple case of the idea of
-“Differentiated Services.”
+Often there is a special queue for such packets, which can be
+identified by the Differentiated Services Code Point (another proposed
+use of the ``TOS`` field) in the IP header. This is in fact a simple case
+of the idea of “Differentiated Services.”
 
-*[I removed the description of Fair Queuing, but we may want to
-mention the idea and its relationship to CC, maybe as a sidebar.]*
+.. sidebar:: Fair Queuing
 
+	*Fair Queuing (FQ) is an alternative to FIFO queuing, commonly
+        used to implement QoS guarantees.  The idea of FQ is to
+        maintain a separate queue for each flow currently being
+        handled by the router. The router then services these queues
+        in round-robin order. When a flow sends packets too quickly,
+        the queue assigned to it fills up. When a queue reaches a
+        particular length, additional packets belonging to that flow
+        are discarded. In this way, a given source cannot arbitrarily
+        increase its share of the network’s capacity at the expense
+        of other flows.*
 
-2.2 Reliable Byte-Stream
---------------------------------
+	*FQ can be used in conjunction with an end-to-end
+        congestion-control mechanism. It simply segregates traffic so
+        that ill-behaved traffic sources do not interfere with those
+        that are faithfully implementing the end-to-end algorithm. FQ
+        also enforces fairness among a collection of flows managed by
+        a well-behaved congestion-control algorithm.*
 
-*[I've removed connection setup, but the following needs additional
-trimming and re-focusing.]*
+2.2 Reliable Byte-Stream (TCP)
+------------------------------
+
+TCP implements a reliable byte stream—between a pair of processes
+running on end hosts—on top of the the best-effort service model
+supported by IP. This section describes TCP in sufficient detail to
+understand the congestion control mechansims described in later
+chapters.
 
 End-to-End Issues
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
-At the heart of TCP is the sliding window algorithm. Even though this is
-the same basic algorithm as is often used at the link level, because TCP
-runs over the Internet rather than a physical point-to-point link, there
-are many important differences. This subsection identifies these
-differences and explains how they complicate TCP. The following
-subsections then describe how TCP addresses these and other
-complications.
+At the heart of TCP is the sliding window algorithm, which in addition
+to its familiar acknowledgement/timeout/retransmit mechanisms, has to
+address the following complications.
 
-First, whereas the link-level sliding window algorithm presented runs
-over a single physical link that always connects the same two computers,
-TCP supports logical connections between processes that are running on
-any two computers in the Internet. This means that TCP needs an explicit
-connection establishment phase during which the two sides of the
-connection agree to exchange data with each other. This difference is
-analogous to having to dial up the other party, rather than having a
-dedicated phone line. TCP also has an explicit connection teardown
-phase. One of the things that happens during connection establishment is
-that the two parties establish some shared state to enable the sliding
-window algorithm to begin. Connection teardown is needed so each host
-knows it is OK to free this state.
+First, because TCP supports logical connections between processes that
+are running on any two computers in the Internet, it needs an explicit
+connection establishment phase during which the two sides agree to
+exchange data with each other. One of the things that happens during
+connection establishment is that the two parties establish some shared
+state to enable the sliding window algorithm to begin. Connection
+teardown is needed so each host knows it is OK to free this state.
 
-Second, whereas a single physical link that always connects the same two
-computers has a fixed round-trip time (RTT), TCP connections are likely
-to have widely different round-trip times. For example, a TCP connection
-between a host in San Francisco and a host in Boston, which are
-separated by several thousand kilometers, might have an RTT of 100 ms,
-while a TCP connection between two hosts in the same room, only a few
-meters apart, might have an RTT of only 1 ms. The same TCP protocol must
-be able to support both of these connections. To make matters worse, the
-TCP connection between hosts in San Francisco and Boston might have an
-RTT of 100 ms at 3 a.m., but an RTT of 500 ms at 3 p.m. Variations in
-the RTT are even possible during a single TCP connection that lasts only
-a few minutes. What this means to the sliding window algorithm is that
+Second, TCP connections are likely to have widely different round-trip
+times. For example, a TCP connection between a host in San Francisco
+and a host in Boston, which are separated by several thousand
+kilometers, might have an RTT of 100 ms, while a TCP connection
+between two hosts in the same room, only a few meters apart, might
+have an RTT of only 1 ms. The same TCP protocol must be able to
+support both of these connections. To make matters worse, the TCP
+connection between hosts in San Francisco and Boston might have an RTT
+of 100 ms at 3 a.m., but an RTT of 500 ms at 3 p.m. Variations in the
+RTT are even possible during a single TCP connection that lasts only a
+few minutes. What this means to the sliding window algorithm is that
 the timeout mechanism that triggers retransmissions must be adaptive.
-(Certainly, the timeout for a point-to-point link must be a settable
-parameter, but it is not necessary to adapt this timer for a particular
-pair of nodes.)
 
-A third difference is that packets may be reordered as they cross the
-Internet, but this is not possible on a point-to-point link where the
-first packet put into one end of the link must be the first to appear at
-the other end. Packets that are slightly out of order do not cause a
-problem since the sliding window algorithm can reorder packets correctly
-using the sequence number. The real issue is how far out of order
-packets can get or, said another way, how late a packet can arrive at
-the destination. In the worst case, a packet can be delayed in the
-Internet until the IP time to live (``TTL``) field expires, at which
-time the packet is discarded (and hence there is no danger of it
-arriving late). Knowing that IP throws packets away after their ``TTL``
-expires, TCP assumes that each packet has a maximum lifetime. The exact
-lifetime, known as the *maximum segment lifetime* (MSL), is an
-engineering choice. The current recommended setting is 120 seconds. Keep
-in mind that IP does not directly enforce this 120-second value; it is
-simply a conservative estimate that TCP makes of how long a packet might
-live in the Internet. The implication is significant—TCP has to be
-prepared for very old packets to suddenly show up at the receiver,
-potentially confusing the sliding window algorithm.
+Third, due to the best-effort nature of the Internet, packets may be
+reordered while in transit. Packets that are slightly out of order do
+not cause a problem since the sliding window algorithm can reorder
+packets correctly using the sequence number. The real issue is how far
+out of order packets can get or, said another way, how late a packet
+can arrive at the destination. In the worst case, a packet can be
+delayed in the Internet until the IP time to live (``TTL``) field
+expires, at which time the packet is discarded (and hence there is no
+danger of it arriving late). Knowing that IP throws packets away after
+their ``TTL`` expires, TCP assumes that each packet has a maximum
+lifetime. The exact lifetime, known as the *maximum segment lifetime*
+(MSL), is an engineering choice. The current recommended setting is
+120 seconds. Keep in mind that IP does not directly enforce this
+120-second value; it is simply a conservative estimate that TCP makes
+of how long a packet might live in the Internet. The implication is
+significant—TCP has to be prepared for very old packets to suddenly
+show up at the receiver, potentially confusing the sliding window
+algorithm.
 
-Fourth, the computers connected to a point-to-point link are generally
-engineered to support the link. For example, if a link’s delay ×
-bandwidth product is computed to be 8 KB—meaning that a window size is
-selected to allow up to 8 KB of data to be unacknowledged at a given
-time—then it is likely that the computers at either end of the link have
-the ability to buffer up to 8 KB of data. Designing the system otherwise
-would be silly. On the other hand, almost any kind of computer can be
-connected to the Internet, making the amount of resources dedicated to
-any one TCP connection highly variable, especially considering that any
-one host can potentially support hundreds of TCP connections at the same
+Fourth, because almost any kind of computer can be connected to the
+Internet, the amount of resources dedicated to any given TCP
+connection is highly variable, especially considering that any one
+host can potentially support hundreds of TCP connections at the same
 time. This means that TCP must include a mechanism that each side uses
 to “learn” what resources (e.g., how much buffer space) the other side
 is able to apply to the connection. This is the flow control issue.
 
-Fifth, because the transmitting side of a directly connected link cannot
-send any faster than the bandwidth of the link allows, and only one host
-is pumping data into the link, it is not possible to unknowingly congest
-the link. Said another way, the load on the link is visible in the form
-of a queue of packets at the sender. In contrast, the sending side of a
-TCP connection has no idea what links will be traversed to reach the
-destination. For example, the sending machine might be directly
-connected to a relatively fast Ethernet—and capable of sending data at a
-rate of 10 Gbps—but somewhere out in the middle of the network, a
-1.5-Mbps link must be traversed. And, to make matters worse, data being
-generated by many different sources might be trying to traverse this
-same slow link. This leads to the problem of network congestion.
-Discussion of this topic is delayed until the next chapter.
+Fifth, the sending side of a TCP connection has no idea what links
+will be traversed to reach the destination. For example, the sending
+machine might be directly connected to a relatively fast Ethernet—and
+capable of sending data at a rate of 10 Gbps—but somewhere out in the
+middle of the network, a 1.5-Mbps link must be traversed. And, to make
+matters worse, data being generated by many different sources might be
+trying to traverse this same slow link. This is the essential factor
+leading to congestion, which we will address in later chapters.
+next chapter.
 
-We conclude this discussion of end-to-end issues by comparing TCP’s
-approach to providing a reliable/ordered delivery service with the
-approach used by virtual-circuit-based networks like the historically
-important X.25 network. In TCP, the underlying IP network is assumed to
-be unreliable and to deliver messages out of order; TCP uses the sliding
-window algorithm on an end-to-end basis to provide reliable/ordered
-delivery. In contrast, X.25 networks use the sliding window protocol
-within the network, on a hop-by-hop basis. The assumption behind this
-approach is that if messages are delivered reliably and in order between
-each pair of nodes along the path between the source host and the
-destination host, then the end-to-end service also guarantees
-reliable/ordered delivery.
+.. sidebar:: Alternative Strategies
+	     
+   *The approach TCP uses to provide a reliable/ordered delivery
+   service is not the only possibility. Networks that support
+   virtual-circuits (as opposed to IP's connectionless, best-effort
+   model) take a different tact.  For example, instead of using the
+   sliding window algorithm on an end-to-end basis to provide
+   reliable/ordered delivery, a virtual-circuit based network might
+   use the sliding window protocol within the network, on a hop-by-hop
+   basis. The assumption behind this approach is that if messages are
+   delivered reliably and in order between each pair of nodes along
+   the path between the source host and the destination host, then the
+   end-to-end service also guarantees reliable/ordered delivery.*
 
-The problem with this latter approach is that a sequence of hop-by-hop
-guarantees does not necessarily add up to an end-to-end guarantee.
-First, if a heterogeneous link (say, an Ethernet) is added to one end of
-the path, then there is no guarantee that this hop will preserve the
-same service as the other hops. Second, just because the sliding window
-protocol guarantees that messages are delivered correctly from node A to
-node B, and then from node B to node C, it does not guarantee that
-node B behaves perfectly. For example, network nodes have been known to
-introduce errors into messages while transferring them from an input
-buffer to an output buffer. They have also been known to accidentally
-reorder messages. As a consequence of these small windows of
-vulnerability, it is still necessary to provide true end-to-end checks
-to guarantee reliable/ordered service, even though the lower levels of
-the system also implement that functionality.
+   *The problem with this latter approach is that a sequence of
+   hop-by-hop guarantees does not necessarily add up to an end-to-end
+   guarantee.  First, if a heterogeneous link (say, an Ethernet) is
+   added to one end of the path, then there is no guarantee that this
+   hop will preserve the same service as the other hops. Second, just
+   because the sliding window protocol guarantees that messages are
+   delivered correctly from node A to node B, and then from node B to
+   node C, it does not guarantee that node B behaves perfectly. For
+   example, network nodes have been known to introduce errors into
+   messages while transferring them from an input buffer to an output
+   buffer. They have also been known to accidentally reorder
+   messages. As a consequence of these small windows of vulnerability,
+   it is still necessary to provide true end-to-end checks to
+   guarantee reliable/ordered service, even though the lower levels of
+   the system also implement that functionality.*
 
-.. _key-e2e:
-.. admonition::  Key Takeaway
-
-   This discussion serves to illustrate one of the most important
-   principles in system design—the *end-to-end argument*. In a nutshell,
-   the end-to-end argument says that a function (in our example,
-   providing reliable/ordered delivery) should not be provided in the
-   lower levels of the system unless it can be completely and correctly
-   implemented at that level. Therefore, this rule argues in favor of
-   the TCP/IP approach. This rule is not absolute, however. It does
-   allow for functions to be incompletely provided at a low level as a
-   performance optimization. This is why it is perfectly consistent with
-   the end-to-end argument to perform error detection (e.g., CRC) on a
-   hop-by-hop basis; detecting and retransmitting a single corrupt
-   packet across one hop is preferable to having to retransmit an entire
-   file end-to-end.
+   *This discussion serves to illustrate one of the most important
+   principles in system design—the end-to-end argument. In a
+   nutshell, the end-to-end argument says that a function (in our
+   example, providing reliable/ordered delivery) should not be
+   provided in the lower levels of the system unless it can be
+   completely and correctly implemented at that level. Therefore, this
+   rule argues in favor of the TCP/IP approach. This rule is not
+   absolute, however. It does allow for functions to be incompletely
+   provided at a low level as a performance optimization. This is why
+   it is perfectly consistent with the end-to-end argument to perform
+   error detection (e.g., CRC) on a hop-by-hop basis; detecting and
+   retransmitting a single corrupt packet across one hop is preferable
+   to having to retransmit an entire file end-to-end.*
 
 Segment Format
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -894,24 +791,105 @@ probably not be accepted, but it tries anyway, because each of these
 window. Eventually, one of these 1-byte probes triggers a response that
 reports a nonzero advertised window.
 
-Note that these 1-byte messages are called *Zero Window Probes* and in
-practice they are sent every 5 to 60 seconds. As for what single byte of
-data to send in the probe: it’s the next byte of actual data just
-outside the window. (It has to be real data in case it’s accepted by the
+These 1-byte messages are called *Zero Window Probes* and in practice
+they are sent every 5 to 60 seconds. As for what single byte of data
+to send in the probe: it’s the next byte of actual data just outside
+the window. (It has to be real data in case it’s accepted by the
 receiver.)
 
-.. _key-dumb-receiver:
-.. admonition::  Key Takeaway
+Note that the reason the sending side periodically sends this probe
+segment is that TCP is designed to make the receive side as simple as
+possible—it simply responds to segments from the sender, and it never
+initiates any activity on its own. This is an example of a
+well-recognized (although not universally applied) protocol design
+rule, which, for lack of a better name, we call the *smart sender/
+dumb receiver* rule. Recall that we saw another example of this rule
+when we discussed the use of NAKs in sliding window algorithm.
 
-   Note that the reason the sending side periodically sends this probe
-   segment is that TCP is designed to make the receive side as simple as
-   possible—it simply responds to segments from the sender, and it never
-   initiates any activity on its own. This is an example of a
-   well-recognized (although not universally applied) protocol design
-   rule, which, for lack of a better name, we call the *smart sender/
-   dumb receiver* rule. Recall that we saw another example of this rule
-   when we discussed the use of NAKs in sliding window algorithm.
+Triggering Transmission
+~~~~~~~~~~~~~~~~~~~~~~~
 
+We next consider a surprisingly subtle issue: how TCP decides to
+transmit a segment. As described earlier, TCP supports a byte-stream
+abstraction; that is, application programs write bytes into the stream,
+and it is up to TCP to decide that it has enough bytes to send a
+segment. What factors govern this decision?
+
+If we ignore the possibility of flow control—that is, we assume the
+window is wide open, as would be the case when a connection first
+starts—then TCP has three mechanisms to trigger the transmission of a
+segment. First, TCP maintains a variable, typically called the *maximum
+segment size* (``MSS``), and it sends a segment as soon as it has
+collected ``MSS`` bytes from the sending process. ``MSS`` is usually set
+to the size of the largest segment TCP can send without causing the
+local IP to fragment. That is, ``MSS`` is set to the maximum
+transmission unit (MTU) of the directly connected network, minus the
+size of the TCP and IP headers. The second thing that triggers TCP to
+transmit a segment is that the sending process has explicitly asked it
+to do so. Specifically, TCP supports a *push* operation, and the sending
+process invokes this operation to effectively flush the buffer of unsent
+bytes. The final trigger for transmitting a segment is that a timer
+fires; the resulting segment contains as many bytes as are currently
+buffered for transmission. However, as we will soon see, this “timer”
+isn’t exactly what you expect.
+
+Of course, we can’t just ignore flow control, which plays an obvious
+role in throttling the sender. If the sender has ``MSS`` bytes of data
+to send and the window is open at least that much, then the sender
+transmits a full segment. Suppose, however, that the sender is
+accumulating bytes to send, but the window is currently closed. Now
+suppose an ACK arrives that effectively opens the window enough for
+the sender to transmit, say, ``MSS/2`` bytes. Should the sender
+transmit a half-full segment or wait for the window to open to a full
+``MSS``? The original specification was silent on this point, and
+early implementations of TCP decided to go ahead and transmit a
+half-full segment. After all, there is no telling how long it will be
+before the window opens further. It turns out that the strategy of
+aggressively taking advantage of any available window leads to a
+situation now known as the *silly window syndrome*, and it was
+addressed by a more sophisticated decision process known as Nagle's
+Algorithm, which as we will see in later chapters, adopts a stategy
+that also plays a role in congestion control.
+
+If the sender has data to send but the window is open less than
+``MSS``, then we may want to wait some amount of time before sending
+the available data, but the question is how long? If we wait too long,
+then we hurt interactive applications. If we don’t wait long enough,
+then we risk sending a bunch of tiny packets and falling into the
+silly window syndrome. The answer is to introduce a timer and to
+transmit when the timer expires.
+
+While we could use a clock-based timer—for example, one that fires
+every 100 ms—Nagle introduced an elegant *self-clocking* solution. The
+idea is that as long as TCP has any data in flight, the sender will
+eventually receive an ACK. This ACK can be treated like a timer
+firing, triggering the transmission of more data. Nagle’s algorithm
+provides a simple, unified rule for deciding when to transmit:
+
+::
+
+   When the application produces data to send
+       if both the available data and the window >= MSS
+           send a full segment
+       else
+           if there is unACKed data in flight
+               buffer the new data until an ACK arrives
+           else
+               send all the new data now
+
+In other words, it’s always OK to send a full segment if the window
+allows. It’s also all right to immediately send a small amount of data
+if there are currently no segments in transit, but if there is anything
+in flight the sender must wait for an ACK before transmitting the next
+segment. Thus, an interactive application like Telnet that continually
+writes one byte at a time will send data at a rate of one segment per
+RTT. Some segments will contain a single byte, while others will contain
+as many bytes as the user was able to type in one round-trip time.
+Because some applications cannot afford such a delay for each write it
+does to a TCP connection, the socket interface allows the application to
+turn off Nagel’s algorithm by setting the ``TCP_NODELAY`` option.
+Setting this option means that data is transmitted as soon as
+possible.
 
 Protecting Against Wraparound
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1022,144 +1000,6 @@ allows us to advertise a window of only 64 KB. The very same TCP
 extension mentioned above provides a mechanism for effectively
 increasing the size of the advertised window.
 
-Triggering Transmission
-~~~~~~~~~~~~~~~~~~~~~~~
-
-We next consider a surprisingly subtle issue: how TCP decides to
-transmit a segment. As described earlier, TCP supports a byte-stream
-abstraction; that is, application programs write bytes into the stream,
-and it is up to TCP to decide that it has enough bytes to send a
-segment. What factors govern this decision?
-
-If we ignore the possibility of flow control—that is, we assume the
-window is wide open, as would be the case when a connection first
-starts—then TCP has three mechanisms to trigger the transmission of a
-segment. First, TCP maintains a variable, typically called the *maximum
-segment size* (``MSS``), and it sends a segment as soon as it has
-collected ``MSS`` bytes from the sending process. ``MSS`` is usually set
-to the size of the largest segment TCP can send without causing the
-local IP to fragment. That is, ``MSS`` is set to the maximum
-transmission unit (MTU) of the directly connected network, minus the
-size of the TCP and IP headers. The second thing that triggers TCP to
-transmit a segment is that the sending process has explicitly asked it
-to do so. Specifically, TCP supports a *push* operation, and the sending
-process invokes this operation to effectively flush the buffer of unsent
-bytes. The final trigger for transmitting a segment is that a timer
-fires; the resulting segment contains as many bytes as are currently
-buffered for transmission. However, as we will soon see, this “timer”
-isn’t exactly what you expect.
-
-Silly Window Syndrome
-~~~~~~~~~~~~~~~~~~~~~
-
-Of course, we can’t just ignore flow control, which plays an obvious
-role in throttling the sender. If the sender has ``MSS`` bytes of data
-to send and the window is open at least that much, then the sender
-transmits a full segment. Suppose, however, that the sender is
-accumulating bytes to send, but the window is currently closed. Now
-suppose an ACK arrives that effectively opens the window enough for the
-sender to transmit, say, ``MSS/2`` bytes. Should the sender transmit a
-half-full segment or wait for the window to open to a full ``MSS``? The
-original specification was silent on this point, and early
-implementations of TCP decided to go ahead and transmit a half-full
-segment. After all, there is no telling how long it will be before the
-window opens further.
-
-It turns out that the strategy of aggressively taking advantage of any
-available window leads to a situation now known as the *silly window
-syndrome*. :numref:`Figure %s <fig-sillywindow>` helps visualize what
-happens.  If you think of a TCP stream as a conveyor belt with “full”
-containers (data segments) going in one direction and empty containers
-(ACKs) going in the reverse direction, then ``MSS``-sized segments
-correspond to large containers and 1-byte segments correspond to very
-small containers. As long as the sender is sending ``MSS``-sized
-segments and the receiver ACKs at least one ``MSS`` of data at a time,
-everything is good (:numref:`Figure %s(a) <fig-sillywindow>`). But,
-what if the receiver has to reduce the window, so that at some time
-the sender can’t send a full ``MSS`` of data? If the sender
-aggressively fills a smaller-than-\ ``MSS`` empty container as soon as
-it arrives, then the receiver will ACK that smaller number of bytes,
-and hence the small container introduced into the system remains in
-the system indefinitely.  That is, it is immediately filled and
-emptied at each end and is never coalesced with adjacent containers to
-create larger containers, as in :numref:`Figure %s(b)
-<fig-sillywindow>`. This scenario was discovered when early
-implementations of TCP regularly found themselves filling the network
-with tiny segments.
-
-.. _fig-sillywindow:
-.. figure:: figures/f05-09-9780123850591.png
-   :width: 500px
-   :align: center
-
-   Silly window syndrome. (a) As long as the sender sends
-   MSS-sized segments and the receiver ACKs one MSS at a time, the
-   system works smoothly. (b) As soon as the sender sends less than
-   one MSS, or the receiver ACKs less than one MSS, a small
-   "container" enters the system and continues to circulate.
-
-Note that the silly window syndrome is only a problem when either the
-sender transmits a small segment or the receiver opens the window a
-small amount. If neither of these happens, then the small container is
-never introduced into the stream. It’s not possible to outlaw sending
-small segments; for example, the application might do a *push* after
-sending a single byte. It is possible, however, to keep the receiver
-from introducing a small container (i.e., a small open window). The rule
-is that after advertising a zero window the receiver must wait for space
-equal to an ``MSS`` before it advertises an open window.
-
-Since we can’t eliminate the possibility of a small container being
-introduced into the stream, we also need mechanisms to coalesce them.
-The receiver can do this by delaying ACKs—sending one combined ACK
-rather than multiple smaller ones—but this is only a partial solution
-because the receiver has no way of knowing how long it is safe to delay
-waiting either for another segment to arrive or for the application to
-read more data (thus opening the window). The ultimate solution falls to
-the sender, which brings us back to our original issue: When does the
-TCP sender decide to transmit a segment?
-
-Nagle’s Algorithm
-~~~~~~~~~~~~~~~~~
-
-Returning to the TCP sender, if there is data to send but the window is
-open less than ``MSS``, then we may want to wait some amount of time
-before sending the available data, but the question is how long? If we
-wait too long, then we hurt interactive applications like Telnet. If we
-don’t wait long enough, then we risk sending a bunch of tiny packets and
-falling into the silly window syndrome. The answer is to introduce a
-timer and to transmit when the timer expires.
-
-While we could use a clock-based timer—for example, one that fires
-every 100 ms—Nagle introduced an elegant *self-clocking* solution. The
-idea is that as long as TCP has any data in flight, the sender will
-eventually receive an ACK. This ACK can be treated like a timer
-firing, triggering the transmission of more data. Nagle’s algorithm
-provides a simple, unified rule for deciding when to transmit:
-
-::
-
-   When the application produces data to send
-       if both the available data and the window >= MSS
-           send a full segment
-       else
-           if there is unACKed data in flight
-               buffer the new data until an ACK arrives
-           else
-               send all the new data now
-
-In other words, it’s always OK to send a full segment if the window
-allows. It’s also all right to immediately send a small amount of data
-if there are currently no segments in transit, but if there is anything
-in flight the sender must wait for an ACK before transmitting the next
-segment. Thus, an interactive application like Telnet that continually
-writes one byte at a time will send data at a rate of one segment per
-RTT. Some segments will contain a single byte, while others will contain
-as many bytes as the user was able to type in one round-trip time.
-Because some applications cannot afford such a delay for each write it
-does to a TCP connection, the socket interface allows the application to
-turn off Nagel’s algorithm by setting the ``TCP_NODELAY`` option.
-Setting this option means that data is transmitted as soon as possible.
-
 
 TCP Extensions
 ~~~~~~~~~~~~~~
@@ -1177,7 +1017,7 @@ than changing the core of the TCP header is that hosts can still
 communicate using TCP even if they do not implement the options. Hosts
 that do implement the optional extensions, however, can take advantage
 of them. The two sides agree that they will use the options during TCP’s
-connection establishment phase.
+connection establishment phase (which we have not describe).
 
 The first extension helps to improve TCP’s timeout mechanism. Instead of
 measuring the RTT using a coarse-grained event, TCP can read the actual
@@ -1248,307 +1088,9 @@ fill the gaps between the segments that have been selectively
 acknowledged.
 
 These extensions, by the way, are not the full story. We’ll see some
-more extensions in the next chapter when we look at how TCP handles
+more extensions in the later chapters when we look at how TCP handles
 congestion. The Internet Assigned Numbers Authority (IANA) keeps track
 of all the options that are defined for TCP (and for many other Internet
 protocols). See the references at the end of the chapter for a link to
 IANA’s protocol number registry.
 
-2.3 Taxonomy of Solutions
--------------------------
-
-*[Need to introduce this material after discussing the service model.]*
-
-There are countless ways in which resource allocation mechanisms differ,
-so creating a thorough taxonomy is a difficult proposition. For now, we
-describe three dimensions along which resource allocation mechanisms can
-be characterized; more subtle distinctions will be called out during the
-course of this chapter.
-
-Router-Centric versus Host-Centric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Resource allocation mechanisms can be classified into two broad groups:
-those that address the problem from inside the network (i.e., at the
-routers or switches) and those that address it from the edges of the
-network (i.e., in the hosts, perhaps inside the transport protocol).
-Since it is the case that both the routers inside the network and the
-hosts at the edges of the network participate in resource allocation,
-the real issue is where the majority of the burden falls.
-
-In a router-centric design, each router takes responsibility for
-deciding when packets are forwarded and selecting which packets are to
-be dropped, as well as for informing the hosts that are generating the
-network traffic how many packets they are allowed to send. In a
-host-centric design, the end hosts observe the network conditions (e.g.,
-how many packets they are successfully getting through the network) and
-adjust their behavior accordingly. Note that these two groups are not
-mutually exclusive. For example, a network that places the primary
-burden for managing congestion on routers still expects the end hosts to
-adhere to any advisory messages the routers send, while the routers in
-networks that use end-to-end congestion control still have some policy,
-no matter how simple, for deciding which packets to drop when their
-queues do overflow.
-
-Reservation-Based versus Feedback-Based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A second way that resource allocation mechanisms are sometimes
-classified is according to whether they use *reservations* or
-*feedback*. In a reservation-based system, some entity (e.g., the end
-host) asks the network for a certain amount of capacity to be allocated
-for a flow. Each router then allocates enough resources (buffers and/or
-percentage of the link’s bandwidth) to satisfy this request. If the
-request cannot be satisfied at some router, because doing so would
-overcommit its resources, then the router rejects the reservation. This
-is analogous to getting a busy signal when trying to make a phone call.
-In a feedback-based approach, the end hosts begin sending data without
-first reserving any capacity and then adjust their sending rate
-according to the feedback they receive. This feedback can be either
-*explicit* (i.e., a congested router sends a “please slow down” message
-to the host) or *implicit* (i.e., the end host adjusts its sending rate
-according to the externally observable behavior of the network, such as
-packet losses).
-
-Note that a reservation-based system always implies a router-centric
-resource allocation mechanism. This is because each router is
-responsible for keeping track of how much of its capacity is currently
-available and deciding whether new reservations can be admitted. Routers
-may also have to make sure each host lives within the reservation it
-made. If a host sends data faster than it claimed it would when it made
-the reservation, then that host’s packets are good candidates for
-discarding, should the router become congested. On the other hand, a
-feedback-based system can imply either a router- or host-centric
-mechanism. Typically, if the feedback is explicit, then the router is
-involved, to at least some degree, in the resource allocation scheme. If
-the feedback is implicit, then almost all of the burden falls to the end
-host; the routers silently drop packets when they become congested.
-
-Reservations do not have to be made by end hosts. It is possible for a
-network administrator to allocate resources to flows or to larger
-aggregates of traffic, as we will see in a later section.
-
-Window Based versus Rate Based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A third way to characterize resource allocation mechanisms is according
-to whether they are *window based* or *rate based*. This is one of the
-areas, noted above, where similar mechanisms and terminology are used
-for both flow control and congestion control. Both flow-control and
-resource allocation mechanisms need a way to express, to the sender, how
-much data it is allowed to transmit. There are two general ways of doing
-this: with a *window* or with a *rate*. We have already seen
-window-based transport protocols, such as TCP, in which the receiver
-advertises a window to the sender. This window corresponds to how much
-buffer space the receiver has, and it limits how much data the sender
-can transmit; that is, it supports flow control. A similar
-mechanism—window advertisement—can be used within the network to reserve
-buffer space (i.e., to support resource allocation). TCP’s
-congestion-control mechanisms are window based.
-
-It is also possible to control a sender’s behavior using a rate—that is,
-how many bits per second the receiver or network is able to absorb.
-Rate-based control makes sense for many multimedia applications, which
-tend to generate data at some average rate and which need at least some
-minimum throughput to be useful. For example, a video codec might
-generate video at an average rate of 1 Mbps with a peak rate of 2 Mbps.
-As we will see later in this chapter, rate-based characterization of
-flows is a logical choice in a reservation-based system that supports
-different qualities of service—the sender makes a reservation for so
-many bits per second, and each router along the path determines if it
-can support that rate, given the other flows it has made commitments to.
-
-Summary of Resource Allocation Taxonomy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Classifying resource allocation approaches at two different points along
-each of three dimensions, as we have just done, would seem to suggest up
-to eight unique strategies. While eight different approaches are
-certainly possible, we note that in practice two general strategies seem
-to be most prevalent; these two strategies are tied to the underlying
-service model of the network.
-
-On the one hand, a best-effort service model usually implies that
-feedback is being used, since such a model does not allow users to
-reserve network capacity. This, in turn, means that most of the
-responsibility for congestion control falls to the end hosts, perhaps
-with some assistance from the routers. In practice, such networks use
-window-based information. This is the general strategy adopted in the
-Internet.
-
-On the other hand, a QoS-based service model probably implies some form
-of reservation. Support for these reservations is likely to require
-significant router involvement, such as queuing packets differently
-depending on the level of reserved resources they require. Moreover, it
-is natural to express such reservations in terms of rate, since windows
-are only indirectly related to how much bandwidth a user needs from the
-network. We discuss this topic in a later section.
-
-2.4 Evaluation Criteria
------------------------
-
-*[We should introduce these concepts in Chapter 1, but it probably
-doesn't make sense to go into any detail until after we have more
-backgound definitions in place.  Also, this needs to be expanded to
-include other criteria, like goodput, stability, and persistent queues.]*
-
-The final issue is one of knowing whether a resource allocation
-mechanism is good or not. Recall that in the problem statement at the
-start of this chapter we posed the question of how a network
-*effectively* and *fairly* allocates its resources. This suggests at
-least two broad measures by which a resource allocation scheme can be
-evaluated. We consider each in turn.
-
-Effective Resource Allocation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A good starting point for evaluating the effectiveness of a resource
-allocation scheme is to consider the two principal metrics of
-networking: throughput and delay. Clearly, we want as much throughput
-and as little delay as possible. Unfortunately, these goals are often
-somewhat at odds with each other. One sure way for a resource allocation
-algorithm to increase throughput is to allow as many packets into the
-network as possible, so as to drive the utilization of all the links up
-to 100%. We would do this to avoid the possibility of a link becoming
-idle because an idle link necessarily hurts throughput. The problem with
-this strategy is that increasing the number of packets in the network
-also increases the length of the queues at each router. Longer queues,
-in turn, mean packets are delayed longer in the network.
-
-To describe this relationship, some network designers have proposed
-using the ratio of throughput to delay as a metric for evaluating the
-effectiveness of a resource allocation scheme. This ratio is sometimes
-referred to as the *power* of the network:
-
-::
-
-   Power = Throughput / Delay
-
-Note that it is not obvious that power is the right metric for judging
-resource allocation effectiveness. For one thing, the theory behind
-power is based on an M/M/1 queuing network that assumes infinite
-queues;\ [#]_ real networks have finite buffers and sometimes have to
-drop packets.  For another, power is typically defined relative to a
-single connection (flow); it is not clear how it extends to multiple,
-competing connections. Despite these rather severe limitations,
-however, no alternatives have gained wide acceptance, and so power
-continues to be used.
-
-.. [#] Since this is not a queuing theory book, we provide only this
-       brief description of an M/M/1 queue. The 1 means it has a
-       single server, and the Ms mean that the distribution of both
-       packet arrival and service times is *Markovian,* that is,
-       exponential.
-
-The objective is to maximize this ratio, which is a function of how
-much load you place on the network. The load, in turn, is set by the
-resource allocation mechanism. :numref:`Figure %s <fig-power>` gives a
-representative power curve, where, ideally, the resource allocation
-mechanism would operate at the peak of this curve. To the left of the
-peak, the mechanism is being too conservative; that is, it is not
-allowing enough packets to be sent to keep the links busy. To the
-right of the peak, so many packets are being allowed into the network
-that increases in delay due to queuing are starting to dominate any
-small gains in throughput.
-
-Interestingly, this power curve looks very much like the system
-throughput curve in a timesharing computer system. System throughput
-improves as more jobs are admitted into the system, until it reaches a
-point when there are so many jobs running that the system begins to
-thrash (spends all of its time swapping memory pages) and the throughput
-begins to drop.
-   
-.. _fig-power:
-.. figure:: figures/f06-03-9780123850591.png
-   :width: 350px
-   :align: center
-
-   Ratio of throughput to delay as a function of load.
-
-As we will see in later sections of this chapter, many
-congestion-control schemes are able to control load in only very crude
-ways; that is, it is simply not possible to turn the “knob” a little
-and allow only a small number of additional packets into the
-network. As a consequence, network designers need to be concerned
-about what happens even when the system is operating under extremely
-heavy load—that is, at the rightmost end of the curve in
-:numref:`Figure %s <fig-power>`. Ideally, we would like to avoid the
-situation in which the system throughput goes to zero because the
-system is thrashing. In networking terminology, we want a system that
-is *stable*—where packets continue to get through the network even
-when the network is operating under heavy load. If a mechanism is not
-stable, the network may experience *congestion collapse*.
-
-Fair Resource Allocation
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The effective utilization of network resources is not the only criterion
-for judging a resource allocation scheme. We must also consider the
-issue of fairness. However, we quickly get into murky waters when we try
-to define what exactly constitutes fair resource allocation. For
-example, a reservation-based resource allocation scheme provides an
-explicit way to create controlled unfairness. With such a scheme, we
-might use reservations to enable a video stream to receive 1 Mbps across
-some link while a file transfer receives only 10 kbps over the same
-link.
-
-In the absence of explicit information to the contrary, when several
-flows share a particular link, we would like for each flow to receive
-an equal share of the bandwidth. This definition presumes that a
-*fair* share of bandwidth means an *equal* share of bandwidth. But,
-even in the absence of reservations, equal shares may not equate to
-fair shares.  Should we also consider the length of the paths being
-compared? For example, as illustrated in :numref:`Figure %s
-<fig-path-len>`, what is fair when one four-hop flow is competing with
-three one-hop flows?
-   
-.. _fig-path-len:
-.. figure:: figures/f06-04-9780123850591.png
-   :width: 600px
-   :align: center
-
-   One four-hop flow competing with three one-hop flows.
-
-Assuming that fair implies equal and that all paths are of equal length,
-networking researcher Raj Jain proposed a metric that can be used to
-quantify the fairness of a congestion-control mechanism. Jain’s fairness
-index is defined as follows. Given a set of flow throughputs
-
-.. math::
-
-   (x_{1}, x_{2}, \ldots , x_{n})
-
-(measured in consistent units such as bits/second), the following
-function assigns a fairness index to the flows:
-
-.. math::
-
-   f(x_{1}, x_{2}, \ldots ,x_{n}) = \frac{( \sum_{i=1}^{n} x_{i}
-   )^{2}} {n  \sum_{i=1}^{n} x_{i}^{2}}
-
-The fairness index always results in a number between 0 and 1, with 1
-representing greatest fairness. To understand the intuition behind this
-metric, consider the case where all *n* flows receive a throughput of
-1 unit of data per second. We can see that the fairness index in this
-case is
-
-.. math::
-
-   \frac{n^2}{n \times n} = 1
-
-Now, suppose one flow receives a throughput of :math:`1 + \Delta`. 
-Now the fairness index is
-
-.. math::
-
-   \frac{((n - 1) + 1 + \Delta)^2}{n(n - 1 + (1 + \Delta)^2)}
-   = \frac{n^2 + 2n\Delta + \Delta^2}{n^2 + 2n\Delta + n\Delta^2}
-
-Note that the denominator exceeds the numerator by :math:`(n-1)\Delta^2`.
-Thus, whether the odd flow out was getting more or less than all the
-other flows (positive or negative :math:`\Delta`), the fairness index has 
-now dropped below one. Another simple case to
-consider is where only *k* of the *n* flows receive equal throughput,
-and the remaining *n-k* users receive zero throughput, in which case the
-fairness index drops to \ *k/n*.
-  
