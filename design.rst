@@ -1,33 +1,46 @@
 Chapter 3:  Design Space
 ==========================
 
-This chapter scopes the design space, by both sketching a taxonomy for
-congestion control mechanisms and defining the criteria by which
-different mechanisms can be quantitatively evaluated and compared.
+Now that we have the architectural foundation of TCP/IP in place, we
+are ready to explore the design space for addressing congestion
+control. To do this, we take a step back and consider the more general
+problem of resource allocation, of which congestion control is a more
+specific example.
+
+In other words, the mechanisms presented in later chapters are all
+trying to allocate switch queues and link bandwidth—both potentially
+scarce resources—to end-to-end network flows. There is no central
+"allocator" in a network the size of the Internet, so we solve the
+problem in a distributed way, with each communicating hosts at the
+edge of the network and all the switches inside of the network
+collaboratively making local decisions.
+
+This chapter scopes the design space for how these various parties
+make those decisions. It does this two parts. First, it presents a
+taxonomy for congestion control mechanisms. Second, it defines the
+criteria by which different mechanisms can be quantitatively evaluated
+and compared.
 
 3.1 Taxonomy of Solutions
 -------------------------
 
-Now that we have the architectural foundation of TCP/IP in place, we
-are ready to explore the design space available to address congestion
-control, more generally, resource allocation. To this end, we
-introduce four dimensions along which resource allocation mechanisms
-can be characterized; more subtle distinctions will be called out in
-later chapters.
-
-*[Reconcile the narrow "Congestion Control" framing versus broader
-"Resource Allocation" framing.]*
+We start by introducing four ways to characterize resource allocation
+mechanisms in general, and congestion control algorithms in
+particular. This taxonomy serves to both place congestion control in
+the larger context of resource allocation and distinguish among
+different congestion control algorithms.
 
 Router-Centric versus Host-Centric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Resource allocation mechanisms can be classified into two broad groups:
-those that address the problem from inside the network (i.e., at the
-routers or switches) and those that address it from the edges of the
-network (i.e., in the hosts, perhaps inside the transport protocol).
-Since it is the case that both the routers inside the network and the
-hosts at the edges of the network participate in resource allocation,
-the real issue is where the majority of the burden falls.
+Resource allocation mechanisms can be classified into two broad
+groups: those that address the problem from inside the network (i.e.,
+at the routers or switches) and those that address it from the edges
+of the network (i.e., in the hosts, perhaps as part of the transport
+protocol).  Since it is the case that both the routers inside the
+network and the hosts at the edges of the network participate in
+resource allocation, the real issue is where the majority of the
+burden falls.
 
 In a router-centric design, each router takes responsibility for
 deciding when packets are forwarded and selecting which packets are to
@@ -77,35 +90,32 @@ involved, to at least some degree, in the resource allocation scheme. If
 the feedback is implicit, then almost all of the burden falls to the end
 host; the routers silently drop packets when they become congested.
 
-Reservations do not have to be made by end hosts. It is possible for a
-network administrator to allocate resources to flows or to larger
-aggregates of traffic, as we will see in a later section.
-
 Window-Based versus Rate-Based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A third way to characterize resource allocation mechanisms is according
-to whether they are *window based* or *rate based*. This is one of the
-areas, noted above, where similar mechanisms and terminology are used
-for both flow control and congestion control. Both flow-control and
-resource allocation mechanisms need a way to express, to the sender, how
-much data it is allowed to transmit. There are two general ways of doing
-this: with a *window* or with a *rate*. We have already seen
-window-based transport protocols, such as TCP, in which the receiver
-advertises a window to the sender. This window corresponds to how much
-buffer space the receiver has, and it limits how much data the sender
-can transmit; that is, it supports flow control. A similar
-mechanism—window advertisement—can be used within the network to reserve
-buffer space (i.e., to support resource allocation). TCP’s
-congestion-control mechanisms are window based.
+A third way to characterize resource allocation mechanisms is
+according to whether they are *window based* or *rate based*. This is
+one of the areas, noted above, where similar mechanisms and
+terminology are used for both flow control and congestion
+control. Both flow-control and resource allocation mechanisms need a
+way to express, to the sender, how much data it is allowed to
+transmit. There are two general ways of doing this: with a *window* or
+with a *rate*. We have already seen window-based transport protocols,
+such as TCP, in which the receiver advertises a window to the
+sender. This window corresponds to how much buffer space the receiver
+has, and it limits how much data the sender can transmit; that is, it
+supports flow control. A similar mechanism—window advertisement—can be
+used within the network to reserve buffer space (i.e., to support
+resource allocation). TCP’s congestion-control mechanisms are window
+based.
 
-It is also possible to control a sender’s behavior using a rate—that is,
-how many bits per second the receiver or network is able to absorb.
-Rate-based control makes sense for many multimedia applications, which
-tend to generate data at some average rate and which need at least some
-minimum throughput to be useful. For example, a video codec might
-generate video at an average rate of 1 Mbps with a peak rate of 2 Mbps.
-As we will see later in this chapter, rate-based characterization of
+It is also possible to control a sender’s behavior using a rate—that
+is, how many bits per second the receiver or network is able to
+absorb.  Rate-based control makes sense for many multimedia
+applications, which tend to generate data at some average rate and
+which need at least some minimum throughput to be useful. For example,
+a video codec might generate video at an average rate of 1 Mbps with a
+peak rate of 2 Mbps.  Generally, a rate-based characterization of
 flows is a logical choice in a reservation-based system that supports
 different qualities of service—the sender makes a reservation for so
 many bits per second, and each router along the path determines if it
@@ -115,23 +125,12 @@ to.
 Control-Based versus Avoidance-Based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Call out the distinction between “congestion control” mechanisms that
-purposely cause congestion (e.g. Reno, Cubic) because they primarily
-respond to packet drops, and "congestion avoidance" mechanisms that
-try to prevent queue buildup in the first place (e.g., Vegas).
-
-
-Discussion
-~~~~~~~~~~~~~~
-
-*[Redo to account for control vs avoidance.]*
-
-Classifying resource allocation approaches at two different points along
-each of three dimensions, as we have just done, would seem to suggest up
-to eight unique strategies. While eight different approaches are
-certainly possible, we note that in practice two general strategies seem
-to be most prevalent; these two strategies are tied to the underlying
-service model of the network.
+Classifying resource allocation approaches at two different points
+along each of three dimensions described so far would seem to suggest
+up to eight unique strategies. While eight different approaches are
+certainly possible, we note that in practice two general strategies
+seem to be most prevalent, and these two strategies are tied to the
+underlying service model of the network.
 
 On the one hand, a best-effort service model usually implies that
 feedback is being used, since such a model does not allow users to
@@ -141,28 +140,46 @@ with some assistance from the routers. In practice, such networks use
 window-based information. This is the general strategy adopted in the
 Internet.
 
-On the other hand, a QoS-based service model probably implies some form
-of reservation. Support for these reservations is likely to require
-significant router involvement, such as queuing packets differently
-depending on the level of reserved resources they require. Moreover, it
-is natural to express such reservations in terms of rate, since windows
-are only indirectly related to how much bandwidth a user needs from the
-network. We discuss this topic in a later section.
+On the other hand, a QoS-based service model probably implies some
+form of reservation. Support for these reservations is likely to
+require significant router involvement, such as queuing packets
+differently depending on the level of reserved resources they
+require. Moreover, it is natural to express such reservations in terms
+of rate, since windows are only indirectly related to how much
+bandwidth a user needs from the network.
+
+The rest of this book focuses on the first of these two scenarios: a
+feedback/end-host/window-based approach, which in short, is a way to
+characterize TCP congestion control as distinct from the general
+problem of allocating network resources. (Chapter 6 is the exception,
+where we consider how routers might assist in hosts in doing a better
+job.)  But in that context, there is a fourth attribute of congestion
+control worth calling out because it is often overlooked: Whether the
+mechanims purposely causes packet loss and then responds to it, or if
+the mechanism instead tries to prevent the queue buildup that leads to
+congestion in the first place. We narrowly refer to the algorithms of
+the first type (of which Reno and CUBIC are examples) as *congestion
+control*, and we refer to algorithms of the second type as *congestion
+avoidance* (of which Vegas and BBR are examples).
+
+This distinction is often not made (and the term "congestion control"
+is used generically to refer to both), but our take is that the
+distinction is important and so we will call it out when appropriate
+(although we will also fall back to the generic use of "congestion
+control," as well).
+
 
 3.2 Evaluation Criteria
 -----------------------
 
-*[We should introduce these concepts in Chapter 1, but it probably
-doesn't make sense to go into any detail until after we have more
-backgound definitions in place.  Also, this needs to be expanded to
-include other criteria, like goodput, stability, and persistent queues.]*
+Beyond characterizing space of possible resource allocation
+mechanisms, there is the question of whether any given solution is
+good or not. Recall that in Chapter 1 we posed the question of how a
+network *effectively* and *fairly* allocates its resources. This
+suggests at least two broad measures by which a resource allocation
+scheme can be evaluated. We consider each in turn.
 
-The final issue is one of knowing whether a resource allocation
-mechanism is good or not. Recall that in the problem statement at the
-start of this chapter we posed the question of how a network
-*effectively* and *fairly* allocates its resources. This suggests at
-least two broad measures by which a resource allocation scheme can be
-evaluated. We consider each in turn.
+*[Other quantitative measures? Stability, Persistent Queues?]*
 
 Effective Resource Allocation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
