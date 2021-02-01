@@ -1,15 +1,13 @@
 Chapter 1:  Introduction
 ========================
 
-*[The following is cut-and-pasted from CN:ASA; may be useful here.]*
+..
+	The following is cut-and-pasted from CN:ASA, but may be useful here.
+	
 
-Cost-Effective Resource Sharing
----------------------------------------
-
-As stated above, this book focuses on packet-switched networks. This
-section explains the key requirement of computer
-networks—efficiency—that leads us to packet switching as the strategy of
-choice.
+This book focuses on packet-switched networks. This section explains
+the key requirement of computer networks—efficiency—that leads us to
+packet switching as the strategy of choice.
 
 Given a collection of nodes indirectly connected by a nesting of
 networks, it is possible for any pair of hosts to send messages to each

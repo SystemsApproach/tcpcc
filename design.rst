@@ -11,9 +11,9 @@ In other words, the mechanisms presented in later chapters are all
 trying to allocate switch queues and link bandwidth—both potentially
 scarce resources—to end-to-end network flows. There is no central
 "allocator" in a network the size of the Internet, so we solve the
-problem in a distributed way, with each communicating hosts at the
-edge of the network and all the switches inside of the network
-collaboratively making local decisions.
+problem in a distributed way, with all the hosts at the edge of the
+network and all the switches inside of the network collaboratively
+making local decisions.
 
 This chapter scopes the design space for how these various parties
 make those decisions. It does this two parts. First, it presents a
@@ -21,14 +21,14 @@ taxonomy for congestion control mechanisms. Second, it defines the
 criteria by which different mechanisms can be quantitatively evaluated
 and compared.
 
-3.1 Taxonomy of Solutions
--------------------------
+3.1 Resource Allocation
+--------------------------
 
-We start by introducing four ways to characterize resource allocation
+We start by introducing three ways to characterize resource allocation
 mechanisms in general, and congestion control algorithms in
 particular. This taxonomy serves to both place congestion control in
-the larger context of resource allocation and distinguish among
-different congestion control algorithms.
+the larger context of resource allocation.
+
 
 Router-Centric versus Host-Centric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,15 +122,14 @@ many bits per second, and each router along the path determines if it
 can support that rate, given the other flows it has made commitments
 to.
 
-Control-Based versus Avoidance-Based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Summary
+~~~~~~~~~~~~~~
 
-Classifying resource allocation approaches at two different points
-along each of three dimensions described so far would seem to suggest
-up to eight unique strategies. While eight different approaches are
-certainly possible, we note that in practice two general strategies
-seem to be most prevalent, and these two strategies are tied to the
-underlying service model of the network.
+Classifying resource allocation approaches along each of these three
+dimensions would seem to suggest up to eight unique strategies. While
+eight different approaches are certainly possible, we note that in
+practice two general strategies seem to be most prevalent, both of
+which are tied to the underlying service model of the network.
 
 On the one hand, a best-effort service model usually implies that
 feedback is being used, since such a model does not allow users to
@@ -148,29 +147,37 @@ require. Moreover, it is natural to express such reservations in terms
 of rate, since windows are only indirectly related to how much
 bandwidth a user needs from the network.
 
-The rest of this book focuses on the first of these two scenarios: a
+3.2 Control versus Avoidance 
+--------------------------------
+
+This book focuses on the first of the two scenarios just outlined: a
 feedback/end-host/window-based approach, which in short, is a way to
 characterize TCP congestion control as distinct from the general
 problem of allocating network resources. (Chapter 6 is the exception,
-where we consider how routers might assist in hosts in doing a better
-job.)  But in that context, there is a fourth attribute of congestion
-control worth calling out because it is often overlooked: Whether the
-mechanims purposely causes packet loss and then responds to it, or if
-the mechanism instead tries to prevent the queue buildup that leads to
-congestion in the first place. We narrowly refer to the algorithms of
-the first type (of which Reno and CUBIC are examples) as *congestion
-control*, and we refer to algorithms of the second type as *congestion
-avoidance* (of which Vegas and BBR are examples).
+where we consider how routers might assist end hosts in doing a better
+job by providing more explicit feedback.)
+
+In that context, there is an important distinction between two general
+approaches to congestion control: Whether the mechanim purposely
+causes packet loss and then respond to it, or if the mechanism instead
+tries to prevent the queue buildup that leads to congestion in the
+first place. We narrowly refer to the mechanisms of the first type (of
+which Reno and CUBIC are examples) as *congestion control* algorithms,
+and we refer to mechanisms of the second type as *congestion
+avoidance* algorithms (of which Vegas and BBR are examples).
 
 This distinction is often not made (and the term "congestion control"
 is used generically to refer to both), but our take is that the
-distinction is important and so we will call it out when appropriate
-(although we will also fall back to the generic use of "congestion
-control," as well).
+distinction is important and so we will call it out when appropriate.
+Admittedly, we will also fall back to the generic use of "congestion
+control" when the distinction is not critical to the discussion.
 
 
-3.2 Evaluation Criteria
+3.3 Evaluation Criteria
 -----------------------
+
+..
+	Other quantitative measures? Stability, Persistent Queues?
 
 Beyond characterizing space of possible resource allocation
 mechanisms, there is the question of whether any given solution is
@@ -179,7 +186,6 @@ network *effectively* and *fairly* allocates its resources. This
 suggests at least two broad measures by which a resource allocation
 scheme can be evaluated. We consider each in turn.
 
-*[Other quantitative measures? Stability, Persistent Queues?]*
 
 Effective Resource Allocation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -263,6 +269,11 @@ stable, the network may experience *congestion collapse*.
 
 Fair Resource Allocation
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+..
+	Current cut-and-paste is largely based on Jain’s work. Need to
+	also include the latest work from Ware’s thesis at CMU:
+	https://www.cs.cmu.edu/~rware/assets/pdf/ware-hotnets19.pdf
 
 The effective utilization of network resources is not the only criterion
 for judging a resource allocation scheme. We must also consider the

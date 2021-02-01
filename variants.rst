@@ -1,13 +1,17 @@
 Chapter 5:  Alternative Algorithms
 ==================================
 
-This chapter describes many variations of the original TCP congestion
-control algorithm have evolved over the years. One common theme is
-that there is a rich design space (and range of use cases), with each
-variant focused on a different combination of factors.
+..
+	The following is cut-and-pasted, and still needs attention.
 
-*[The following is cut-and-pasted: the order still needs attenion, and
-the treatment is uneven.]*
+..
+	If the "Original Algorithm" is reframed as a case studty on
+	control-based approaches, then this one could be framed as a
+	case study of avoidance-based approaches: Vegas / NV / BBR.
+	This would imply introducing another chapter on "other"
+	algorithms target at more specific use cases: Datacenters
+	(DCTCP) and Scavengers (LEDBAT). -llp
+
 
 5.1 TCP Vegas
 -------------
