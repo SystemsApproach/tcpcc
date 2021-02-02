@@ -20,7 +20,7 @@ chapters. For more complete coverage of TCP and IP, we recommend
 2.1  Best-Effort Packet Delivery
 -------------------------------------
 
-The Internet assumes a *connectionless, best-effort* packet delivery
+The Internet supports a *connectionless, best-effort* packet delivery
 service model, as specified by the Internet Protocol (IP) and
 implemented by switches and routers. Being *connectionless* means
 every IP packet carries enough information for the network ot forward
@@ -52,7 +52,7 @@ congestion.
 
    Congestion at a bottleneck router.
 
-Note that congestion control is a different problem than routing.
+Note that avoiding congestion is a different problem than routing.
 While it is true that a congested link could be assigned a large edge
 weight by the routing protocol, and, as a consequence, routers would
 route around it, “routing around” a congested link does not generally
@@ -72,13 +72,14 @@ Because the Internet assumes a connectionless model, any
 connection-oriented service is implemented by an end-to-end transport
 protocol running on the end hosts. There is no connection setup phase
 implemented within the network (corresponding, for example, to
-establishing a virtual circuit), and as a consequence, there is not
-way for individual routers to pre-allocate buffer space to active connections.
+establishing a virtual circuit), and as a consequence, there is no
+mechanism for individual routers to pre-allocate buffer space to
+active connections.
 
 However, the lack of an explicit connection setup phase does not imply
 that routers must be completely unaware of end-to-end connections. IP
 packets are switched independently, but it is usually the case that a
-stream of packets between a particular pair of hosts flows through a
+stream of packets between a given pair of hosts flows through a
 particular set of routers. This idea of a *flow*—a sequence of packets
 sent between a source/destination pair and following the same route
 through the network—is an important abstraction in the context of
@@ -117,21 +118,6 @@ correctly without regard to this state), but when a packet happens to
 belong to a flow for which the router is currently maintaining soft
 state, then the router is better able to handle the packet.
 
-Note that a flow can be either implicitly defined or explicitly
-established. In the former case, each router watches for packets that
-happen to be traveling between the same source/destination pair—the
-router does this by inspecting the addresses in the header—and treats
-these packets as belonging to the same flow for the purpose of
-congestion control. In the latter case, the source sends a flow setup
-message across the network, declaring that a flow of packets is about to
-start. While explicit flows are arguably no different than a connection
-across a connection-oriented network, we call attention to this case
-because, even when explicitly established, a flow does not imply any
-end-to-end semantics and, in particular, does not imply the reliable and
-ordered delivery of a virtual circuit. It simply exists for the purpose
-of resource allocation. We will see examples of both implicit and
-explicit flows in this chapter.
-
 .. sidebar:: Quality-of-Service
 
 	*With best-effort service, all packets are given essentially
@@ -156,24 +142,15 @@ explicit flows in this chapter.
 IP Packet Format
 ~~~~~~~~~~~~~~~~
 
-The format of the IP packet is shown in :numref:`Figure %s
-<fig-iphead>`. Looking at each field in the header, we see that the
-“simple” model of best-effort datagram delivery still has some subtle
-features. The ``Version`` field specifies the version of IP. The
-still-assumed version of IP is 4, which is typically called
-*IPv4*. Observe that putting this field right at the start of the
-datagram makes it easy for everything else in the packet format to be
-redefined in subsequent versions; the header processing software
-starts off by looking at the version and then branches off to process
-the rest of the packet according to the appropriate format. The next
-field, ``HLen``, specifies the length of the header in 32-bit
-words. When there are no options, which is most of the time, the
-header is 5 words (20 bytes) long. The 8-bit ``TOS`` (type of service)
-field has had a number of different definitions over the years, but
-its basic function is to allow packets to be treated differently based
-on application needs. We will see how various congestion control
-mechanisms have applied different meanings to the ``TOS`` field over
-time.
+For completeness, :numref:`Figure %s <fig-iphead>` gives the IPv4
+packet format. The ``SourceAddr`` and ``DestinationAddr`` fields
+identify packet flows at the granularity of host pairs. The other
+field that is relevant to our discussion is the 8-bit ``TOS`` (type of
+service) field. This field has been interpreted in different ways over
+the years, but its basic function is to allow packets to be treated
+differently based on application needs. We will see how various
+congestion control mechanisms have applied different meanings to the
+``TOS`` field over time.
 
 .. _fig-iphead:
 .. figure:: figures/f03-16-9780123850591.png
@@ -181,66 +158,6 @@ time.
    :align: center
 
    IPv4 packet header.
-
-The next 16 bits of the header contain the ``Length`` of the datagram,
-including the header. Unlike the ``HLen`` field, the ``Length`` field
-counts bytes rather than words. Thus, the maximum size of an IP datagram
-is 65,535 bytes. The physical network over which IP is running, however,
-may not support such long packets. For this reason, IP supports a
-fragmentation and reassembly process. The second word of the header
-contains information about fragmentation, and the details of its use are
-presented in the following section entitled “Fragmentation and
-Reassembly.”
-
-Moving on to the third word of the header, the next byte is the ``TTL``
-(time to live) field. Its name reflects its historical meaning rather
-than the way it is commonly used today. The intent of the field is to
-catch packets that have been going around in routing loops and discard
-them, rather than let them consume resources indefinitely. Originally,
-``TTL`` was set to a specific number of seconds that the packet would be
-allowed to live, and routers along the path would decrement this field
-until it reached 0. However, since it was rare for a packet to sit for
-as long as 1 second in a router, and routers did not all have access to
-a common clock, most routers just decremented the ``TTL`` by 1 as they
-forwarded the packet. Thus, it became more of a hop count than a timer,
-which is still a perfectly good way to catch packets that are stuck in
-routing loops. One subtlety is in the initial setting of this field by
-the sending host: Set it too high and packets could circulate rather a
-lot before getting dropped; set it too low and they may not reach their
-destination. The value 64 is the current default.
-
-The ``Protocol`` field is simply a demultiplexing key that identifies
-the higher-level protocol to which this IP packet should be passed.
-There are values defined for the TCP (Transmission Control Protocol—6),
-UDP (User Datagram Protocol—17), and many other protocols that may sit
-above IP in the protocol graph.
-
-The ``Checksum`` is calculated by considering the entire IP header as a
-sequence of 16-bit words, adding them up using ones’ complement
-arithmetic, and taking the ones’ complement of the result. Thus, if any
-bit in the header is corrupted in transit, the checksum will not contain
-the correct value upon receipt of the packet. Since a corrupted header
-may contain an error in the destination address—and, as a result, may
-have been misdelivered—it makes sense to discard any packet that fails
-the checksum. It should be noted that this type of checksum does not
-have the same strong error detection properties as a CRC, but it is much
-easier to calculate in software.
-
-The last two required fields in the header are the ``SourceAddr`` and
-the ``DestinationAddr`` for the packet. The latter is the key to
-datagram delivery: Every packet contains a full address for its intended
-destination so that forwarding decisions can be made at each router. The
-source address is required to allow recipients to decide if they want to
-accept the packet and to enable them to reply. IP addresses are
-discussed in a later section—for now, the important thing to know is
-that IP defines its own global address space, independent of whatever
-physical networks it runs over. As we will see, this is one of the keys
-to supporting heterogeneity.
-
-Finally, there may be a number of options at the end of the header. The
-presence or absence of options may be determined by examining the header
-length (``HLen``) field. While options are used fairly rarely, a
-complete IP implementation must handle them all.
 
 FIFO Queuing
 ~~~~~~~~~~~~
@@ -308,7 +225,7 @@ it does not go so far as to make guarantees to any particular priority
 class. It just allows high-priority packets to cut to the front of the
 line.
 
-The problem with priority queuing, of course, is that the high-priority
+The problem with priority queuing is that the high-priority
 queue can starve out all the other queues; that is, as long as there is
 at least one high-priority packet in the high-priority queue,
 lower-priority queues do not get served. For this to be viable, there
@@ -328,7 +245,7 @@ are necessary to stabilize the routing tables after a topology change.
 Often there is a special queue for such packets, which can be
 identified by the Differentiated Services Code Point (another proposed
 use of the ``TOS`` field) in the IP header. This is in fact a simple case
-of the idea of “Differentiated Services.”
+of the idea of *Differentiated Services.*
 
 .. sidebar:: Fair Queuing
 
@@ -363,7 +280,7 @@ End-to-End Issues
 ~~~~~~~~~~~~~~~~~
 
 At the heart of TCP is the sliding window algorithm, which in addition
-to its familiar acknowledgement/timeout/retransmit mechanisms, has to
+to its familiar acknowledgement/timeout/retransmit mechanism, has to
 address the following complications.
 
 First, because TCP supports logical connections between processes that
@@ -424,50 +341,6 @@ trying to traverse this same slow link. This is the essential factor
 leading to congestion, which we will address in later chapters.
 next chapter.
 
-.. sidebar:: Alternative Strategies
-	     
-   *The approach TCP uses to provide a reliable/ordered delivery
-   service is not the only possibility. Networks that support
-   virtual-circuits (as opposed to IP's connectionless, best-effort
-   model) take a different tact.  For example, instead of using the
-   sliding window algorithm on an end-to-end basis to provide
-   reliable/ordered delivery, a virtual-circuit based network might
-   use the sliding window protocol within the network, on a hop-by-hop
-   basis. The assumption behind this approach is that if messages are
-   delivered reliably and in order between each pair of nodes along
-   the path between the source host and the destination host, then the
-   end-to-end service also guarantees reliable/ordered delivery.*
-
-   *The problem with this latter approach is that a sequence of
-   hop-by-hop guarantees does not necessarily add up to an end-to-end
-   guarantee.  First, if a heterogeneous link (say, an Ethernet) is
-   added to one end of the path, then there is no guarantee that this
-   hop will preserve the same service as the other hops. Second, just
-   because the sliding window protocol guarantees that messages are
-   delivered correctly from node A to node B, and then from node B to
-   node C, it does not guarantee that node B behaves perfectly. For
-   example, network nodes have been known to introduce errors into
-   messages while transferring them from an input buffer to an output
-   buffer. They have also been known to accidentally reorder
-   messages. As a consequence of these small windows of vulnerability,
-   it is still necessary to provide true end-to-end checks to
-   guarantee reliable/ordered service, even though the lower levels of
-   the system also implement that functionality.*
-
-   *This discussion serves to illustrate one of the most important
-   principles in system design—the end-to-end argument. In a
-   nutshell, the end-to-end argument says that a function (in our
-   example, providing reliable/ordered delivery) should not be
-   provided in the lower levels of the system unless it can be
-   completely and correctly implemented at that level. Therefore, this
-   rule argues in favor of the TCP/IP approach. This rule is not
-   absolute, however. It does allow for functions to be incompletely
-   provided at a low level as a performance optimization. This is why
-   it is perfectly consistent with the end-to-end argument to perform
-   error detection (e.g., CRC) on a hop-by-hop basis; detecting and
-   retransmitting a single corrupt packet across one hop is preferable
-   to having to retransmit an entire file end-to-end.*
-
 Segment Format
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -520,8 +393,7 @@ Note that because TCP connections come and go, it is possible for a
 connection between a particular pair of ports to be established, used to
 send and receive data, and closed, and then at a later time for the same
 pair of ports to be involved in a second connection. We sometimes refer
-to this situation as two different *incarnations* of the same
-connection.
+to this situation as two different *incarnations* of the same connection.
 
 The ``Acknowledgement``, ``SequenceNum``, and ``AdvertisedWindow``
 fields are all involved in TCP’s sliding window algorithm. Because TCP
@@ -882,17 +754,16 @@ provides a simple, unified rule for deciding when to transmit:
 
 In other words, it’s always OK to send a full segment if the window
 allows. It’s also all right to immediately send a small amount of data
-if there are currently no segments in transit, but if there is anything
-in flight the sender must wait for an ACK before transmitting the next
-segment. Thus, an interactive application like Telnet that continually
-writes one byte at a time will send data at a rate of one segment per
-RTT. Some segments will contain a single byte, while others will contain
-as many bytes as the user was able to type in one round-trip time.
-Because some applications cannot afford such a delay for each write it
-does to a TCP connection, the socket interface allows the application to
-turn off Nagel’s algorithm by setting the ``TCP_NODELAY`` option.
-Setting this option means that data is transmitted as soon as
-possible.
+if there are currently no segments in transit, but if there is
+anything in flight the sender must wait for an ACK before transmitting
+the next segment. Thus, an interactive application like Telnet that
+continually writes one byte at a time will send data at a rate of one
+segment per RTT. Some segments will contain a single byte, while
+others will contain as many bytes as the user was able to type in one
+round-trip time.  Because some applications cannot afford such a delay
+for each write it does to a TCP connection, the socket interface
+allows the application to set the ``TCP_NODELAY`` option, meaning that
+data is transmitted as soon as possible.
 
 2.3 High-Speed Networks
 --------------------------
