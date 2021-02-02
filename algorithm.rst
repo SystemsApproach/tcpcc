@@ -2,49 +2,50 @@ Chapter 4:  Control-Based Algorithms
 ====================================
 
 ..
-	These lead paragraphs need attention. One idea is to frame
-	this chapter as a "case study" of control-based strategies: from
-	Tahoe to Reno to CUBIC. -llp
+	Still need to work the names -- Tahoe, Reno, CUBIC -- into
+	the narrative, as well as better highlight the "case study"
+	perspective. -llp
+	
+This chapter describes the dominant congestion control algorithm in
+use today on the Internet. The approach was introduced into the
+Internet in the late 1980s by Van Jacobson, roughly eight years after
+the TCP/IP protocol stack had become operational. Immediately
+preceding this time, the Internet was suffering from congestion
+collapse—hosts would send their packets into the Internet as fast as
+the advertised window would allow, congestion would occur at some
+router (causing packets to be dropped), and the hosts would time out
+and retransmit their packets, resulting in even more congestion.
 
-This chapter describes the predominant example of end-to-end
-congestion control in use today, that implemented by TCP. The
-essential strategy of TCP is to send packets into the network without
-a reservation and then to react to observable events that occur. TCP
-assumes only FIFO queuing in the network’s routers, but also works
-with fair queuing.
+The general idea is straightforward. Having transmitted a set of
+packets according to its current estimate of the available bandwidth,
+the sender uses the arrival of an ACK as a signal that one of its
+packets has left the network and that it is therefore safe to insert a
+new packet into the network without adding to the level of
+congestion. By using ACKs to pace the transmission of packets, TCP is
+said to be *self-clocking*.  The sender also uses timeouts as a signal
+that the network is congested, indicating that it needs to reduce its
+sending rate. By using packet loss as an indication of congestion, we
+refer to the approach as *control-based*.
 
-TCP congestion control was introduced into the Internet in the late
-1980s by Van Jacobson, roughly eight years after the TCP/IP protocol
-stack had become operational. Immediately preceding this time, the
-Internet was suffering from congestion collapse—hosts would send their
-packets into the Internet as fast as the advertised window would allow,
-congestion would occur at some router (causing packets to be dropped),
-and the hosts would time out and retransmit their packets, resulting in
-even more congestion.
+Of course, determining the available capacity in the first place is no
+easy task. And to make matters worse, because other connections come
+and go, the available bandwidth changes over time, meaning that any
+given source must be able to adjust the number of packets it has in
+transit. This chapter describes the suite of techniques that TCP uses
+to address these and other problems. Most of the techniques are
+adjustments to the sender's behavior, with no changes to the
+over-the-wire protocol. The exceptions are a set of extensions to the
+TCP header, as described in Section 4.2.
 
-Broadly speaking, the idea of TCP congestion control is for each source
-to determine how much capacity is available in the network, so that it
-knows how many packets it can safely have in transit. Once a given
-source has this many packets in transit, it uses the arrival of an ACK
-as a signal that one of its packets has left the network and that it is
-therefore safe to insert a new packet into the network without adding to
-the level of congestion. By using ACKs to pace the transmission of
-packets, TCP is said to be *self-clocking*. Of course, determining the
-available capacity in the first place is no easy task. To make matters
-worse, because other connections come and go, the available bandwidth
-changes over time, meaning that any given source must be able to adjust
-the number of packets it has in transit. This section describes the
-algorithms used by TCP to address these and other problems.
-
-Note that, although we describe the TCP congestion-control mechanisms
-one at a time, thereby giving the impression that we are talking about
-three independent mechanisms, it is only when they are taken as a whole
-that we have TCP congestion control. Also, while we are going to begin
-here with the variant of TCP congestion control most often referred to
-as *standard TCP*, we will see that there are actually quite a few
-variants of TCP congestion control in use today, and researchers
-continue to explore new approaches to addressing this problem. Some of
-these new approaches are discussed below.
+Although we describe the set of mechanisms one at a time, giving the
+impression that we are talking about three independent approaches, it
+is only when they are taken as a whole that we have TCP congestion
+control. It is also the case that these mechanisms have been further
+refined over the last 30 years, culminating the variant most commonly
+found running on end-hosts today: *TCP CUBIC*. In other words, this
+chapter can read as a case study of control-based algorithms, spanning
+the incremental experience of identifying and solving a sequence of
+problems.
 
 4.1 Adaptive Retransmission
 ---------------------------
@@ -58,11 +59,10 @@ RTT between the same two hosts over time, choosing an appropriate
 timeout value is not that easy. To address this problem, TCP uses an
 adaptive retransmission mechanism.
 
-We describe this mechanism and how it has evolved over time as the
-Internet community has gained more experience using TCP. We start with
-the original algorithm included in the TCP specification, which of
-course pre-dates concerns about congestion control. As the connection
-between how aggressively a sender retransmits packets and the level of
+We describe this mechanism and how it has evolved. We start with the
+original algorithm included in the TCP specification, which of course
+pre-dates concerns about congestion control. As the connection between
+how aggressively a sender retransmits packets and the level of
 congestion in the network became clear, a more accurate way to compute
 (and adapt) the retransmission timer became an important first step
 towards a comprehensive approach to congestion control.
@@ -70,18 +70,14 @@ towards a comprehensive approach to congestion control.
 Original Algorithm
 ~~~~~~~~~~~~~~~~~~
 
-We begin with a simple algorithm for computing a timeout value between a
-pair of hosts. This is the algorithm that was originally described in
-the TCP specification—and the following description presents it in those
-terms—but it could be used by any end-to-end protocol.
-
-The idea is to keep a running average of the RTT and then to compute
-the timeout as a function of this RTT. Specifically, every time TCP
-sends a data segment, it records the time. When an ACK for that
-segment arrives, TCP reads the time again, and then takes the
-difference between these two times as a ``SampleRTT``. TCP then
-computes an ``EstimatedRTT`` as a weighted average between the
-previous estimate and this new sample. That is,
+We begin with the simple algorithm that was originally described in
+the TCP specification.  The idea is to keep a running average of the
+RTT and then to compute the timeout as a function of this RTT.
+Specifically, every time TCP sends a data segment, it records the
+time. When an ACK for that segment arrives, TCP reads the time again,
+and then takes the difference between these two times as a
+``SampleRTT``. TCP then computes an ``EstimatedRTT`` as a weighted
+average between the previous estimate and this new sample. That is,
 
 ::
 
@@ -103,14 +99,15 @@ Karn/Partridge Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 After several years of use on the Internet, a rather obvious flaw was
-discovered in this simple algorithm. The problem was that an ACK does
-not really acknowledge a transmission; it actually acknowledges the
-receipt of data. In other words, whenever a segment is retransmitted
-and then an ACK arrives at the sender, it is impossible to determine
-if this ACK should be associated with the first or the second
-transmission of the segment for the purpose of measuring the sample
-RTT. It is necessary to know which transmission to associate it with
-so as to compute an accurate ``SampleRTT``. As illustrated in
+discovered in this simple approach: An ACK does not really acknowledge
+a transmission, but rather, it acknowledges the receipt of data. In
+other words, whenever a segment is retransmitted and then an ACK
+arrives at the sender, it is impossible to determine if this ACK
+should be associated with the first or the second transmission of the
+segment for the purpose of measuring the sample RTT.
+
+It is necessary to know which transmission to associate it with so as
+to compute an accurate ``SampleRTT``. As illustrated in
 :numref:`Figure %s <fig-tcp-karn>`, if you assume that the ACK is for
 the original transmission but it was really for the second, then the
 ``SampleRTT`` is too large (a); if you assume that the ACK is for the
@@ -144,30 +141,25 @@ chapter.
 Jacobson/Karels Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Karn/Partridge algorithm was introduced at a time when the Internet
-was suffering from high levels of network congestion. Their approach was
-designed to fix some of the causes of that congestion, but, although it
-was an improvement, the congestion was not eliminated. The following
-year (1988), two other researchers—Jacobson and Karels—proposed a more
-drastic change to TCP to battle congestion. The bulk of that proposed
-change is described in the next chapter. Here, we focus on the aspect of
-that proposal that is related to deciding when to time out and
-retransmit a segment.
+The Karn/Partridge algorithm fixed some of the causes of congestion,
+and was an improvement, but congestion was not eliminated. The
+following year (1988), two other researchers—Jacobson and
+Karels—proposed a more drastic change to TCP to battle congestion,
+including a new way to decide when to time out and retransmit a
+segment.
 
-As an aside, it should be clear how the timeout mechanism is related to
-congestion—if you time out too soon, you may unnecessarily retransmit a
-segment, which only adds to the load on the network. The other reason
-for needing an accurate timeout value is that a timeout is taken to
-imply congestion, which triggers a congestion-control mechanism.
-Finally, note that there is nothing about the Jacobson/Karels timeout
-computation that is specific to TCP. It could be used by any end-to-end
-protocol.
+It should be clear how the timeout mechanism is related to
+congestion—if you time out too soon, you may unnecessarily retransmit
+a segment, which only adds to the load on the network. The other
+reason for needing an accurate timeout value is that a timeout is
+taken to imply congestion, which triggers the other control mechanism
+described later in this chapter.
 
-The main problem with the original computation is that it does not take
-the variance of the sample RTTs into account. Intuitively, if the
+The main problem with the original computation is that it does not
+take the variance of the sample RTTs into account. Intuitively, if the
 variation among samples is small, then the ``EstimatedRTT`` can be
-better trusted and there is no reason for multiplying this estimate by 2
-to compute the timeout. On the other hand, a large variance in the
+better trusted and there is no reason for multiplying this estimate by
+2 to compute the timeout. On the other hand, a large variance in the
 samples suggests that the timeout value should not be too tightly
 coupled to the ``EstimatedRTT``.
 
@@ -228,28 +220,28 @@ results as the equations above.
 The second point of note is that the Jacobson/Karels algorithm is only
 as good as the clock used to read the current time. On typical Unix
 implementations at the time, the clock granularity was as large as
-500 ms, which is significantly larger than the average cross-country RTT
-of somewhere between 100 and 200 ms. To make matters worse, the Unix
-implementation of TCP only checked to see if a timeout should happen
-every time this 500-ms clock ticked and would only take a sample of the
-round-trip time once per RTT. The combination of these two factors could
-mean that a timeout would happen 1 second after the segment was
-transmitted. Once again, the extensions to TCP include a mechanism that
-makes this RTT calculation a bit more precise.
+500 ms, which is significantly larger than the average cross-country
+RTT of somewhere between 100 and 200 ms. To make matters worse, the
+Unix implementation of TCP only checked to see if a timeout should
+happen every time this 500-ms clock ticked and would only take a
+sample of the round-trip time once per RTT. The combination of these
+two factors could mean that a timeout would happen 1 second after the
+segment was transmitted. An extension to TCP, described in the next
+section, makes this RTT calculation a bit more precise.
 
 All of the retransmission algorithms we have discussed are based on
-acknowledgment timeouts, which indicate that a segment has probably been
-lost. Note that a timeout does not, however, tell the sender whether any
-segments it sent after the lost segment were successfully received. This
-is because TCP acknowledgments are cumulative; they identify only the
-last segment that was received without any preceding gaps. The reception
-of segments that occur after a gap grows more frequent as faster
-networks lead to larger windows. If ACKs also told the sender which
-subsequent segments, if any, had been received, then the sender could be
-more intelligent about which segments it retransmits, draw better
-conclusions about the state of congestion, and make better RTT
-estimates. A TCP extension supporting this is described in a later
-section.
+acknowledgment timeouts, which indicate that a segment has probably
+been lost. Note that a timeout does not, however, tell the sender
+whether any segments it sent after the lost segment were successfully
+received. This is because TCP acknowledgments are cumulative; they
+identify only the last segment that was received without any preceding
+gaps. The reception of segments that occur after a gap grows more
+frequent as faster networks lead to larger windows. If ACKs also told
+the sender which subsequent segments, if any, had been received, then
+the sender could be more intelligent about which segments it
+retransmits, draw better conclusions about the state of congestion,
+and make better RTT estimates. A second TCP extension supporting this
+is described in the next section.
 
 .. _key-open-source:
 .. admonition::  Key Takeaway
@@ -267,12 +259,12 @@ section.
    seeing open source software grow in importance as open standards
    receed in importance.
 
-TCP Extensions
-~~~~~~~~~~~~~~
+4.2 TCP Extensions
+------------------
 
 We have mentioned at four different points in this and earlier
-chapters that there are now extensions to TCP that help to mitigate
-some problem that TCP faced as the underlying network got
+chapters that there are extensions to TCP that help to mitigate the
+problems TCP faced as congestion became a problem and networks got
 faster. These extensions are designed to have as small an impact on
 TCP as possible. In particular, they are realized as options that can
 be added to the TCP header. (We glossed over this point earlier, but
@@ -355,7 +347,7 @@ fill the gaps between the segments that have been selectively
 acknowledged.
 
 
-4.2 Additive Increase/Multiplicative Decrease
+4.3 Additive Increase/Multiplicative Decrease
 ---------------------------------------------
 
 TCP maintains a new state variable for each connection, called
@@ -481,7 +473,7 @@ to the cost of measuring each transmission with an accurate clock, TCP
 only samples the round-trip time once per RTT (rather than once per
 packet) using a coarse-grained (500-ms) clock.
 
-4.3 Slow Start
+4.4 Slow Start
 --------------
 
 The additive increase mechanism just described is the right approach to
@@ -692,7 +684,7 @@ could be a long time before these types of enhancements could make it
 into the Internet; for now, they are more likely to be used in
 controlled network environments (e.g., research networks).
 
-4.4 Fast Retransmit and Fast Recovery
+4.5 Fast Retransmit and Fast Recovery
 -------------------------------------
 
 The mechanisms described so far were part of the original proposal to
@@ -785,7 +777,7 @@ coarse-grained timeout occurs. At all other times, the congestion
 window is following a pure additive increase/multiplicative decrease
 pattern.
 
-4.5 TCP CUBIC 
+4.6 TCP CUBIC 
 --------------
 
 A variant of the standard TCP algorithm, called CUBIC, is the default
@@ -846,5 +838,5 @@ that standard TCP uses. Looking back at :numref:`Figure %s
 function to being convex (whereas standard TCP’s additive function is 
 only convex). 
 
-4.6 Retrospective
+4.7 Retrospective
 --------------------
