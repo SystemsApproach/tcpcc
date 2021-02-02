@@ -16,6 +16,7 @@ TCP Congestion Control: A Systems Approach
    tcp_ip.rst
    design.rst
    algorithm.rst
+   avoidance.rst
    variants.rst
    aqm.rst
    tools.rst

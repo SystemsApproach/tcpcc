@@ -1,5 +1,5 @@
-Chapter 4:  Original Algorithm
-==============================
+Chapter 4:  Control-Based Algorithms
+====================================
 
 ..
 	These lead paragraphs need attention. One idea is to frame
@@ -785,3 +785,66 @@ coarse-grained timeout occurs. At all other times, the congestion
 window is following a pure additive increase/multiplicative decrease
 pattern.
 
+4.5 TCP CUBIC 
+--------------
+
+A variant of the standard TCP algorithm, called CUBIC, is the default
+congestion control algorithm distributed with Linux. CUBIC’s primary
+goal is to support networks with large delay × bandwidth products,
+which are sometimes called *long-fat networks*. Such networks suffer
+from the original TCP algorithm requiring too many round-trips to
+reach the available capacity of the end-to-end path. CUBIC does this
+by being more aggressive in how it increases the window size, but of
+course the trick is to be more aggressive without being so aggressive
+as to adversely affect other flows.
+
+One important aspect of CUBIC’s approach is to adjust its congestion 
+window at regular intervals, based on the amount of time that has 
+elapsed since the last congestion event (e.g., the arrival of a 
+duplicate ACK), rather than only when ACKs arrive (the latter being a 
+function of RTT). This allows CUBIC to behave fairly when competing with 
+short-RTT flows, which will have ACKs arriving more frequently. 
+
+.. _fig-cubic:
+.. figure:: figures/Slide1.png 
+   :width: 500px 
+   :align: center 
+
+   Generic cubic function illustrsting the change in the congestion 
+   window as a function of time. 
+
+The second important aspect of CUBIC is its use of a cubic function to 
+adjust the congestion window. The basic idea is easiest to understand 
+by looking at the general shape of a cubic function, which has three 
+phases: slowing growth, flatten plateau, increasing growth. A generic 
+example is shown in :numref:`Figure %s <fig-cubic>`, which we have 
+annotated with one extra piece of information: the maximum congestion 
+window size achieved just before the last congestion event as a target 
+(denoted :math:`W_{max}`). The idea is to start fast but slow the 
+growth rate as you get close to :math:`W_{max}`, be cautious and have 
+near-zero growth when close to :math:`W_{max}`, and then increase the 
+growth rate as you move away from :math:`W_{max}`. The latter phase is 
+essentially probing for a new achievable :math:`W_{max}`. 
+
+Specifically, CUBIC computes the congestion window as a function of time 
+(t) since the last congestion event 
+
+.. math::
+
+   \mathsf{CWND(t)} = \mathsf{C} \times \mathsf{(t-K)}^{3} + \mathsf{W}_{max}
+
+where 
+
+.. math::
+
+   \mathsf{K} =  \sqrt[3]{\mathsf{W}_{max} \times (1 - \beta{})/\mathsf{C}}
+
+C is a scaling constant and :math:`\beta` is the multiplicative 
+decrease factor.  CUBIC sets the latter to 0.7 rather than the 0.5 
+that standard TCP uses. Looking back at :numref:`Figure %s 
+<fig-cubic>`, CUBIC is often described as shifting between a concave 
+function to being convex (whereas standard TCP’s additive function is 
+only convex). 
+
+4.6 Retrospective
+--------------------
