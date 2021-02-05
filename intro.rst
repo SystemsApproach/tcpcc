@@ -5,6 +5,26 @@ Chapter 1:  Introduction
 	The following is cut-and-pasted from CN:ASA, but may be useful here.
 	
 
+There are few papers in networking with more citations than
+*Congestion Avoidance and Control* by Jacobson and Karels. There are
+good reasons for that. One is that the congestion collapse of the
+Internet, which began in 1986, threatened the success of the
+relatively new network at that time, and the work undertaken to
+address it was foundational to the Internet's ultimate
+success. Without that work it's unlikely we'd have the global Internet
+we have today.
+
+Another reason for the citation impact of this work is that congestion
+control has been an amazingly fruitful area of research for over three
+decades. There have been lots of improvements to the original work of
+Jacobson and Karels, and it seems fair to assume that new approaches
+or refinements to the existing approaches will continue to appear for
+as long as the Internet exists.
+
+
+
+
+        
 This book focuses on packet-switched networks. This section explains
 the key requirement of computer networks—efficiency—that leads us to
 packet switching as the strategy of choice.
@@ -165,8 +185,8 @@ this state, it is said to be *congested*.
   to different flows and dealing with congestion when it occurs are
   the key challenges of statistical multiplexing.
 
-*[The following is probably repetative. It comes from the Issues
-scection of chapter 6.]*
+*[The following is probably repetitive. It comes from the Issues
+section of chapter 6.]*
 
 Resource allocation and congestion control are complex issues that have
 been the subject of much study ever since the first network was
