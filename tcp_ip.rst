@@ -24,12 +24,12 @@ The Internet supports a *connectionless, best-effort* packet delivery
 service model, as specified by the Internet Protocol (IP) and
 implemented by switches and routers. Being *connectionless* means
 every IP packet carries enough information for the network ot forward
-it to its correct destination; there is no need for any advance setup
-mechanism to tell the network what to do when the packet arrives.
-Being *best-effort* means that if something goes wrong and the packet
-gets lost, corrupted, or misdelivered while enroute, the network does
-nothing to recover from the failure. This approach was intentionally
-designed to keep routers as simple as possible.
+it to its correct destination; there is no setup mechanism to tell the
+network what to do when packets arrives.  Being *best-effort* means
+that if something goes wrong and the packet gets lost, corrupted, or
+misdelivered while enroute, the network does nothing to recover from
+the failure. This approach was intentionally designed to keep routers
+as simple as possible.
 
 Best-effort delivery does not just mean that packets can get lost.
 Sometimes they can get delivered out of order, and sometimes the same
@@ -42,8 +42,9 @@ than enough capacity on the immediate outgoing link to send a packet,
 but somewhere in the middle of a network its packets encounter a link
 that is being used by many different traffic sources. :numref:`Figure
 %s <fig-congestion>` illustrates this situation—two high-speed links
-are feeding a low-speed link. This is the fundamental definition of
-congestion.
+are feeding a low-speed link. The router is able to queue (buffer)
+packets for a while, but if the problem persists, the queue will
+overflow.  This is the very definition of congestion.
 
 .. _fig-congestion:
 .. figure:: figures/f06-01-9780123850591.png
@@ -162,21 +163,17 @@ congestion control mechanisms have applied different meanings to the
 FIFO Queuing
 ~~~~~~~~~~~~
 
-Regardless of how simple or how sophisticated the rest of the resource
-allocation mechanism is, each router must implement some queuing
-discipline that governs how packets are buffered while waiting to be
-transmitted. The queuing algorithm can be thought of as allocating both
-bandwidth (which packets get transmitted) and buffer space (which
-packets get discarded). It also directly affects the latency experienced
-by a packet by determining how long a packet waits to be transmitted.
-This section introduces two common queuing algorithms—first-in,
-first-out (FIFO) and fair queuing (FQ)—and identifies several variations
-that have been proposed.
+Each router implements some queuing discipline that governs how
+packets are buffered while waiting to be transmitted. The queuing
+algorithm can be thought of as allocating both bandwidth (which
+packets get transmitted) and buffer space (which packets get
+discarded). It also directly affects the latency experienced by a
+packet by determining how long a packet waits to be transmitted.
 
-The idea of FIFO queuing, also called first-come, first-served (FCFS)
-queuing, is simple: The first packet that arrives at a router is the
-first packet to be transmitted. This is illustrated in :numref:`Figure
-%s(a) <fig-fifo>`, which shows a FIFO with “slots” to hold up to eight
+The most common queuing algorithm is *First-In/First-Out (FIFO)*.  The
+idea is simple: The first packet that arrives at a router is the first
+packet to be transmitted. This is illustrated in :numref:`Figure %s(a)
+<fig-fifo>`, which shows a FIFO with “slots” to hold up to eight
 packets. Given that the amount of buffer space at each router is
 finite, if a packet arrives and the queue (buffer space) is full, then
 the router discards that packet, as shown in :numref:`Figure %s(b)
@@ -196,56 +193,14 @@ Note that tail drop and FIFO are two separable ideas. FIFO is a
 *scheduling discipline*—it determines the order in which packets are
 transmitted. Tail drop is a *drop policy*—it determines which packets
 get dropped. Because FIFO and tail drop are the simplest instances of
-scheduling discipline and drop policy, respectively, they are sometimes
-viewed as a bundle—the vanilla queuing implementation. Unfortunately,
-the bundle is often referred to simply as *FIFO queuing*, when it should
-more precisely be called *FIFO with tail drop*. A later section provides
-an example of another drop policy, which uses a more complex algorithm
-than “Is there a free buffer?” to decide when to drop packets. Such a
-drop policy may be used with FIFO, or with more complex scheduling
-disciplines.
-
-FIFO with tail drop, as the simplest of all queuing algorithms, is the
-most widely used in Internet routers at the time of writing. This simple
-approach to queuing pushes all responsibility for congestion control and
-resource allocation out to the edges of the network. Thus, the prevalent
-form of congestion control in the Internet currently assumes no help
-from the routers: TCP takes responsibility for detecting and responding
-to congestion. We will see how this works in the next section.
-
-A simple variation on basic FIFO queuing is priority queuing. The idea
-is to mark each packet with a priority; the mark could be carried, for
-example, in the IP header, as we’ll discuss in a later section. The
-routers then implement multiple FIFO queues, one for each priority
-class. The router always transmits packets out of the highest-priority
-queue if that queue is nonempty before moving on to the next priority
-queue. Within each priority, packets are still managed in a FIFO manner.
-This idea is a small departure from the best-effort delivery model, but
-it does not go so far as to make guarantees to any particular priority
-class. It just allows high-priority packets to cut to the front of the
-line.
-
-The problem with priority queuing is that the high-priority
-queue can starve out all the other queues; that is, as long as there is
-at least one high-priority packet in the high-priority queue,
-lower-priority queues do not get served. For this to be viable, there
-needs to be hard limits on how much high-priority traffic is inserted in
-the queue. It should be immediately clear that we can’t allow users to
-set their own packets to high priority in an uncontrolled way; we must
-either prevent them from doing this altogether or provide some form of
-“pushback” on users. One obvious way to do this is to use economics—the
-network could charge more to deliver high-priority packets than
-low-priority packets. However, there are significant challenges to
-implementing such a scheme in a decentralized environment such as the
-Internet.
-
-One situation in which priority queuing is used in the Internet is to
-protect the most important packets—typically, the routing updates that
-are necessary to stabilize the routing tables after a topology change.
-Often there is a special queue for such packets, which can be
-identified by the Differentiated Services Code Point (another proposed
-use of the ``TOS`` field) in the IP header. This is in fact a simple case
-of the idea of *Differentiated Services.*
+scheduling discipline and drop policy, respectively, they are
+sometimes viewed as a bundle—the vanilla queuing
+implementation. Unfortunately, the bundle is often referred to simply
+as *FIFO queuing*, when it should more precisely be called *FIFO with
+tail drop*. Chapter 7 presents another drop policy, which uses a more
+complex algorithm than “Is there a free buffer?” to decide when to
+drop packets. Such a drop policy may be used with FIFO, or with more
+complex scheduling disciplines.
 
 .. sidebar:: Fair Queuing
 
@@ -339,7 +294,6 @@ middle of the network, a 1.5-Mbps link must be traversed. And, to make
 matters worse, data being generated by many different sources might be
 trying to traverse this same slow link. This is the essential factor
 leading to congestion, which we will address in later chapters.
-next chapter.
 
 Segment Format
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -355,9 +309,7 @@ host. TCP on the destination host then empties the contents of the
 packet into a receive buffer, and the receiving process reads from
 this buffer at its leisure.  This situation is illustrated in
 :numref:`Figure %s <fig-tcp-stream>`, which, for simplicity, shows
-data flowing in only one direction. Remember that, in general, a
-single TCP connection supports byte streams flowing in both
-directions.
+data flowing in only one direction.
  
 .. _fig-tcp-stream:
 .. figure:: figures/f05-03-9780123850591.png
@@ -369,9 +321,8 @@ directions.
 The packets exchanged between TCP peers in :numref:`Figure %s
 <fig-tcp-stream>` are called *segments*, since each one carries a
 segment of the byte stream. Each TCP segment contains the header
-schematically depicted in :numref:`Figure %s <fig-tcp-format>`. The
-relevance of most of these fields will become apparent throughout this
-section. For now, we simply introduce them.
+schematically depicted in :numref:`Figure %s <fig-tcp-format>`.  The
+following introduces the fields that will be relevant to our discussion.
 
 .. _fig-tcp-format:
 .. figure:: figures/f05-04-9780123850591.png
@@ -381,9 +332,11 @@ section. For now, we simply introduce them.
    TCP header format.
 
 The ``SrcPort`` and ``DstPort`` fields identify the source and
-destination ports, respectively, just as in UDP. These two fields, plus
-the source and destination IP addresses, combine to uniquely identify
-each TCP connection. That is, TCP’s demux key is given by the 4-tuple
+destination ports, respectively. These two fields, plus the source and
+destination IP addresses, combine to uniquely identify each TCP
+connection. All state needed to manage a TCP connection, including the
+congestion-related state introduced in later chapters, is bound to the
+4-tuple.
 
 .. code:: c
 
@@ -419,36 +372,16 @@ later in this chapter.
    the other.
 
 The 6-bit ``Flags`` field is used to relay control information between
-TCP peers. The possible flags include ``SYN``, ``FIN``, ``RESET``,
-``PUSH``, ``URG``, and ``ACK``. The ``SYN`` and ``FIN`` flags are used
-when establishing and terminating a TCP connection, respectively. Their
-use is described in a later section. The ``ACK`` flag is set any time
-the ``Acknowledgement`` field is valid, implying that the receiver
-should pay attention to it. The ``URG`` flag signifies that this segment
-contains urgent data. When this flag is set, the ``UrgPtr`` field
-indicates where the nonurgent data contained in this segment begins. The
-urgent data is contained at the front of the segment body, up to and
-including a value of ``UrgPtr`` bytes into the segment. The ``PUSH``
-flag signifies that the sender invoked the push operation, which
-indicates to the receiving side of TCP that it should notify the
-receiving process of this fact. We discuss these last two features more
-in a later section. Finally, the ``RESET`` flag signifies that the
-receiver has become confused—for example, because it received a segment
-it did not expect to receive—and so wants to abort the connection.
+TCP peers. They include the ``SYN`` and ``FIN`` flags, which are used
+when establishing and terminating a connection, and the ``ACK`` flag,
+which is set any time the ``Acknowledgement`` field is valid (implying
+that the receiver should pay attention to it).
 
-Finally, the ``Checksum`` field is used in exactly the same way as for
-UDP—it is computed over the TCP header, the TCP data, and the
-pseudoheader, which is made up of the source address, destination
-address, and length fields from the IP header. The checksum is required
-for TCP in both IPv4 and IPv6. Also, since the TCP header is of variable
-length (options can be attached after the mandatory fields), a
-``HdrLen`` field is included that gives the length of the header in
-32-bit words. This field is also known as the ``Offset`` field, since it
-measures the offset from the start of the packet to the start of the
-data.
-
-We skip details of connection setup, and jump straight into the
-sliding window details needed to understand congestion control.
+Finally, the TCP header is of variable length (options can be attached
+after the mandatory fields), and so the ``HdrLen`` field is included
+to give the length of the header in 32-bit words. This field is
+relevant when TCP extensions are appended to the end of the header, as
+we'll see in later Chapters.
 
 Reliable and Ordered Delivery
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -772,12 +705,12 @@ TCP was first deployed in the early 1980s, when backbone networks had
 link bandwidths measured in the tens of kilobits-per-second. It should
 not be surprising that significant attention has gone into adapting
 TCP for ever-increasing network speeds. In principle, the resulting
-changes are independent of the congestion control mechanisms in later
-chapters, but they were deployed in concert with those changes, which
-unfortunately, conflates the two issues. To further blur the line
-between accommodating high-speed networks and addressing congestion,
-there are extensions to the TCP header that play a dual role in
-addressing both.
+changes are independent of the congestion control mechanisms presented
+in later chapters, but they were deployed in concert with those
+changes, which unfortunately, conflates the two issues. To further
+blur the line between accommodating high-speed networks and addressing
+congestion, there are extensions to the TCP header that play a dual
+role in addressing both.
 
 This section focuses on the challenges of high-speed networks, but we
 postpone the details about the TCP extensions used to address those

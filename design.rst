@@ -14,10 +14,11 @@ Because the Internet originally adopted a best-effort service model,
 and users (or more precisely, TCP running on their behalf) were free
 to send as many packets into the network as they could generate, it
 was not surprising that the Internet eventually suffered from the
-*tragedy of the commons*. And with congestion collapse inevitable, the
-natural response was to try to control it. Hence the term *congestion
-control*, which can be viewed as an implicit mechanism for allocating
-resources. One that is reactive to resources becoming scarce.
+*tragedy of the commons*. And with starting to experience congestion
+collapse, the natural response was to try to control it. Hence the
+term *congestion control*, which can be viewed as an implicit
+mechanism for allocating resources. One that is reactive to resources
+becoming scarce.
 
 A network service model in which resources are explicitly allocated to
 packet flows is the obvious alternative, but given the best-effort
@@ -36,18 +37,54 @@ compared.
 3.1 Implementation Choices
 -------------------------------
 
-We start by introducing five implementation choices that TCP
-congestion control faced, and the design rationale behind the
-decisions that were made. Some of the decision were "obvious" given
+We start by introducing four implementation choices that a congestion
+control mechanism faces, and the design rationale behind the decisions
+that were made for TCP/IP. Some of the decision were "obvious" given
 the circumstances under which they were made, but for completeness—and
-because the Internet's continual evolution means circumstances can
+because the Internet's continual evolution means circumstances
 change—it is prudent to consider them all.
 
 Centralized versus Distributed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Obviously distributed, due to scale, but there are limited domains in
-which centralized is feasible... e.g., B4.
+In principle, the first design decision is whether a network's
+approach to resource allocation is centralized or distributed. In
+practice, the Internet's scale—along with the autonomy of the
+organizations that connect to it—dictated a distributed approach.  But
+acknowledging this default decision is important for two reasons.
+
+First, while the Internet's approach to congestion control is
+distributed across its millions of hosts and routers, it is fair to
+think of them as cooperatively trying to achieve a globally optimal
+solution.  From this perspective, there is a shared objective
+function, and all the elements are implementing a distributed
+algorithm to optimize that function. The various mechanisms described
+throughout this book are simply defining different objective
+functions, where a persistent challenge has been how to think about
+competing objective functions when multiple mechanisms have been
+deployed.
+
+Second, while a centralized approach is not practical for the Internet
+as a whole, it can be appropriate for limited domains. For example, a
+logically centralized controller could collect information about the
+state of the network's links and switches, compute a globally optimal
+solution, and then advise (or even police) end hosts as to how much
+capacity is available to each them. Such an approach would certainly
+be limited by the time-scale in which the centralized controller could
+be responsive to changes in the network, but it has been successfully
+applied to the coarse-grain allocations decisions made by traffic
+engineering mechanisms like B4 and SWAN.  Exactly where one draws a
+line between coarse-grain traffic engineering decisions and fine-grain
+congestion control decisions is not clear, but it's good to keep an
+open mind about the spectrum of options that are available.
+
+.. _reading_b4:
+.. admonition:: Further Reading 
+
+   S. Jain, et. al. `B4: Experience with a 
+   Globally-Deployed Software Defined WAN 
+   <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
+   ACM SIGCOMM, August 2013.
 
 Router-Centric versus Host-Centric 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,66 +94,44 @@ whether is to address it inside the network (i.e., at the routers or
 switches) or from the edges of the network (i.e., in the hosts,
 perhaps as part of the transport protocol). This is not strictly an
 either/or situation. Both locations are involved, and real issue is
-where the majority of the burden falls. On the one hand, individual
-routers always take responsibility for deciding when packets are
-forwarded and selecting which packets are to be dropped. On the other
-hand, there is a range of options for how the router interacts with
-hosts, and hence, how much responsibility the host takes on.
+where the majority of the burden falls. Individual routers always take
+responsibility for deciding when packets are forwarded and selecting
+which packets are to be dropped. Where there is a range of options is
+how far the router goes to interact with hosts, and hence, how much
+responsibility the host takes on.
 
-In a router-centric design, routers can go so far as to reserve
-capacity and ensure each flow's packets are delivered accordingly. In
-a host-centric design, the router makes no guarantees and provides
-minimal feedback about the available capacity, and it is the host's
-responsibility to observe the network conditions (e.g., how many
-packets they are successfully getting through the network) and adjust
-its behavior accordingly. How much is minimal? The absolute least a
-router can do is silently drop a packet when its buffers are full, but
-as we will see in Chapter 7, there are more proactive actions routers
-can take to assist the end hosts in doing their job.
+At one end of the spectrum, routers can go so far as to reserve
+capacity and ensure each flow's packets are delivered accordingly.  It
+might do this, for example, by implementing Fair Queing, accepting new
+flows only when there is sufficient capacity, and policing hosts to
+make sure their flows stay within their reservations. This would
+correspond to a reservation-based approach in which the network is
+able to make QoS guarantees. We consider this out-of-scope for the
+purpose of this book.
 
-Reservation-Based versus Feedback-Based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+At the other end of the spectrum, the router makes no guarantees and
+offers no feedback about the available capacity (i.e., silently drops
+packets when its buffers are full) and it is the host's responsibility
+to observe the network conditions (e.g., how many packets they are
+successfully getting through the network) and adjust its behavior
+accordingly.
 
-Another way of asking the host-centric versus router-center question
-is whether the allocation mechanism uses *reservations* or *feedback*.
-In a reservation-based system, the end host asks the network for a
-certain amount of capacity to be allocated for a flow.  Each router
-then allocates enough resources (buffers and/or percentage of the
-link’s bandwidth) to satisfy this request. If the request cannot be
-satisfied at some router, because doing so would overcommit its
-resources, then the router rejects the reservation. This is exactly
-how a system that makes QoS guarantees is implemented.
-
-In a feedback-based approach, the end hosts begin sending data without
-first reserving any capacity and then adjust their sending rate
-according to the feedback they receive. This feedback can be either
-*explicit* (i.e., a congested router sends a “please slow down”
-message to the host) or *implicit* (i.e., the end host adjusts its
-sending rate according to the externally observable behavior of the
-network, such as packet losses).
-
-A reservation-based system always implies a router-centric resource
-allocation mechanism. This is because each router is responsible for
-keeping track of how much of its capacity is currently available and
-deciding whether new reservations can be admitted.  Routers may also
-have to make sure each host lives within the reservation it made; this
-is sometimes called *policing*. On the other hand, a feedback-based
-system can imply either a router- or host-centric
-mechanism. Typically, if the feedback is explicit, then the router is
-involved, to at least some degree, in the resource allocation
-scheme. If the feedback is implicit, then almost all of the burden
-falls to the end host; the routers silently drop packets when they
-become congested.
+In the middle of the spectrum, routers can take more proactive action
+to assist the end hosts in doing their job, but not by reserving
+buffer space. Instead, this involves sending *feedback* to the end
+hosts when its buffers are full. We describe some of these forms of
+*Active Queue Management (AQM)* in Chapter 7, but the host-centric
+congestion-control mechanisms described in the next three chapters
+assume routers silently taildrop packets when their buffers are full.
 
 Window-Based versus Rate-Based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Another implementation choice is whether it is *window based* or *rate
-based*. This is one of the areas where similar mechanisms and
-terminology are used for both flow control and congestion control,
-both of which need a way to express how much data the sender is
-allowed to transmit. There are two general ways of doing this: with a
-*window* or with a *rate*.
+Having settled on a host-centric approach, the next implementation
+choice is whether the mechanism is *window based* or *rate based*.
+This is a situation where similar mechanisms and terminology are used
+for flow control and congestion control, both of which need a way to
+express how much data the sender is allowed to transmit. 
 
 Rate-based control makes sense for many multimedia applications, which
 tend to generate data at some average rate and which need at least
@@ -130,42 +145,40 @@ given the other flows it has made commitments to.
 
 TCP uses window-based mechanism to implement flow control, so the
 design decision for TCP congestion control seems obvious.  And in
-fact, many of the congestion-control mechanisms described in this book
-are window-based. But is also possible for a congestion control
-mechanism to compute the rate at which the network is able to deliver
-packets based on implicit or explicit feedback, and to pace the
-transmission of packets accordingly.  Observed rate is just the number
-of bytes delivered over some time period, such as a window's worth of
-data in one RTT.  We will see example mechanims do exactly that in
-later chapters.
+fact, the congestion-control mechanisms described in Chapter 4 are
+centered around an algorithm for computing a *congestion window*,
+where the sender is throttled by whichever is lesser: the advertized
+window or the computed congestion window. But is also possible for a
+congestion control mechanism to compute the rate at which the network
+is able to deliver packets, and to pace transmissions accordingly. The
+observed rate is just the number of bytes delivered over some time
+period, such as the measured RTT. We will see example mechanims do
+exactly that in Chapter 5.
 
 Control-based versus Avoidance-based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final implementation choice we draw attention to somewhat subtle.
-The challenge is for the the end-host, based on feedback, to compute
-how much capacity is available in the network, and throttle its
-sending rate accordingly. There are two general strategies for doing
-this: an aggresive approach that purposely causes packet loss and then
-responds to it, and a conservative approach that tries to detect the
-onset of router queues building up and slowing down before the queues
-actually overflow.  We narrowly refer to the mechanisms of the first
-type as *congestion-based*, and we refer to mechanisms of the second
-type as *avoidance-based*.
+The challenge is for the the end-host, based on feedback and
+observations, to compute how much capacity is available in the
+network, and throttle its sending rate accordingly. There are two
+general strategies for doing this: an aggresive approach that
+purposely causes packet loss and then responds to it, and a
+conservative approach that tries to detect the onset of queue build-up
+and slows down before they actually overflow.  We refer to the
+mechanisms of the first type as *control-based*, and we refer to
+mechanisms of the second type as *avoidance-based*.
 
 This distinction is often overlooked—and the term "congestion control"
 is used generically to refer to both—but our take is that the
 distinction represents and important difference, and so we will call
 it out when appropriate.  Admittedly, we will also fall back to the
 generic use of "congestion control" when the distinction is not
-critical to the discussion, but we will say "congestion-based" when
-the distinction is relevant.
+critical to the discussion, but we will say "control-based" or
+"avoidance-based" when the distinction is relevant.
 
 3.2 Evaluation Criteria
 -----------------------
-
-..
-	Other quantitative measures? Stability, Persistent Queues?
 
 Having identified the set of design decisions that go into crafting a
 congestion-control mechanism, the next question is whether any given
@@ -181,42 +194,44 @@ A good starting point for evaluating the effectiveness of a
 congestion-control mechanism is to consider the two principal metrics
 of networking: throughput and delay. Clearly, we want as much
 throughput and as little delay as possible. Unfortunately, these goals
-are often somewhat at odds with each other. One sure way for a
-resource allocation algorithm to increase throughput is to allow as
-many packets into the network as possible, so as to drive the
+can be at odds with each other. One way to increase throughput is to
+allow as many packets into the network as possible, so as to drive the
 utilization of all the links up to 100%. We would do this to avoid the
 possibility of a link becoming idle because an idle link necessarily
 hurts throughput. The problem with this strategy is that increasing
 the number of packets in the network also increases the length of the
-queues at each router. Longer queues, in turn, mean packets are
-delayed longer in the network.
+queues at each router. *Persistent queues*, in turn, mean packets are
+delayed longer in the network, or worse, dropped. Having to drop
+packets in the middle of the network not only impacts delay but also
+hurts throughput because link bandwidth has been wasted on a packet
+that was not successfully delivered to the destination.\ [#]_
 
-The ratio of throughput to delay as a general and widely-accepted
-metric for evaluating the effectiveness of a resource allocation
-scheme. This ratio is sometimes referred to as the *power* of the
-system:
+.. [#]
+	We sometimes use the term *goodput* instead of *throughput* to
+	emphasize that we care about data that is successfully delivered
+	through the network to the receiver, as opposed to just transmitted
+	by the sender.
+
+The ratio of throughput to delay is a general metric for evaluating
+the effectiveness of a resource allocation scheme. This ratio is
+sometimes referred to as the *power* of the system:
 
 ::
 
    Power = Throughput / Delay
 
-The objective is to maximize this ratio, which is a function of how
-much load you place on the system. The load, in turn, is set by the
-resource allocation mechanism. :numref:`Figure %s <fig-power>` gives a
-representative power curve, where, ideally, the resource allocation
-mechanism would operate at the peak of this curve. To the left of the
-peak, the mechanism is being too conservative; that is, it is not
-allowing enough packets to be sent to keep the links busy. To the
-right of the peak, so many packets are being allowed into the network
-that increases in delay due to queuing are starting to dominate any
-small gains in throughput.
-
-Interestingly, this power curve looks very much like the system
-throughput curve in a timesharing computer system. System throughput
-improves as more jobs are admitted into the system, until it reaches a
-point when there are so many jobs running that the system begins to
-thrash (spends all of its time swapping memory pages) and the throughput
-begins to drop.
+Intuitively, the objective is to maximize this ratio, which is a
+function of how much load you place on the system. The load, in turn,
+is set by the resource allocation mechanism. :numref:`Figure %s
+<fig-power>` gives a representative power curve, where, ideally, the
+resource allocation mechanism would operate at the peak of this
+curve. To the left of the peak, the mechanism is being too
+conservative; that is, it is not allowing enough packets to be sent to
+keep the links busy. To the right of the peak, so many packets are
+being allowed into the network that either (a) increases in delay due
+to queuing are starting to dominate any small gains in throughput,
+or (b) throughput actually starts to drop due to packets being
+dropped.
    
 .. _fig-power:
 .. figure:: figures/f06-03-9780123850591.png
@@ -225,19 +240,17 @@ begins to drop.
 
    Ratio of throughput to delay as a function of load.
 
-As we will see in later chapters, many congestion-control schemes are
-able to control load in only very crude ways; that is, it is simply
-not possible to turn the “knob” a little and allow only a small number
-of additional packets into the network. As a consequence, network
-designers need to be concerned about what happens even when the system
-is operating under extremely heavy load—that is, at the rightmost end
-of the curve in :numref:`Figure %s <fig-power>`. Ideally, we would
-like to avoid the situation in which the system throughput goes to
-zero because the system is thrashing. In networking terminology, we
-want a system that is *stable*—where packets continue to get through
-the network even when the network is operating under heavy load. If a
-mechanism is not stable, the network may experience *congestion
-collapse*.
+Finally, many congestion-control schemes are able to control load in
+only very crude ways; that is, it is simply not possible to turn the
+“knob” a little and allow only a small number of additional packets
+into the network. As a consequence, we need to be concerned about what
+happens even when the system is operating under heavy load—towards the
+right end of the curve in :numref:`Figure %s <fig-power>`. Ideally, we
+would like to avoid the situation in which the system throughput
+approaches zero. The goal is for the mechanism to be *stable*—where
+packets continue to get through the network even when the network is
+operating under heavy load. For a mechanism to not be stable under
+certain circumstances is the very definition of *congestion collapse*.
 
 Fairness
 ~~~~~~~~~~~~~
@@ -316,4 +329,84 @@ now dropped below one. Another simple case to
 consider is where only *k* of the *n* flows receive equal throughput,
 and the remaining *n-k* users receive zero throughput, in which case the
 fairness index drops to \ *k/n*.
-  
+
+.. _reading_jain:
+.. admonition:: Further Reading 
+
+	R. Jain, D. Chiu, and W. Hawe. `A Quantitative Measure of Fairness
+	and Discrimination for Resource Allocation in Shared Computer Systems
+	<https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
+	DEC Research Report TR-301, 1984.
+
+Comparative Analysis
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The first step in evaluating any congstion control mechanism is to
+measure its performance in isolation, including:
+
+* The average throughput (goodput) flows are able to achieve.
+
+* The avarage end-to-end delay flows experience.
+
+* That the mechanism avoid persistent queues across a range of
+  operating scenarios.
+
+* That the mechanism be stability across a range of operating
+  scenarios.
+
+* The degree to which flows receive a fair share of the available
+  capacity.
+
+The inevitable second step is to compare two or more mechanisms.
+Comparing quantitative metrics like throughput is easy. The problem is
+how to evaluate multiple mechanism that might coexist, competing with
+each other for network resources. Here, the question not whether a
+given mechanism treats all of its flows fairly, but whether mechanism
+A is fair to flows managed by mechanism B. If mechanism A is is able
+to measure improved thoughput over B, but it does so by being more
+aggresive, and hence, stealing bandwidth from B's flows, then A's
+improvement is not fairly gained and should be discounted.
+
+.. _reading_ware:
+.. admonition:: Further Reading
+
+   R. Ware, et. al. `Beyond Jain's Fairness Index: Setting the Bar for
+   the Deployment of Congestion Control Algorithms
+   <https://www.cs.cmu.edu/~rware/assets/pdf/ware-hotnets19.pdf>`__.
+   ACM SICOMM HotNets. November 2019.
+
+Arguments like this have been made many times over the last 30 years,
+almost always to the advantage of the incumbent algorithm. But such
+analysis suffers from three problems, as identified by Ranysh Ware and
+colleagues:
+
+* **Ideal-Driven Goalposting:** A fairness-based threshold asserts
+  new mechanism B should equally share the bottelneck link with
+  currently deployed mechanism A. This goal is too idealistic in
+  practice, especially when A is sometimes unfair to its own flows.
+
+* **Throughput-Centricity:** A fairness-based threshold focuses on
+  how new mechanism B impacts a competitor flow using mechanism A
+  by focusing on A’s achieved throughput.  However, this ignores other
+  important figures of merit for good performance, such as latency,
+  flow completion time, or loss rate.
+
+* **Assumption of Balance:** Inter-mechanism interactions often have
+  some bias, but a fairness metric cannot tell whether the outcome
+  is biased for or against the status quo. It makes a difference in
+  terms a deployability whether a new mechanism B takes a larger
+  ahare of bandwidth than legacy mechanism A or leaves a larger
+  share for A to consume: the former might elicit complaints from
+  legacy users of A, where the latter would not. Jain’s Fairness
+  Index assigns an equivalent score to both scenarios.
+
+Instead of a simple calculation of Jain's fairness index, Ware
+advocates for a threshold based on *harm*, as measured by a reduction
+in throughput or an increase in latency. Intuitively, if the amount of
+harm caused by flows using a new mechanism B on flows using existing
+mechanism A is within a bound derived from how much harm A-managed
+flows cause other A-managed flows, we can consider B deployable
+alongside A without harm. Ware goes on to propose concrete measures of
+acceptable harm, which we revisit for specific pair-wise comparisons
+throughout the book.
+
