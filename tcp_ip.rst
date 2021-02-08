@@ -23,9 +23,9 @@ chapters. For more complete coverage of TCP and IP, we recommend
 The Internet supports a *connectionless, best-effort* packet delivery
 service model, as specified by the Internet Protocol (IP) and
 implemented by switches and routers. Being *connectionless* means
-every IP packet carries enough information for the network ot forward
+every IP packet carries enough information for the network to forward
 it to its correct destination; there is no setup mechanism to tell the
-network what to do when packets arrives.  Being *best-effort* means
+network what to do when packets arrive.  Being *best-effort* means
 that if something goes wrong and the packet gets lost, corrupted, or
 misdelivered while enroute, the network does nothing to recover from
 the failure. This approach was intentionally designed to keep routers
@@ -133,7 +133,7 @@ state, then the router is better able to handle the packet.
         additional levels of service, but (1) they are not widely
         deployed throughout the Internet, and (2) even when they are
         deployed, they still allow for best-effort traffic, which
-        operates according to the congestion contol algorithms
+        operates according to the congestion control algorithms
         described in the book.*
 
 IP Packet Format
@@ -220,9 +220,9 @@ more complex scheduling disciplines.
 ------------------------------
 
 TCP implements a reliable byte stream—between a pair of processes
-running on end hosts—on top of the the best-effort service model
+running on end hosts—on top of the best-effort service model
 supported by IP. This section describes TCP in sufficient detail to
-understand the congestion control mechansims described in later
+understand the congestion control mechanisms described in later
 chapters.
 
 End-to-End Issues
@@ -241,17 +241,16 @@ state to enable the sliding window algorithm to begin. Connection
 teardown is needed so each host knows it is OK to free this state.
 
 Second, TCP connections are likely to have widely different round-trip
-times. For example, a TCP connection between a host in San Francisco
-and a host in Boston, which are separated by several thousand
-kilometers, might have an RTT of 100 ms, while a TCP connection
-between two hosts in the same room, only a few meters apart, might
-have an RTT of only 1 ms. The same TCP protocol must be able to
+times. For example, a TCP connection between San Francisco and Boston,
+which are separated by several thousand kilometers, might have an RTT
+of 100 ms, while a TCP connection between two hosts in the same room
+might have an RTT of only 1 ms. The same TCP protocol must be able to
 support both of these connections. To make matters worse, the TCP
-connection between hosts in San Francisco and Boston might have an RTT
-of 100 ms at 3 a.m., but an RTT of 500 ms at 3 p.m. Variations in the
-RTT are even possible during a single TCP connection that lasts only a
-few minutes. What this means to the sliding window algorithm is that
-the timeout mechanism that triggers retransmissions must be adaptive.
+connection between San Francisco and Boston might have an RTT of
+100 ms at 3 a.m., but an RTT of 500 ms at 3 p.m. Variations in the RTT
+are even possible during a single TCP connection that lasts only a few
+minutes. What this means to the sliding window algorithm is that the
+timeout mechanism that triggers retransmissions must be adaptive.
 
 Third, due to the best-effort nature of the Internet, packets may be
 reordered while in transit. Packets that are slightly out of order do
@@ -353,8 +352,7 @@ the fact that data can flow in both directions, and we concentrate on
 data that has a particular ``SequenceNum`` flowing in one direction
 and ``Acknowledgement`` and ``AdvertisedWindow`` values flowing in the
 opposite direction, as illustrated in :numref:`Figure %s
-<fig-tcp-flow>`. The use of these three fields is described more fully
-later in this chapter.
+<fig-tcp-flow>`.
 
 .. _fig-tcp-flow:
 .. figure:: figures/f05-05-9780123850591.png
@@ -380,20 +378,17 @@ we'll see in later Chapters.
 Reliable and Ordered Delivery
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We are now ready to discuss TCP’s variant of the sliding window
-algorithm, which serves several purposes: (1) it guarantees the
-reliable delivery of data, (2) it ensures that data is delivered in
-order, and (3) it enforces flow control between the sender and the
-receiver.  On this last point, rather than having a fixed-size sliding
-window, the receiver *advertises* a window size to the sender. This is
-done using the ``AdvertisedWindow`` field in the TCP header. The
-sender is then limited to having no more than a value of
-``AdvertisedWindow`` bytes of unacknowledged data at any given
-time. The receiver selects a suitable value for ``AdvertisedWindow``
-based on the amount of memory allocated to the connection for the
-purpose of buffering data. The idea is to keep the sender from
-over-running the receiver’s buffer. We discuss this at greater length
-below.
+TCP’s variant of the sliding window algorithm serves two main
+purposes: (1) it guarantees the reliable, in-order delivery of data,
+and (2) it enforces flow control between the sender and the receiver.
+On latter point, rather than having a fixed-size sliding window,
+the receiver *advertises* a window size to the sender. This is done
+using the ``AdvertisedWindow`` field in the TCP header. The sender is
+then limited to having no more than a value of ``AdvertisedWindow``
+bytes of unacknowledged data at any given time. The receiver selects a
+suitable value for ``AdvertisedWindow`` based on the amount of memory
+allocated to the connection for the purpose of buffering data. The
+idea is to keep the sender from over-running the receiver’s buffer.
 
 To see how the sending and receiving sides of TCP interact with each
 other to implement reliable and ordered delivery, consider the
@@ -426,77 +421,53 @@ the send buffer, each with an obvious meaning: ``LastByteAcked``,
 
 ::
 
-   LastByteAcked <= LastByteSent
+   LastByteAcked <= LastByteSent <= LastByteWritten
 
 since the receiver cannot have acknowledged a byte that has not yet been
-sent, and
-
-::
-
-   LastByteSent <= LastByteWritten
-
-since TCP cannot send a byte that the application process has not yet
-written. Also note that none of the bytes to the left of
-``LastByteAcked`` need to be saved in the buffer because they have
-already been acknowledged, and none of the bytes to the right of
-``LastByteWritten`` need to be buffered because they have not yet been
-generated.
+sent, and TCP cannot send a byte that the application process has not yet
+written.
 
 A similar set of pointers (sequence numbers) are maintained on the
 receiving side: ``LastByteRead``, ``NextByteExpected``, and
 ``LastByteRcvd``. The inequalities are a little less intuitive, however,
-because of the problem of out-of-order delivery. The first relationship
+because of the problem of out-of-order delivery. In this case:
 
 ::
 
-   LastByteRead < NextByteExpected
+   LastByteRead < NextByteExpected <= LastByteRcvd + 1
 
-is true because a byte cannot be read by the application until it is
-received *and* all preceding bytes have also been received.
-``NextByteExpected`` points to the byte immediately after the latest
-byte to meet this criterion. Second,
-
-::
-
-   NextByteExpected <= LastByteRcvd + 1
-
-since, if data has arrived in order, ``NextByteExpected`` points to the
-byte after ``LastByteRcvd``, whereas if data has arrived out of order,
-then ``NextByteExpected`` points to the start of the first gap in the
-data, as in :numref:`Figure %s <fig-tcp-fc>`. Note that bytes to the left of
-``LastByteRead`` need not be buffered because they have already been
-read by the local application process, and bytes to the right of
-``LastByteRcvd`` need not be buffered because they have not yet arrived.
+since a byte cannot be read by the application until it is received
+*and* all preceding bytes have also been received. If data has
+arrived in order, ``NextByteExpected`` points to the byte after
+``LastByteRcvd``, whereas if data has arrived out of order, then
+``NextByteExpected`` points to the start of the first gap in the data,
+as in :numref:`Figure %s <fig-tcp-fc>`.
 
 Flow Control
 ~~~~~~~~~~~~
 
-Most of the above discussion is similar to that found in the standard
-sliding window algorithm; the only real difference is that this time we
-elaborated on the fact that the sending and receiving application
-processes are filling and emptying their local buffer, respectively.
-In what follows, we reintroduce the fact that both buffers are of some
-finite size, denoted ``MaxSendBuffer`` and ``MaxRcvBuffer``, although we
-don’t worry about the details of how they are implemented. In other
-words, we are only interested in the number of bytes being buffered, not
-in where those bytes are actually stored.
+The discussion up to this point assumes the receiver is able to keep
+pace with the sender, but because this is not necessarily the case and
+the both the sender and receiver have buffers of some fixes size, the
+receiver needs some way to slow down the sender. This is the essence
+of flow control.
 
-Recall that in a sliding window protocol, the size of the window sets
-the amount of data that can be sent without waiting for acknowledgment
-from the receiver. Thus, the receiver throttles the sender by
+In what follows, we reintroduce the fact that both buffers are of some
+finite size, denoted ``SendBufferSize`` and ``RcvBufferSize``,
+respectively. The receiver throttles the sender by
 advertising a window that is no larger than the amount of data that it
 can buffer. Observe that TCP on the receive side must keep
 
 ::
 
-   LastByteRcvd - LastByteRead <= MaxRcvBuffer
+   LastByteRcvd - LastByteRead <= RcvBufferSize
 
 to avoid overflowing its buffer. It therefore advertises a window size
 of
 
 ::
 
-   AdvertisedWindow = MaxRcvBuffer - ((NextByteExpected - 1) - LastByteRead)
+   AdvertisedWindow = RcvBufferSize - ((NextByteExpected - 1) - LastByteRead)
 
 which represents the amount of free space remaining in its buffer. As
 data arrives, the receiver acknowledges it as long as all the preceding
@@ -506,7 +477,7 @@ shrinks. Whether or not it shrinks depends on how fast the local
 application process is consuming data. If the local process is reading
 data just as fast as it arrives (causing ``LastByteRead`` to be
 incremented at the same rate as ``LastByteRcvd``), then the advertised
-window stays open (i.e., ``AdvertisedWindow = MaxRcvBuffer``). If,
+window stays open (i.e., ``AdvertisedWindow = RcvBufferSize``). If,
 however, the receiving process falls behind, perhaps because it performs
 a very expensive operation on each byte of data that it reads, then the
 advertised window grows smaller with every segment that arrives, until
@@ -540,120 +511,98 @@ the local application process does not overflow the send buffer—that is,
 
 ::
 
-   LastByteWritten - LastByteAcked <= MaxSendBuffer
+   LastByteWritten - LastByteAcked <= SendBufferSize
 
 If the sending process tries to write y bytes to TCP, but
 
 ::
 
-   (LastByteWritten - LastByteAcked) + y > MaxSendBuffer
+   (LastByteWritten - LastByteAcked) + y > SendBufferSize
 
 then TCP blocks the sending process and does not allow it to generate
 more data.
 
-It is now possible to understand how a slow receiving process ultimately
-stops a fast sending process. First, the receive buffer fills up, which
-means the advertised window shrinks to 0. An advertised window of 0
-means that the sending side cannot transmit any data, even though data
-it has previously sent has been successfully acknowledged. Finally, not
-being able to transmit any data means that the send buffer fills up,
-which ultimately causes TCP to block the sending process. As soon as the
-receiving process starts to read data again, the receive-side TCP is
-able to open its window back up, which allows the send-side TCP to
-transmit data out of its buffer. When this data is eventually acknowledged,
-``LastByteAcked`` is incremented, the buffer space holding this
-acknowledged data becomes free, and the sending process is unblocked
-and allowed to proceed.
+It is now possible to understand how a slow receiving process
+ultimately stops a fast sending process. First, the receive buffer
+fills up, which means the advertised window shrinks to 0. An
+advertised window of 0 means that the sending side cannot transmit any
+data, even though the previously sent data has been successfully
+acknowledged. Finally, not being able to transmit any data means that
+the send buffer fills up, which ultimately causes TCP to block the
+sending process. As soon as the receiving process starts to read data
+again, the receive-side TCP is able to open its window back up, which
+allows the send-side TCP to transmit data out of its buffer. When this
+data is eventually acknowledged, ``LastByteAcked`` is incremented, the
+buffer space holding this acknowledged data becomes free, and the
+sending process is unblocked and allowed to proceed.
 
 There is only one remaining detail that must be resolved—how does the
-sending side know that the advertised window is no longer 0? As
-mentioned above, TCP *always* sends a segment in response to a received
-data segment, and this response contains the latest values for the
-``Acknowledge`` and ``AdvertisedWindow`` fields, even if these values
-have not changed since the last time they were sent. The problem is
-this. Once the receive side has advertised a window size of 0, the
-sender is not permitted to send any more data, which means it has no way
-to discover that the advertised window is no longer 0 at some time in
-the future. TCP on the receive side does not spontaneously send nondata
+sending side know that the advertised window is no longer 0? TCP
+*always* sends a segment in response to a received data segment, and
+this response contains the latest values for the ``Acknowledge`` and
+``AdvertisedWindow`` fields, even if these values have not changed
+since the last time they were sent. The problem is this. Once the
+receive side has advertised a window size of 0, the sender is not
+permitted to send any more data, which means it has no way to discover
+that the advertised window is no longer 0 at some time in the
+future. TCP on the receive side does not spontaneously send nondata
 segments; it only sends them in response to an arriving data segment.
 
 TCP deals with this situation as follows. Whenever the other side
 advertises a window size of 0, the sending side persists in sending a
-segment with 1 byte of data every so often. It knows that this data will
-probably not be accepted, but it tries anyway, because each of these
-1-byte segments triggers a response that contains the current advertised
-window. Eventually, one of these 1-byte probes triggers a response that
-reports a nonzero advertised window.
-
-These 1-byte messages are called *Zero Window Probes* and in practice
-they are sent every 5 to 60 seconds. As for what single byte of data
-to send in the probe: it’s the next byte of actual data just outside
-the window. (It has to be real data in case it’s accepted by the
-receiver.)
-
-Note that the reason the sending side periodically sends this probe
-segment is that TCP is designed to make the receive side as simple as
-possible—it simply responds to segments from the sender, and it never
-initiates any activity on its own. This is an example of a
-well-recognized (although not universally applied) protocol design
-rule, which, for lack of a better name, we call the *smart sender/
-dumb receiver* rule. Recall that we saw another example of this rule
-when we discussed the use of NAKs in sliding window algorithm.
+segment with 1 byte of data every so often. It knows that this data
+will probably not be accepted, but it tries anyway, because each of
+these 1-byte segments triggers a response that contains the current
+advertised window, which will eventually be nonzero.  These 1-byte
+messages are called *Zero Window Probes* and in practice they are sent
+every 5 to 60 seconds.
 
 Triggering Transmission
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-We next consider a surprisingly subtle issue: how TCP decides to
-transmit a segment. As described earlier, TCP supports a byte-stream
-abstraction; that is, application programs write bytes into the stream,
-and it is up to TCP to decide that it has enough bytes to send a
-segment. What factors govern this decision?
+We next consider the surprisingly subtle issue of how TCP decides to
+transmit a segment. If we ignore flow control and assume the window is
+wide open, then TCP has three mechanisms to trigger the transmission
+of a segment:
 
-If we ignore the possibility of flow control—that is, we assume the
-window is wide open, as would be the case when a connection first
-starts—then TCP has three mechanisms to trigger the transmission of a
-segment. First, TCP maintains a variable, typically called the *maximum
-segment size* (``MSS``), and it sends a segment as soon as it has
-collected ``MSS`` bytes from the sending process. ``MSS`` is usually set
-to the size of the largest segment TCP can send without causing the
-local IP to fragment. That is, ``MSS`` is set to the maximum
-transmission unit (MTU) of the directly connected network, minus the
-size of the TCP and IP headers. The second thing that triggers TCP to
-transmit a segment is that the sending process has explicitly asked it
-to do so. Specifically, TCP supports a *push* operation, and the sending
-process invokes this operation to effectively flush the buffer of unsent
-bytes. The final trigger for transmitting a segment is that a timer
-fires; the resulting segment contains as many bytes as are currently
-buffered for transmission. However, as we will soon see, this “timer”
-isn’t exactly what you expect.
+* TCP maintains a variable, typically called the *maximum segment
+  size* (``MSS``), and it sends a segment as soon as it has collected
+  ``MSS`` bytes from the sending process.
 
-Of course, we can’t just ignore flow control, which plays an obvious
-role in throttling the sender. If the sender has ``MSS`` bytes of data
-to send and the window is open at least that much, then the sender
-transmits a full segment. Suppose, however, that the sender is
-accumulating bytes to send, but the window is currently closed. Now
-suppose an ACK arrives that effectively opens the window enough for
-the sender to transmit, say, ``MSS/2`` bytes. Should the sender
-transmit a half-full segment or wait for the window to open to a full
-``MSS``? The original specification was silent on this point, and
-early implementations of TCP decided to go ahead and transmit a
-half-full segment. After all, there is no telling how long it will be
-before the window opens further. It turns out that the strategy of
-aggressively taking advantage of any available window leads to a
-situation now known as the *silly window syndrome*, and it was
-addressed by a more sophisticated decision process known as Nagle's
-Algorithm, which as we will see in later chapters, adopts a stategy
-that also plays a role in congestion control.
+* The sending process explicitly asks TCP to send a segment by
+  invoking a *push* operation. This causes TCP flush the buffer of
+  unsent bytes.
 
-If the sender has data to send but the window is open less than
-``MSS``, then we may want to wait some amount of time before sending
-the available data, but the question is how long? If we wait too long,
-then we hurt interactive applications. If we don’t wait long enough,
-then we risk sending a bunch of tiny packets and falling into the
-silly window syndrome. The answer is to introduce a timer and to
-transmit when the timer expires.
+* A timer fires, resulting in a segment that contains as many bytes as
+  are currently buffered for transmission.
 
-While we could use a clock-based timer—for example, one that fires
+Of course, we can’t just ignore flow control. If the sender has
+``MSS`` bytes of data to send and the window is open at least that
+much, then the sender transmits a full segment. Suppose, however, that
+the sender is accumulating bytes to send, but the window is currently
+closed. Now suppose an ACK arrives that effectively opens the window
+enough for the sender to transmit, say, ``MSS/2`` bytes. Should the
+sender transmit a half-full segment or wait for the window to open to
+a full ``MSS``?
+
+The original specification was silent on this point, and early
+implementations of TCP decided to go ahead and transmit a half-full
+segment. But it turns out that the strategy of aggressively taking
+advantage of any available window led to a situation now known as the
+*silly window syndrome*, whereby partial segments could not be
+coalesced back into a full segment. This led to the introduction of a
+more sophisticated decision process known as Nagle's Algorithm, which
+we introduce here because it becomes a central part of the strategy
+adopted by the congestion-control mechanisms described in later
+chapters.
+
+The central question Nagle answers is this: How long does the sender
+wait when the effective window is open less than ``MSS``? If we wait
+too long, then we hurt interactive applications. If we don’t wait long
+enough, then we risk sending a bunch of tiny packets and falling into
+the silly window syndrome. 
+
+While TCP could use a clock-based timer—for example, one that fires
 every 100 ms—Nagle introduced an elegant *self-clocking* solution. The
 idea is that as long as TCP has any data in flight, the sender will
 eventually receive an ACK. This ACK can be treated like a timer
@@ -672,17 +621,17 @@ provides a simple, unified rule for deciding when to transmit:
                send all the new data now
 
 In other words, it’s always OK to send a full segment if the window
-allows. It’s also all right to immediately send a small amount of data
+allows. It’s also alright to immediately send a small amount of data
 if there are currently no segments in transit, but if there is
 anything in flight the sender must wait for an ACK before transmitting
-the next segment. Thus, an interactive application like Telnet that
-continually writes one byte at a time will send data at a rate of one
-segment per RTT. Some segments will contain a single byte, while
-others will contain as many bytes as the user was able to type in one
-round-trip time.  Because some applications cannot afford such a delay
-for each write it does to a TCP connection, the socket interface
-allows the application to set the ``TCP_NODELAY`` option, meaning that
-data is transmitted as soon as possible.
+the next segment. Thus, an interactive application that continually
+writes one byte at a time will send data at a rate of one segment per
+RTT. Some segments will contain a single byte, while others will
+contain as many bytes as the user was able to type in one round-trip
+time.  Because some applications cannot afford such a delay for each
+write it does to a TCP connection, the socket interface allows the
+application to set the ``TCP_NODELAY`` option, meaning that data is
+transmitted as soon as possible.
 
 2.3 High-Speed Networks
 --------------------------
@@ -750,7 +699,7 @@ bandwidths.
 The 32-bit sequence number space is adequate at modest bandwidths, but
 given that OC-192 links are now common in the Internet backbone, and
 that most servers now come with 10Gig Ethernet (or 10 Gbps) interfaces,
-we aree now well-past the point where 32 bits is too small.  A TCP
+we are now well-past the point where 32 bits is too small.  A TCP
 extension doubles the size of the sequence number field to protect
 against the ``SequenceNum`` field wrapping. This extension plays a
 dual role in congestion control, so we postpone the details until
