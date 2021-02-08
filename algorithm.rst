@@ -1,51 +1,32 @@
 Chapter 4:  Control-Based Algorithms
 ====================================
-
-..
-	Still need to work the names -- Tahoe, Reno, CUBIC -- into
-	the narrative, as well as better highlight the "case study"
-	perspective. -llp
 	
-This chapter describes the dominant congestion control algorithm in
-use today on the Internet. The approach was introduced into the
-Internet in the late 1980s by Van Jacobson, roughly eight years after
-the TCP/IP protocol stack had become operational. Immediately
-preceding this time, the Internet was suffering from congestion
-collapse—hosts would send their packets into the Internet as fast as
-the advertised window would allow, congestion would occur at some
-router (causing packets to be dropped), and the hosts would time out
-and retransmit their packets, resulting in even more congestion.
+This chapter describes the dominant congestion-control algorithm in
+use today on the Internet. The approach was introduced in the late
+1980s by Van Jacobson, and then refined multiple times by him and
+others over the years. The variant in widespread use today is called
+CUBIC, for reasons that will become clear when we introduce it at the
+end of the chapter.
 
 The general idea is straightforward. Having transmitted a set of
 packets according to its current estimate of the available bandwidth,
 the sender uses the arrival of an ACK as a signal that one of its
 packets has left the network and that it is therefore safe to insert a
-new packet into the network without adding to the level of
-congestion. By using ACKs to pace the transmission of packets, TCP is
-said to be *self-clocking*.  The sender also uses timeouts as a signal
-that the network is congested, indicating that it needs to reduce its
-sending rate. By using packet loss as an indication of congestion, we
-refer to the approach as *control-based*.
+new packet into the network without adding to the level of congestion.
+By using ACKs to pace the transmission of packets, TCP is said to be
+*self-clocking*.  The sender also uses timeouts as a signal that the
+network is congested, indicating that it needs to reduce its sending
+rate. By using packet loss as an indication of congestion, we refer to
+the approach as *control-based*. Of course, determining the available
+capacity in the first place is no easy task, and to make matters
+worse, because other connections come and go, the available bandwidth
+changes over time.
 
-Of course, determining the available capacity in the first place is no
-easy task. And to make matters worse, because other connections come
-and go, the available bandwidth changes over time, meaning that any
-given source must be able to adjust the number of packets it has in
-transit. This chapter describes the suite of techniques that TCP uses
-to address these and other problems. Most of the techniques are
-adjustments to the sender's behavior, with no changes to the
-over-the-wire protocol. The exceptions are a set of extensions to the
-TCP header, as described in Section 4.2.
-
-Although we describe the set of mechanisms one at a time, giving the
-impression that we are talking about three independent approaches, it
-is only when they are taken as a whole that we have TCP congestion
-control. It is also the case that these mechanisms have been further
-refined over the last 30 years, culminating the variant most commonly
-found running on end-hosts today: *TCP CUBIC*. In other words, this
-chapter can read as a case study of control-based algorithms, spanning
-the incremental experience of identifying and solving a sequence of
-problems.
+This chapter describes the collection of techniques that TCP uses to
+address these and other problems, and as such, can be read as a case
+study of the experience of identifying and solving a sequence of
+problems. We will trace the historical context as we visit each of the
+techniques in the sections that follow.
 
 4.1 Adaptive Retransmission
 ---------------------------
@@ -141,19 +122,17 @@ chapter.
 Jacobson/Karels Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Karn/Partridge algorithm fixed some of the causes of congestion,
-and was an improvement, but congestion was not eliminated. The
-following year (1988), two other researchers—Jacobson and
-Karels—proposed a more drastic change to TCP to battle congestion,
-including a new way to decide when to time out and retransmit a
-segment.
+The Karn/Partridge algorithm was an improvement, but it did not
+eliminate congestion. The following year (1988), Jacobson and Karels
+proposed a more drastic change to TCP to battle congestion, including
+a new way to decide when to time out and retransmit a segment.
 
 It should be clear how the timeout mechanism is related to
 congestion—if you time out too soon, you may unnecessarily retransmit
 a segment, which only adds to the load on the network. The other
 reason for needing an accurate timeout value is that a timeout is
 taken to imply congestion, which triggers the other control mechanism
-described later in this chapter.
+described later sections.
 
 The main problem with the original computation is that it does not
 take the variance of the sample RTTs into account. Intuitively, if the
@@ -217,21 +196,30 @@ results as the equations above.
        TimeOut = (EstimatedRTT >> 3) + (Deviation >> 1);
    }
 
-The second point of note is that the Jacobson/Karels algorithm is only
-as good as the clock used to read the current time. On typical Unix
-implementations at the time, the clock granularity was as large as
-500 ms, which is significantly larger than the average cross-country
-RTT of somewhere between 100 and 200 ms. To make matters worse, the
-Unix implementation of TCP only checked to see if a timeout should
-happen every time this 500-ms clock ticked and would only take a
-sample of the round-trip time once per RTT. The combination of these
-two factors could mean that a timeout would happen 1 second after the
-segment was transmitted. An extension to TCP, described in the next
-section, makes this RTT calculation a bit more precise.
+The second is that the algorithm is only as good as the clock used to
+read the current time. On typical Unix implementations at the time,
+the clock granularity was as large as 500 ms, which is significantly
+larger than the average cross-country RTT of somewhere between 100 and
+200 ms. To make matters worse, the Unix implementation of TCP only
+checked to see if a timeout should happen every time this 500-ms clock
+ticked and would only take a sample of the round-trip time once per
+RTT. The combination of these two factors could mean that a timeout
+would happen 1 second after the segment was transmitted. An extension
+to TCP, described in the next section, makes this RTT calculation a
+bit more precise.
 
-All of the retransmission algorithms we have discussed are based on
-acknowledgment timeouts, which indicate that a segment has probably
-been lost. Note that a timeout does not, however, tell the sender
+The additional details about the implementation of timeouts in TCP,
+we refer the reader to the authoritative RFC:
+
+.. _reading_timeout:
+.. admonition::  Further Reading
+
+   `RFC 6298: Computing TCP's Retransmission Timer
+   <https://tools.ietf.org/html/rfc6298>`__. June 2011.
+
+Finally, all of the retransmission algorithms discussed in this
+section are based on timeouts, which indicate that a segment has
+probably been lost.  A timeout does not, however, tell the sender
 whether any segments it sent after the lost segment were successfully
 received. This is because TCP acknowledgments are cumulative; they
 identify only the last segment that was received without any preceding
@@ -240,43 +228,24 @@ frequent as faster networks lead to larger windows. If ACKs also told
 the sender which subsequent segments, if any, had been received, then
 the sender could be more intelligent about which segments it
 retransmits, draw better conclusions about the state of congestion,
-and make better RTT estimates. A second TCP extension supporting this
-is described in the next section.
-
-.. _key-open-source:
-.. admonition::  Key Takeaway
-
-   There is one other point to make about computing timeouts. It is a
-   surprisingly tricky business, so much so, that there is an entire RFC
-   dedicated to the topic: `RFC
-   6298 <https://tools.ietf.org/html/rfc6298>`__. The takeaway is that
-   sometimes fully specifying a protocol involves so much minutiae that
-   the line between specification and implementation becomes blurred.
-   That has happened more than once with TCP, causing some to argue that
-   “the implementation **is** the specification.” But that’s not
-   necessarily a bad thing as long as the reference implementation is
-   available as open source software. More generally, the industry is
-   seeing open source software grow in importance as open standards
-   receed in importance.
+and make better RTT estimates. A TCP extension supporting this is
+described in the next section.
 
 4.2 TCP Extensions
 ------------------
 
-We have mentioned at four different points in this and earlier
-chapters that there are extensions to TCP that help to mitigate the
-problems TCP faced as congestion became a problem and networks got
-faster. These extensions are designed to have as small an impact on
-TCP as possible. In particular, they are realized as options that can
-be added to the TCP header. (We glossed over this point earlier, but
-the reason why the TCP header has a ``HdrLen`` field is that the
-header can be of variable length; the variable part of the TCP header
-contains the options that have been added.) The significance of adding
-these extensions as options rather than changing the core of the TCP
-header is that hosts can still communicate using TCP even if they do
-not implement the options. Hosts that do implement the optional
-extensions, however, can take advantage of them. The two sides agree
-that they will use the options during TCP’s connection establishment
-phase (which we have not describe).
+Most of the techniques described in this chapter are adjustments to
+the sender's behavior, with no changes to the over-the-wire
+protocol. The exceptions are a set of four extensions to the TCP
+header, which we introduce here.
+
+These extensions are realized as options that can be added to the TCP
+header. The significance of adding these extensions as options rather
+than changing the core of the TCP header is that hosts can still
+communicate using TCP even if they do not implement the options. Hosts
+that do implement the optional extensions, however, can take advantage
+of them. The two sides agree that they will use the options during
+TCP’s connection establishment phase.
 
 The first extension helps to improve TCP’s timeout mechanism. Instead of
 measuring the RTT using a coarse-grained event, TCP can read the actual
@@ -326,38 +295,43 @@ also uses optional fields in the header to acknowledge any additional
 blocks of received data. This allows the sender to retransmit just the
 segments that are missing according to the selective acknowledgment.
 
-Without SACK, there are only two reasonable strategies for a sender. The
-pessimistic strategy responds to a timeout by retransmitting not just
-the segment that timed out, but any segments transmitted subsequently.
-In effect, the pessimistic strategy assumes the worst: that all those
-segments were lost. The disadvantage of the pessimistic strategy is that
-it may unnecessarily retransmit segments that were successfully received
-the first time. The other strategy is the optimistic strategy, which
-responds to a timeout by retransmitting only the segment that timed out.
-In effect, the optimistic approach assumes the rosiest scenario: that
-only the one segment has been lost. The disadvantage of the optimistic
-strategy is that it is very slow, unnecessarily, when a series of
+Without SACK, there are only two reasonable strategies for a
+sender. The pessimistic strategy responds to a timeout by
+retransmitting not just the segment that timed out, but any segments
+transmitted subsequently.  In effect, the pessimistic strategy assumes
+the worst: that all those segments were lost. The disadvantage of the
+pessimistic strategy is that it may unnecessarily retransmit segments
+that were successfully received the first time. The other strategy is
+to respond to a timeout by retransmitting only the segment that timed
+out.  This optimistic approach assumes the rosiest scenario: that only
+the one segment has been lost. The disadvantage of the optimistic
+strategy is that it is very slow to recover when a series of
 consecutive segments has been lost, as might happen when there is
 congestion. It is slow because each segment’s loss is not discovered
-until the sender receives an ACK for its retransmission of the previous
-segment. So it consumes one RTT per segment until it has retransmitted
-all the segments in the lost series. With the SACK option, a better
-strategy is available to the sender: retransmit just the segments that
-fill the gaps between the segments that have been selectively
-acknowledged.
-
+until the sender receives an ACK for its retransmission of the
+previous segment. This means it consumes one RTT per segment until it
+has retransmitted all the segments in the lost series. With the SACK
+option, a better strategy is available to the sender: retransmit just
+the segments that fill the gaps between the segments that have been
+selectively acknowledged.
 
 4.3 Additive Increase/Multiplicative Decrease
 ---------------------------------------------
 
-TCP maintains a new state variable for each connection, called
-``CongestionWindow``, which is used by the source to limit how much data
-it is allowed to have in transit at a given time. The congestion window
-is congestion control’s counterpart to flow control’s advertised window.
-TCP is modified such that the maximum number of bytes of unacknowledged 
-data allowed is now the minimum of the congestion window and the
-advertised window. Thus, using the variables defined in the previous
-chapter, TCP’s effective window is revised as follows:
+A better way to compute timeouts is a necessary building block, but it
+does not get at the heart controlling congestion. The central
+challenge is computing an estimate of how much traffic the network
+this sender can safely transmit. To this end, TCP maintains a new
+state variable for each connection, called ``CongestionWindow``. It is
+used by the source to limit how much data it is allowed to have in
+transit at a given time.
+
+The congestion window is congestion control’s counterpart to flow
+control’s advertised window.  The TCP sender is modified such that the
+maximum number of bytes of unacknowledged data allowed is now the
+minimum of the congestion window and the advertised window. Thus,
+using the variables defined in Chapter 2, TCP’s effective window is
+revised as follows:
 
 ::
 
@@ -370,39 +344,39 @@ faster than the slowest component—the network or the destination
 host—can accommodate.
 
 The problem, of course, is how TCP comes to learn an appropriate value
-for ``CongestionWindow``. Unlike the ``AdvertisedWindow``, which is sent
-by the receiving side of the connection, there is no one to send a
-suitable ``CongestionWindow`` to the sending side of TCP. The answer is
-that the TCP source sets the ``CongestionWindow`` based on the level of
-congestion it perceives to exist in the network. This involves
-decreasing the congestion window when the level of congestion goes up
-and increasing the congestion window when the level of congestion goes
-down. Taken together, the mechanism is commonly called *additive
-increase/multiplicative decrease* (AIMD); the reason for this mouthful
-of a name will become apparent below.
+for ``CongestionWindow``. Unlike the ``AdvertisedWindow``, which is
+sent by the receiving side of the connection, there is no one to send
+a suitable ``CongestionWindow`` to the sending side of TCP. The answer
+is that the TCP source sets the ``CongestionWindow`` based on the
+level of congestion it perceives to exist in the network. This
+involves decreasing the congestion window when the level of congestion
+goes up and increasing the congestion window when the level of
+congestion goes down. Taken together, the mechanism is commonly called
+*additive increase/multiplicative decrease (AIMD)* due to the
+heuristic it adopts.
 
-The key question, then, is how does the source determine that the
-network is congested and that it should decrease the congestion window?
-The answer is based on the observation that the main reason packets are
-not delivered, and a timeout results, is that a packet was dropped due
-to congestion. It is rare that a packet is dropped because of an error
-during transmission. Therefore, TCP interprets timeouts as a sign of
-congestion and reduces the rate at which it is transmitting.
+The key question then becomes: How does the source determine that the
+network is congested and that it should decrease the congestion
+window?  The answer is based on the observation that the main reason
+packets are not delivered, and a timeout results, is that a packet was
+dropped due to congestion. It is rare that a packet is dropped because
+of an error during transmission. Therefore, TCP interprets timeouts as
+a sign of congestion and reduces the rate at which it is transmitting.
 Specifically, each time a timeout occurs, the source sets
-``CongestionWindow`` to half of its previous value. This halving of the
-``CongestionWindow`` for each timeout corresponds to the “multiplicative
-decrease” part of AIMD.
+``CongestionWindow`` to half of its previous value. This halving of
+the ``CongestionWindow`` for each timeout corresponds to the
+“multiplicative decrease” part of AIMD.
 
 Although ``CongestionWindow`` is defined in terms of bytes, it is
 easiest to understand multiplicative decrease if we think in terms of
 whole packets. For example, suppose the ``CongestionWindow`` is
-currently set to 16 packets. If a loss is detected, ``CongestionWindow``
-is set to 8. (Normally, a loss is detected when a timeout occurs, but as
-we see below, TCP has another mechanism to detect dropped packets.)
-Additional losses cause ``CongestionWindow`` to be reduced to 4, then 2,
-and finally to 1 packet. ``CongestionWindow`` is not allowed to fall
-below the size of a single packet, or in TCP terminology, the *maximum
-segment size* .
+currently set to 16 packets. If a loss is detected,
+``CongestionWindow`` is set to 8. (Normally, a loss is detected when a
+timeout occurs, but as we see below, TCP has another mechanism to
+detect dropped packets.)  Additional losses cause ``CongestionWindow``
+to be reduced to 4, then 2, and finally to 1 packet.
+``CongestionWindow`` is not allowed to fall below the size of a single
+packet, which we know from Chapter 2 to be the ``MSS``.
 
 .. _fig-linear:
 .. figure:: figures/f06-08-9780123850591.png
@@ -420,8 +394,9 @@ follows. Every time the source successfully sends a
 ``CongestionWindow``\ ’s worth of packets—that is, each packet sent
 out during the last round-trip time (RTT) has been ACKed—it adds the
 equivalent of 1 packet to ``CongestionWindow``. This linear increase
-is illustrated in :numref:`Figure %s <fig-linear>`. Note that, in
-practice, TCP does not wait for an entire window’s worth of ACKs to
+is illustrated in :numref:`Figure %s <fig-linear>`.
+
+In practice, TCP does not wait for an entire window’s worth of ACKs to
 add 1 packet’s worth to the congestion window, but instead increments
 ``CongestionWindow`` by a little for each ACK that
 arrives. Specifically, the congestion window is incremented as follows
@@ -465,13 +440,13 @@ congestion even worse. It is important to get out of this state quickly.
 
 Finally, since a timeout is an indication of congestion that triggers
 multiplicative decrease, TCP needs the most accurate timeout mechanism
-it can afford. We already covered TCP’s timeout mechanism in an earlier
-chapter, so we do not repeat it here. The two main things to remember
-about that mechanism are that (1) timeouts are set as a function of both
-the average RTT and the standard deviation in that average, and (2) due
-to the cost of measuring each transmission with an accurate clock, TCP
-only samples the round-trip time once per RTT (rather than once per
-packet) using a coarse-grained (500-ms) clock.
+it can afford. We already covered TCP’s timeout mechanism in Section
+4.1, but two main things to remember about that mechanism are that
+(1) timeouts are set as a function of both the average RTT and the
+standard deviation in that average, and (2) due to the cost of
+measuring each transmission with an accurate clock, TCP only samples
+the round-trip time once per RTT (rather than once per packet) using a
+coarse-grained (500-ms) clock.
 
 4.4 Slow Start
 --------------
@@ -503,21 +478,21 @@ growth of additive increase illustrated in :numref:`Figure %s
    Packets in transit during slow start.
 
 Why any exponential mechanism would be called “slow” is puzzling at
-first, but it can be explained if put in the proper historical context.
-We need to compare slow start not against the linear mechanism of the
-previous subsection, but against the original behavior of TCP. Consider
-what happens when a connection is established and the source first
-starts to send packets—that is, when it currently has no packets in
-transit. If the source sends as many packets as the advertised window
-allows—which is exactly what TCP did before slow start was
-developed—then even if there is a fairly large amount of bandwidth
-available in the  network, the routers may not be able to consume this
-burst of packets. It all depends on how much buffer space is available
-at the routers. Slow start was therefore designed to space packets out
-so that this burst does not occur. In other words, even though its
-exponential growth is faster than linear growth, slow start is much
-“slower” than sending an entire advertised window’s worth of data all at
-once.
+first, but it can be explained if put in the proper historical
+context.  We need to compare slow start not against the linear
+mechanism of the previous section, but against the original behavior
+of TCP. Consider what happens when a connection is established and the
+source first starts to send packets—that is, when it currently has no
+packets in transit. If the source sends as many packets as the
+advertised window allows—which is exactly what TCP did before slow
+start was developed—then even if there is a fairly large amount of
+bandwidth available in the  network, the routers may not be able to
+consume this burst of packets. It all depends on how much buffer space
+is available at the routers. Slow start was therefore designed to
+space packets out so that this burst does not occur. In other words,
+even though its exponential growth is faster than linear growth, slow
+start is much “slower” than sending an entire advertised window’s
+worth of data all at once.
 
 There are actually two different situations in which slow start runs.
 The first is at the very beginning of a connection, at which time the
@@ -583,7 +558,7 @@ grow.
 increases and decreases over time and serves to illustrate the
 interplay of slow start and additive increase/multiplicative
 decrease. This trace was taken from an actual TCP connection and shows
-the current value of ``CongestionWindow``—the colored line—over time.
+the current value of ``CongestionWindow``\ —the colored line—over time.
 
 .. _fig-trace1:
 .. figure:: figures/f06-11-9780123850591.png
@@ -645,19 +620,20 @@ other hand, if the source is aggressive at this stage, as TCP is during
 exponential growth, then the source runs the risk of having half a
 window’s worth of packets dropped by the network.
 
-To see what can happen during exponential growth, consider the situation
-in which the source was just able to successfully send 16 packets
-through the network, causing it to double its congestion window to 32.
-Suppose, however, that the network happens to have just enough capacity
-to support 16 packets from this source. The likely result is that 16 of
-the 32 packets sent under the new congestion window will be dropped by
-the network; actually, this is the worst-case outcome, since some of the
-packets will be buffered in some router. This problem will become
-increasingly severe as the delay × bandwidth product of networks
-increases. For example, a delay × bandwidth product of 500 KB means that
-each connection has the potential to lose up to 500 KB of data at the
-beginning of each connection. Of course, this assumes that both the
-source and the destination implement the “big windows” extension.
+To see what can happen during exponential growth, consider the
+situation in which the source was just able to successfully send
+16 packets through the network, causing it to double its congestion
+window to 32.  Suppose, however, that the network happens to have just
+enough capacity to support 16 packets from this source. The likely
+result is that 16 of the 32 packets sent under the new congestion
+window will be dropped by the network; actually, this is the
+worst-case outcome, since some of the packets will be buffered in some
+router. This problem will become increasingly severe as the delay ×
+bandwidth product of networks increases. For example, a delay ×
+bandwidth product of 1.8 MB means that each connection has the
+potential to lose up to 1.8 MB of data at the beginning of each
+connection. Of course, this assumes that both the source and the
+destination implement the "big windows” extension.
 
 Alternatives to slow start, whereby the source tries to estimate the
 available bandwidth by more sophisticated means, have also been
@@ -687,30 +663,39 @@ controlled network environments (e.g., research networks).
 4.5 Fast Retransmit and Fast Recovery
 -------------------------------------
 
-The mechanisms described so far were part of the original proposal to
-add congestion control to TCP. It was soon discovered, however, that the
-coarse-grained implementation of TCP timeouts led to long periods of
-time during which the connection went dead while waiting for a timer to
-expire. Because of this, a new mechanism called *fast retransmit* was
-added to TCP. Fast retransmit is a heuristic that sometimes triggers the
-retransmission of a dropped packet sooner than the regular timeout
-mechanism. The fast retransmit mechanism does not replace regular
-timeouts; it just enhances that facility.
+..
+	Where does New Reno fit into this history? -llp
 
-The idea of fast retransmit is straightforward. Every time a data packet
-arrives at the receiving side, the receiver responds with an
-acknowledgment, even if this sequence number has already been
-acknowledged. Thus, when a packet arrives out of order—when TCP cannot
-yet acknowledge the data the packet contains because earlier data has
-not yet arrived—TCP resends the same acknowledgment it sent the last
-time. This second transmission of the same acknowledgment is called a
+The mechanisms described so far were part of the original proposal to
+add congestion control to TCP, and they have collectively become know
+as *TCP Tahoe* because they were included in the *Tahoe* release of
+4.3 BSD Unix in 1988. Once widely deployed, experience revealed some
+problems in Tahoe that were subsequently addressed by *TCP Reno* (part
+of the 4.3BSD-Reno release) in early 1990. This section describes that
+experience and Reno's approach to addressing it.
+
+In short, the coarse-grained implementation of TCP timeouts led to
+long periods of time during which the connection went dead while
+waiting for a timer to expire. A heuristic, called *fast retransmit*,
+sometimes triggers the retransmission of a dropped packet sooner than
+the regular timeout mechanism. The fast retransmit mechanism does not
+replace regular timeouts; it just enhances that facility.
+
+The idea is that every time a data packet arrives at the receiving
+side, the receiver responds with an acknowledgment, even if this
+sequence number has already been acknowledged. Thus, when a packet
+arrives out of order—when TCP cannot yet acknowledge the data the
+packet contains because earlier data has not yet arrived—TCP resends
+the same acknowledgment it sent the last time.
+
+This second transmission of the same acknowledgment is called a
 *duplicate ACK*. When the sending side sees a duplicate ACK, it knows
 that the other side must have received a packet out of order, which
 suggests that an earlier packet might have been lost. Since it is also
-possible that the earlier packet has only been delayed rather than lost,
-the sender waits until it sees some number of duplicate ACKs and then
-retransmits the missing packet. In practice, TCP waits until it has seen
-three duplicate ACKs before retransmitting the packet.
+possible that the earlier packet has only been delayed rather than
+lost, the sender waits until it sees some number of duplicate ACKs and
+then retransmits the missing packet. In practice, TCP waits until it
+has seen three duplicate ACKs before retransmitting the packet.
 
 .. _fig-tcp-fast:
 .. figure:: figures/f06-12-9780123850591.png
@@ -761,25 +746,32 @@ blocks the sender until a timeout occurs. In practice, TCP’s fast
 retransmit mechanism can detect up to three dropped packets per
 window.
 
-Finally, there is one last improvement we can make. When the fast
-retransmit mechanism signals congestion, rather than drop the
-congestion window all the way back to one packet and run slow start,
-it is possible to use the ACKs that are still in the pipe to clock the
-sending of packets. This mechanism, which is called *fast recovery*,
-effectively removes the slow start phase that happens between when
-fast retransmit detects a lost packet and additive increase
-begins. For example, fast recovery avoids the slow start period
-between 3.8 and 4 seconds in :numref:`Figure %s <fig-trace2>` and
-instead simply cuts the congestion window in half (from 22 KB to
-11 KB) and resumes additive increase. In other words, slow start is
-only used at the beginning of a connection and whenever a
-coarse-grained timeout occurs. At all other times, the congestion
-window is following a pure additive increase/multiplicative decrease
-pattern.
+There is one last improvement we can make. When the fast retransmit
+mechanism signals congestion, rather than drop the congestion window
+all the way back to one packet and run slow start, it is possible to
+use the ACKs that are still in the pipe to clock the sending of
+packets. This mechanism, which is called *fast recovery*, effectively
+removes the slow start phase that happens between when fast retransmit
+detects a lost packet and additive increase begins. For example, fast
+recovery avoids the slow start period between 3.8 and 4 seconds in
+:numref:`Figure %s <fig-trace2>` and instead simply cuts the
+congestion window in half (from 22 KB to 11 KB) and resumes additive
+increase. In other words, slow start is only used at the beginning of
+a connection and whenever a coarse-grained timeout occurs. At all
+other times, the congestion window is following a pure additive
+increase/multiplicative decrease pattern.
 
 4.6 TCP CUBIC 
 --------------
 
+.. 
+	Lots of intervening years not accounted for here. More about the 
+	BSD-to-Linux transistion might also be helpful. -llp
+
+.. 
+	And, this section is pretty thin, but I don't have enough
+	insight into CUBIC to embellish. -llp	
+	
 A variant of the standard TCP algorithm, called CUBIC, is the default
 congestion control algorithm distributed with Linux. CUBIC’s primary
 goal is to support networks with large delay × bandwidth products,
@@ -840,3 +832,7 @@ only convex).
 
 4.7 Retrospective
 --------------------
+
+..
+	May not be necessary if the info bridging Reno-to-CUBIC is
+	complete enough. -llp
