@@ -2,11 +2,11 @@ Chapter 2:  Background
 ======================
 
 ..
-	This chapter likely still includes too much detail.
+	This chapter still includes too much detail.
 
 To understand the Internet's approach to congestion, it's necessary to
 first talk about the assumptions and design decisions built into the
-Internet architecture. This chapter does that, which includes giving
+Internet architecture. This chapter does that, and in doing so, gives
 enough detail about the TCP/IP protocol stack to understand the
 specifics of the congestion control mechanisms introduced in later
 chapters. For more complete coverage of TCP and IP, we recommend
@@ -63,8 +63,8 @@ than the simple network depicted in :numref:`Figure %s
 router to reach the destination. Although this is an extreme example,
 it is common to have a certain router that it is not possible to route
 around. This router can become congested, and there is nothing the
-routing mechanism can do about it. This congested router is sometimes
-called the *bottleneck* router.
+routing mechanism can do about it. This congested router is said to be
+the *bottleneck* router.
 
 Flows and Soft State
 ~~~~~~~~~~~~~~~~~~~~
@@ -74,27 +74,23 @@ connection-oriented service is implemented by an end-to-end transport
 protocol running on the end hosts. There is no connection setup phase
 implemented within the network (corresponding, for example, to
 establishing a virtual circuit), and as a consequence, there is no
-mechanism for individual routers to pre-allocate buffer space to
-active connections.
+mechanism for individual routers to pre-allocate buffer space or link
+bandwidth to active connections.
 
-However, the lack of an explicit connection setup phase does not imply
-that routers must be completely unaware of end-to-end connections. IP
+The lack of an explicit connection setup phase does not imply that
+routers must be completely unaware of end-to-end connections. IP
 packets are switched independently, but it is usually the case that a
 stream of packets between a given pair of hosts flows through a
 particular set of routers. This idea of a *flow*—a sequence of packets
 sent between a source/destination pair and following the same route
-through the network—is an important abstraction in the context of
-resource allocation; it is one that we will use in later chapters.
+through the network—is an important abstraction that we will use in
+later chapters.
 
 One of the powers of the flow abstraction is that flows can be defined
 at different granularities. For example, a flow can be host-to-host
-(i.e., have the same source/destination host addresses) or
+(i.e., have the same source/destination IP addresses) or
 process-to-process (i.e., have the same source/destination host/port
-pairs). In the latter case, a flow is essentially the same as a
-channel, as we have been using that term throughout this book. The
-reason we introduce a new term is that a flow is visible to the
-routers inside the network, whereas a channel is an end-to-end
-abstraction. :numref:`Figure %s <fig-flow>` illustrates several flows
+pairs). :numref:`Figure %s <fig-flow>` illustrates several flows
 passing through a series of routers.
    
 .. _fig-flow:
@@ -194,13 +190,11 @@ Note that tail drop and FIFO are two separable ideas. FIFO is a
 transmitted. Tail drop is a *drop policy*—it determines which packets
 get dropped. Because FIFO and tail drop are the simplest instances of
 scheduling discipline and drop policy, respectively, they are
-sometimes viewed as a bundle—the vanilla queuing
-implementation. Unfortunately, the bundle is often referred to simply
-as *FIFO queuing*, when it should more precisely be called *FIFO with
-tail drop*. Chapter 7 presents another drop policy, which uses a more
-complex algorithm than “Is there a free buffer?” to decide when to
-drop packets. Such a drop policy may be used with FIFO, or with more
-complex scheduling disciplines.
+sometimes viewed as a bundle—the default queuing
+implementation. Chapter 7 presents another drop policy, which uses a
+more complex algorithm than “Is there a free buffer?” to decide when
+to drop packets. Such a drop policy may be used with FIFO, or with
+more complex scheduling disciplines.
 
 .. sidebar:: Fair Queuing
 
@@ -387,21 +381,19 @@ Reliable and Ordered Delivery
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We are now ready to discuss TCP’s variant of the sliding window
-algorithm, which serves several purposes: (1) it guarantees the reliable
-delivery of data, (2) it ensures that data is delivered in order, and
-(3) it enforces flow control between the sender and the receiver. TCP’s
-use of the sliding window algorithm is the same as at the link level in
-the case of the first two of these three functions. Where TCP differs
-from the link-level algorithm is that it folds the flow-control function
-in as well. In particular, rather than having a fixed-size sliding
+algorithm, which serves several purposes: (1) it guarantees the
+reliable delivery of data, (2) it ensures that data is delivered in
+order, and (3) it enforces flow control between the sender and the
+receiver.  On this last point, rather than having a fixed-size sliding
 window, the receiver *advertises* a window size to the sender. This is
-done using the ``AdvertisedWindow`` field in the TCP header. The sender
-is then limited to having no more than a value of ``AdvertisedWindow``
-bytes of unacknowledged data at any given time. The receiver selects a
-suitable value for ``AdvertisedWindow`` based on the amount of memory
-allocated to the connection for the purpose of buffering data. The idea
-is to keep the sender from over-running the receiver’s buffer. We
-discuss this at greater length below.
+done using the ``AdvertisedWindow`` field in the TCP header. The
+sender is then limited to having no more than a value of
+``AdvertisedWindow`` bytes of unacknowledged data at any given
+time. The receiver selects a suitable value for ``AdvertisedWindow``
+based on the amount of memory allocated to the connection for the
+purpose of buffering data. The idea is to keep the sender from
+over-running the receiver’s buffer. We discuss this at greater length
+below.
 
 To see how the sending and receiving sides of TCP interact with each
 other to implement reliable and ordered delivery, consider the
@@ -483,12 +475,6 @@ Most of the above discussion is similar to that found in the standard
 sliding window algorithm; the only real difference is that this time we
 elaborated on the fact that the sending and receiving application
 processes are filling and emptying their local buffer, respectively.
-(The earlier discussion glossed over the fact that data arriving from an
-upstream node was filling the send buffer and data being transmitted to
-a downstream node was emptying the receive buffer.)
-
-You should make sure you understand this much before proceeding because
-now comes the point where the two algorithms differ more significantly.
 In what follows, we reintroduce the fact that both buffers are of some
 finite size, denoted ``MaxSendBuffer`` and ``MaxRcvBuffer``, although we
 don’t worry about the details of how they are implemented. In other
@@ -574,10 +560,10 @@ being able to transmit any data means that the send buffer fills up,
 which ultimately causes TCP to block the sending process. As soon as the
 receiving process starts to read data again, the receive-side TCP is
 able to open its window back up, which allows the send-side TCP to
-transmit data out of its buffer. When this data is eventually
-acknowledged, ``LastByteAcked`` is incremented, the buffer space holding
-this acknowledged data becomes free, and the sending process is
-unblocked and allowed to proceed.
+transmit data out of its buffer. When this data is eventually acknowledged,
+``LastByteAcked`` is incremented, the buffer space holding this
+acknowledged data becomes free, and the sending process is unblocked
+and allowed to proceed.
 
 There is only one remaining detail that must be resolved—how does the
 sending side know that the advertised window is no longer 0? As
@@ -703,16 +689,16 @@ data is transmitted as soon as possible.
 
 TCP was first deployed in the early 1980s, when backbone networks had
 link bandwidths measured in the tens of kilobits-per-second. It should
-not be surprising that significant attention has gone into adapting
-TCP for ever-increasing network speeds. In principle, the resulting
-changes are independent of the congestion control mechanisms presented
-in later chapters, but they were deployed in concert with those
-changes, which unfortunately, conflates the two issues. To further
-blur the line between accommodating high-speed networks and addressing
-congestion, there are extensions to the TCP header that play a dual
-role in addressing both.
+not come as a surprise that significant attention has gone into
+adapting TCP for ever-increasing network speeds. In principle, the
+resulting changes are independent of the congestion control mechanisms
+presented in later chapters, but they were deployed in concert with
+those changes, which unfortunately, conflates the two issues. To
+further blur the line between accommodating high-speed networks and
+addressing congestion, there are extensions to the TCP header that
+play a dual role in addressing both.
 
-This section focuses on the challenges of high-speed networks, but we
+This section focuses on the challenges of high-speed networks, and we
 postpone the details about the TCP extensions used to address those
 challenges until Chapter 4, where we also take the related congestion
 control mechanisms into account. For now, we focus on limitations of
