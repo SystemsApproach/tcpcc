@@ -349,9 +349,36 @@ over the decades. The quest for stability features heavily in the
 early work of Jacobson and Karels and stability remains a requirement that 
 subsequent approaches have to meet. 
 
+..
+	I'd like to include some version of the following. -llp
 
+Finally, much of the theoretical work on congestion control has framed
+the problem as *"a distributed algorithm to share network resources
+among competing sources, where the goal is to choose source rate so as
+to maximize aggregate source utility subject to capacity
+constraints."* Formuling a congestion-control mechanism as an algorithm
+to optimize an objective function is traceable to a paper by Frank
+Kelly in 1997, and later extended by Sanjeewa Athuraliya and Steven
+Low to take into account both traffic sources (TCP) and the Active
+Queue Management (AQM) techniques implemented by network routers.
 
+.. _reading_kelly_low:
+.. admonition:: Further Reading
 
+   F. Kelly, `Charging and Rate Control for Elastic Traffic
+   <http://www.statslab.cam.ac.uk/~frank/elastic.pdf>`__.
+   European Transactions on Telecommunications, 8:33–37, 1997.
+
+   S. Athuraliya and S. Low, `An Emperical Validation of a Duality
+   Model of TCP and Active Queue Management Algorithms
+   <https://ieeexplore.ieee.org/document/977445>`__.  Proceedings of the
+   Winter Simulation Conference, 2001.
+
+This book does not pursue the mathematical formulation outlined in
+these papers (and the large body of work that followed), but we do
+find it helpful to recognize that there is an established connection
+between optimizing a utility function and the pragmatic aspects of the
+mechanisms described in this book.
 
 1.4 Congestion Control Today
 ----------------------------
