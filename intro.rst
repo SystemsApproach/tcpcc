@@ -28,7 +28,7 @@ congestion control ever since. This book is about that journey.
 
 .. [#] Ten years earlier a similar effect, called *thrashing*, had plagued the pioneers in time-shared computing systems.
    
-The first efforts to manage congestion were undertaken by two
+The most famous early efforts to manage congestion were undertaken by two
 researchers, Jacobson and Karels. The resulting paper, 
 *Congestion Avoidance and Control*, published in 1988, is one of the
 most cited papers in networking of all time. There are
@@ -55,7 +55,7 @@ have been developed over the last three decades.
 .. _reading_vj:
 .. admonition:: Further Reading
 
-   V.Jacobson `Congestion Avoidance and Control'
+   V.Jacobson `Congestion Avoidance and Control
    <https://dl.acm.org/doi/10.1145/52324.52356>`__.
    SIGCOMM '88 Symposium, August 1988.
 
@@ -73,11 +73,21 @@ everyone has to slow down (because there is no longer enough space for
 everyone to keep a safe distance at the speed limit) at which point the
 road actually becomes *less effective* at moving vehicles. So, just at
 the point when you would be wanting more capacity, there is actually
-less capacity to move traffic. This is the essence of *congestion
-collapse*, when congestion is so bad that the systems start to perform
+less capacity to move traffic, as illustrated in :numref:`Figure %s <fig-collapse>`. This is the essence of *congestion
+collapse*, when congestion is so bad that the system starts to perform
 significantly worse than it did without congestion. The mechanism of congestion collapse is quite a bit different for
 packet networks than for highways, but it is equally problematic [#]_.
 
+
+.. _fig-collapse:
+.. figure:: figures/Fig1.png
+   :width: 500px
+   :align: center
+
+   As load increases, throughput rises then falls at the point of
+   congestion collapse.
+
+   
 .. [#] Networking people like making analogies between real-world
        congestion and network congestion, but it's important to
        recognize that analogies are imperfect.
@@ -91,6 +101,8 @@ show up somewhat randomly, and we rely on the statistical properties
 of those arrivals to ensure that we don't run out of resources. The
 existence of congestion collapse shows that sometimes the statistics
 don't quite work out as we'd like.
+
+
 
 To see how this might work, consider the simple network illustrated in
 :numref:`Figure %s <fig-mux>`, where the three hosts on the left side
@@ -142,17 +154,18 @@ following text.
       *Computer Networks: A Systems Approach*, 2020.
 
 
-When a switch builds a queue of packets awaiting transmission, it needs to decide which packet gets sent
-next. 
-Each switch in a packet-switched network makes this decision
-independently, on a packet-by-packet basis. One of the issues that arises is how to make this decision in a fair manner. For
-example, many switches are designed to service packets on a first-in,
-first-out (FIFO) basis. Another approach would be to transmit the
-packets from each of the different flows that are currently sending data
-through the switch in a round-robin manner. This might be done to ensure
-that certain flows receive a particular share of the link’s bandwidth or
-that they never have their packets delayed in the switch for more than a
-certain length of time. A network that attempts to allocate bandwidth to
+When a switch builds a queue of packets awaiting transmission, it
+needs to decide which packet gets sent next.  Each switch in a
+packet-switched network makes this decision independently, on a
+packet-by-packet basis. One of the issues that arises is how to make
+this decision in a fair manner. For example, many switches are
+designed to service packets on a first-in, first-out (FIFO)
+basis. Another approach would be to transmit the packets from each of
+the different flows that are currently sending data through the switch
+in a round-robin manner. This might be done to ensure that certain
+flows receive a particular share of the link’s bandwidth or that they
+never have their packets delayed in the switch for more than a certain
+length of time. A network that attempts to allocate bandwidth to
 particular flows is sometimes said to support *quality of service*
 (QoS).
 
@@ -160,7 +173,7 @@ One thing to take away from this discussion is that it is in the
 nature of packet-switched networks that they will sometimes be
 congested. The focus of this book is on the large body of work that
 has been done to mitigate congestion, either by responding to it in
-effective ways to lessen it, or be preventing it before it occurs.
+effective ways to lessen it, or by preventing it before it occurs.
 
 
 
@@ -225,16 +238,119 @@ discipline, and dropped arriving packets if they queue was full
 ("tail-drop"). This is still common today, although other approaches
 are also common now.
 
-The reason that congestion collapse occurred in this
+The reason that congestion collapse occurred in this scenario is that
+dropped packets are not just discarded and forgotten. When the
+end-to-end transport protocol is TCP, as it is for most Internet
+traffic, a dropped packet will be retransmitted. So as congestion
+rises, the number of retransmitted packets rises; in other words, the
+number of packets sent into the network increases even if there is no
+real increase in the offered load from users and applications. More
+packets lead to more drops leading to more retransmissions and so
+on. You can see how this leads to collapse.
+
+A useful term in this context is *goodput*, which is distinguished
+from throughput in the sense that only packets doing useful work are
+counted towards goodput. So, for example, if a link is running at 100%
+utilization, but 60% of the packets on that link are retransmitted due
+to earlier losses, you could say the goodput was only 40%.
+
+The key insight of early researchers on congestion control was that it
+was possible and necessary for TCP to do something other than blindly retransmit
+lost packets during times of congestion. TCP would have to detect the
+congestion—which it can do, for example, by noticing the loss of
+packets—and then respond to the congestion by *reducing* the amount of
+traffic sent into the network. This interaction between the end-to-end
+protocol and the network during times of congestion formed the basis
+for much of today's congestion control and avoidance approaches. We'll
+get into the specifics of how these approaches work in subsequent
+chapters. 
 
 
 1.3 Theoretical Underpinnings
 ------------------------------
-Introduce theoretical underpinnings. Since we are about “systems
-approach” it’s ok to stay on the practical side, but it would be
-helpful to give the intuition behind the theory (and how it has
-evolved since the VJ era). Notably, talk about dynamics/stability and
-fairness. 
+
+There has been a lot of important theoretical work done to understand
+congestion. At the core of congestion is queueing, and there is a huge
+body of theory behind queueing, much of which extends into other
+physical realms such as supermarket checkouts and road congestion. The
+standard reference on queueing for packet networks was written by one
+of the early pioneers of the ARPANET, Leonard Kleinrock.
+
+
+.. _reading_queue:
+.. admonition:: Further Reading
+
+   L. Kleinrock, `Queueing Systems, Volume 2
+   <https://archive.org/details/queueingsystems02klei>`__.
+
+As packet networks became more widespread in the 1980s, there was a
+great deal of interest in how traffic behaved, with a growing
+realization that it might be more complex than had first been
+thought. One of the most popular models for data traffic was the
+Poisson model, which had worked well for various systems like call
+arrivals in the telephone network and people arriving at a queue in a
+supermarket. But the more that people studied the Internet and other
+packet networks, the worse the Poisson model started to look. There
+are a number of seminal papers that make the case for more complex
+models, of which the following are two.
+
+.. _reading_pfail:
+.. admonition:: Further Reading
+
+   V. Paxson and S. Floyd, `Wide-Area Traffic: The Failure of Poisson Modeling
+   <https://www.icir.org/vern/papers/poisson.TON.pdf>`__.
+   IEEE/ACM Transactions on Networking, Jun 1995.
+
+         
+   W. Leland *et al*,  `On the self-similar nature of Ethernet
+   traffic
+   <https://doi.org/10.1145/167954.166255>`__.
+   ACM SIGCOMM, 1993.
+          
+         
+
+These papers and others contributed to the consensus that Internet
+traffic is much more “bursty”—packets arrive in clumps—than had been
+assumed by early models.  Furthermore, this burstiness displays
+*self-similarity*. Self-similarity is a property of fractals—when
+you zoom in, you keep on seeing similar complexity at finer
+resolutions. For Internet traffic, this means that at any time scale,
+from microseconds to hours, you will see similar sorts of complexity.
+
+This research had a number of practical consequences, such as the
+realization that packet queues might get to be very long indeed, and
+thus routers and switches should have reasonably large packet
+buffers. (Correctly sizing those buffers became its own research
+topic.) Link utilizations could not be reliably kept close to 100% all
+the time, because you had to allow room for an unforeseen burst.
+
+Two topics of particular importance when thinking about congestion
+avoidance are *fairness* and *stability*. When the network is
+congested, it's going to be necessary for some users or flows to send
+less. It is clearly worth asking: which flows should send less? Should
+all flows share the pain equally? And what happens if some flows pay
+more attention to congestion signals than others? These questions are at the heart of
+the fairness issue. Jain's *fairness index* is one of the widely
+accepted ways to measure how fair a network is; we will dig into this
+topic in Chapter 3.
+
+Stability is a critical property for any sort of control system, which
+is what congestion control is. Congestion is detected, some action is
+taken to reduce the total amount of traffic, causing congestion to
+ease, at which point it would seem reasonable to start sending more
+traffic again, leading back to more congestion. You can imagine that
+this sort of oscillation between congested and uncongested states
+could go on forever, and would be quite detrimental if the network is
+swinging from underutilized to collapsing.  We really want it to settle on some
+optimum where the network is busy but not so much so that
+congestion collapse occurs. Finding these stable control loops has
+been one of the key challenges for congestion control system designers
+over the decades. The quest for stability features heavily in the
+early work of Jacobson and Karels and stability remains a requirement that 
+subsequent approaches have to meet. 
+
+
+
 
 
 1.4 Congestion Control Today
