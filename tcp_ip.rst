@@ -373,7 +373,14 @@ Finally, the TCP header is of variable length (options can be attached
 after the mandatory fields), and so the ``HdrLen`` field is included
 to give the length of the header in 32-bit words. This field is
 relevant when TCP extensions are appended to the end of the header, as
-we'll see in later Chapters.
+we'll see in later sections. The significance of adding these
+extensions as options rather than changing the core of the TCP header
+is that hosts can still communicate using TCP even if they do not
+implement the options. Hosts that do implement the optional
+extensions, however, can take advantage of them. The two sides agree
+that they will use the options during TCP’s connection establishment
+phase.
+
 
 Reliable and Ordered Delivery
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -749,7 +756,18 @@ product for several network technologies.
 In other words, TCP’s ``AdvertisedWindow`` field is in even worse
 shape than its ``SequenceNum`` field—it is not big enough to handle
 even a T3 connection across the continental United States, since a
-16-bit field allows us to advertise a window of only 64 KB. A TCP
-extension allows a sender to fill larger delay × bandwidth pipes by
-defining a *scaling factor* for the advertised window. We give the
-specifics of this extension in Chapter 4.
+16-bit field allows us to advertise a window of only 64 KB.
+
+The fix is an extension to TCP that allows the receiver to advertise a
+larger window, thereby allowing the sender to fill larger delay ×
+bandwidth pipes that are made possible by high-speed networks. This
+extension involves an option that defines a *scaling factor* for the
+advertised window. That is, rather than interpreting the number that
+appears in the ``AdvertisedWindow`` field as indicating how many bytes
+the sender is allowed to have unacknowledged, this option allows the
+two sides of TCP to agree that the ``AdvertisedWindow`` field counts
+larger chunks (e.g., how many 16-byte units of data the sender can
+have unacknowledged). In other words, the window scaling option
+specifies how many bits each side should left-shift the
+``AdvertisedWindow`` field before using its contents to compute an
+effective window.

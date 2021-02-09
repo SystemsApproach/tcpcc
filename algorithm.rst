@@ -2,51 +2,45 @@ Chapter 4:  Control-Based Algorithms
 ====================================
 	
 This chapter describes the dominant congestion-control algorithm in
-use today on the Internet. The approach was introduced in the late
-1980s by Van Jacobson, and then refined multiple times by him and
-others over the years. The variant in widespread use today is called
-CUBIC, for reasons that will become clear when we introduce it at the
-end of the chapter.
+use today on the Internet. The approach was introduced in 1988 by Van
+Jacobson, and refined multiple times by him and others over the years.
+The variant in widespread use today is called CUBIC, for reasons that
+will become clear when we introduce it at the end of the chapter.
 
 The general idea is straightforward. Having transmitted a set of
 packets according to its current estimate of the available bandwidth,
-the sender uses the arrival of an ACK as a signal that one of its
-packets has left the network and that it is therefore safe to insert a
-new packet into the network without adding to the level of congestion.
-By using ACKs to pace the transmission of packets, TCP is said to be
-*self-clocking*.  The sender also uses timeouts as a signal that the
-network is congested, indicating that it needs to reduce its sending
-rate. By using packet loss as an indication of congestion, we refer to
-the approach as *control-based*. Of course, determining the available
-capacity in the first place is no easy task, and to make matters
-worse, because other connections come and go, the available bandwidth
-changes over time.
+a TCP sender reacts to two "signals" from the network. On the one
+hande, the arrival of an ACK signals that one of its packets packets
+has left the network and that it is therefore safe to transmit a new
+packet without adding to the level of congestion.  By using ACKs to
+pace the transmission of packets, TCP is said to be *self-clocking*.
+On the other hand, a timeout signals that the network is congested,
+indicating that it needs to reduce its sending rate. By using packet
+loss as an indication of congestion, we refer to the approach as
+*control-based*.
 
-This chapter describes the collection of techniques that TCP uses to
-address these and other problems, and as such, can be read as a case
-study of the experience of identifying and solving a sequence of
-problems. We will trace the historical context as we visit each of the
-techniques in the sections that follow.
+There are many subtle issues that must be addressed to make this a
+practical approach to congestion control.  This chapter describes the
+collection of techniques that address these issues, and as such, can
+be read as a case study of the experience of identifying and solving a
+sequence of problems. We will trace the historical context as we visit
+each of the techniques in the sections that follow.
 
 4.1 Adaptive Retransmission
 ---------------------------
 
-Because TCP guarantees the reliable delivery of data, it retransmits
-each segment if an ACK is not received in a certain period of time. TCP
-sets this timeout as a function of the RTT it expects between the two
-ends of the connection. Unfortunately, given the range of possible RTTs
-between any pair of hosts in the Internet, as well as the variation in
-RTT between the same two hosts over time, choosing an appropriate
-timeout value is not that easy. To address this problem, TCP uses an
-adaptive retransmission mechanism.
+Timeouts and retransmissions are a central part TCP's approach to
+implementing a reliable byte-stream, but timeouts also play a key role
+in congestion control because they signal packet loss, which in turn
+indicates the likelihood of congestion. In other words, TCP's timeout
+mechanism is a building block for its overall approach to congestion
+control.
 
-We describe this mechanism and how it has evolved. We start with the
-original algorithm included in the TCP specification, which of course
-pre-dates concerns about congestion control. As the connection between
-how aggressively a sender retransmits packets and the level of
-congestion in the network became clear, a more accurate way to compute
-(and adapt) the retransmission timer became an important first step
-towards a comprehensive approach to congestion control.
+TCP has an adaptive approach to setting a timeout, computed as a
+function of the measured RTT. As simple as this sounds, the full
+implementation is more involved than you might expect, and has
+been through multiple refinements over the years. This section
+revisits that experience.
 
 Original Algorithm
 ~~~~~~~~~~~~~~~~~~
@@ -79,13 +73,13 @@ setting of ``alpha`` between 0.8 and 0.9. TCP then uses
 Karn/Partridge Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-After several years of use on the Internet, a rather obvious flaw was
-discovered in this simple approach: An ACK does not really acknowledge
-a transmission, but rather, it acknowledges the receipt of data. In
-other words, whenever a segment is retransmitted and then an ACK
-arrives at the sender, it is impossible to determine if this ACK
-should be associated with the first or the second transmission of the
-segment for the purpose of measuring the sample RTT.
+After several years, a rather obvious flaw was discovered in this
+simple approach: An ACK does not really acknowledge a transmission,
+but rather, it acknowledges the receipt of data. In other words,
+whenever a segment is retransmitted and then an ACK arrives at the
+sender, it is impossible to determine if this ACK should be associated
+with the first or the second transmission of the segment for the
+purpose of measuring the sample RTT.
 
 It is necessary to know which transmission to associate it with so as
 to compute an accurate ``SampleRTT``. As illustrated in
@@ -103,36 +97,28 @@ second transmission but it was actually for the first, then the
    Associating the ACK with (a) original transmission
    versus (b) retransmission.
 
-The solution, which was proposed in 1987, is surprisingly simple.
-Whenever TCP retransmits a segment, it stops taking samples of the RTT;
-it only measures ``SampleRTT`` for segments that have been sent only
-once. This solution is known as the Karn/Partridge algorithm, after its
+The solution is surprisingly simple.  Whenever TCP retransmits a
+segment, it stops taking samples of the RTT; it only measures
+``SampleRTT`` for segments that have been sent only once. This
+solution is known as the Karn/Partridge algorithm, after its
 inventors. Their proposed fix also includes a second small change to
 TCP’s timeout mechanism. Each time TCP retransmits, it sets the next
-timeout to be twice the last timeout, rather than basing it on the last
-``EstimatedRTT``. That is, Karn and Partridge proposed that TCP use
-exponential backoff, similar to what the Ethernet does. The motivation
-for using exponential backoff is simple: Congestion is the most likely
-cause of lost segments, meaning that the TCP source should not react too
-aggressively to a timeout. In fact, the more times the connection times
-out, the more cautious the source should become. We will see this idea
-again, embodied in a much more sophisticated mechanism, in the next
-chapter.
+timeout to be twice the last timeout, rather than basing it on the
+last ``EstimatedRTT``. That is, Karn and Partridge proposed that TCP
+use exponential backoff. The motivation for using exponential backoff
+is that congestion the most likely cause of lost segments, meaning
+that the TCP source should not react too aggressively to a timeout. In
+fact, the more times the connection times out, the more cautious the
+source should become. We will see this idea again, embodied in a much
+more sophisticated mechanism, in a later section.
 
 Jacobson/Karels Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Karn/Partridge algorithm was an improvement, but it did not
-eliminate congestion. The following year (1988), Jacobson and Karels
-proposed a more drastic change to TCP to battle congestion, including
-a new way to decide when to time out and retransmit a segment.
-
-It should be clear how the timeout mechanism is related to
-congestion—if you time out too soon, you may unnecessarily retransmit
-a segment, which only adds to the load on the network. The other
-reason for needing an accurate timeout value is that a timeout is
-taken to imply congestion, which triggers the other control mechanism
-described later sections.
+eliminate congestion. The 1988 congestion-control mechanism proposed
+by Jacobson and Karels include a new way to decide when to time out
+and retransmit a segment.
 
 The main problem with the original computation is that it does not
 take the variance of the sample RTTs into account. Intuitively, if the
@@ -208,8 +194,8 @@ would happen 1 second after the segment was transmitted. An extension
 to TCP, described in the next section, makes this RTT calculation a
 bit more precise.
 
-The additional details about the implementation of timeouts in TCP,
-we refer the reader to the authoritative RFC:
+For additional details about the implementation of timeouts in TCP, we
+refer the reader to the authoritative RFC:
 
 .. _reading_timeout:
 .. admonition::  Further Reading
@@ -217,35 +203,15 @@ we refer the reader to the authoritative RFC:
    `RFC 6298: Computing TCP's Retransmission Timer
    <https://tools.ietf.org/html/rfc6298>`__. June 2011.
 
-Finally, all of the retransmission algorithms discussed in this
-section are based on timeouts, which indicate that a segment has
-probably been lost.  A timeout does not, however, tell the sender
-whether any segments it sent after the lost segment were successfully
-received. This is because TCP acknowledgments are cumulative; they
-identify only the last segment that was received without any preceding
-gaps. The reception of segments that occur after a gap grows more
-frequent as faster networks lead to larger windows. If ACKs also told
-the sender which subsequent segments, if any, had been received, then
-the sender could be more intelligent about which segments it
-retransmits, draw better conclusions about the state of congestion,
-and make better RTT estimates. A TCP extension supporting this is
-described in the next section.
+TCP Extensions
+~~~~~~~~~~~~~~~
 
-4.2 TCP Extensions
-------------------
-
-Most of the techniques described in this chapter are adjustments to
-the sender's behavior, with no changes to the over-the-wire
-protocol. The exceptions are a set of four extensions to the TCP
-header, which we introduce here.
-
-These extensions are realized as options that can be added to the TCP
-header. The significance of adding these extensions as options rather
-than changing the core of the TCP header is that hosts can still
-communicate using TCP even if they do not implement the options. Hosts
-that do implement the optional extensions, however, can take advantage
-of them. The two sides agree that they will use the options during
-TCP’s connection establishment phase.
+The changes to TCP described up to this point have been adjustments to
+how the sender computes timeouts, with no changes to the over-the-wire
+protocol. But there are also two extensions to the TCP header that help
+improve its ability to manage timeouts and retransmissions. We discuss
+them here. (A third TCP extension, establishing a scaling factor the
+``AdvertizedWindow``, was described in Section 2.2.)
 
 The first extension helps to improve TCP’s timeout mechanism. Instead of
 measuring the RTT using a coarse-grained event, TCP can read the actual
@@ -259,63 +225,53 @@ time in the segment itself. Note that the endpoints in the connection do
 not need synchronized clocks, since the timestamp is written and read at
 the same end of the connection.
 
-The second extension addresses the problem of TCP’s 32-bit
-``SequenceNum`` field wrapping around too soon on a high-speed network.
-Rather than define a new 64-bit sequence number field, TCP uses the
-32-bit timestamp just described to effectively extend the sequence
-number space. In other words, TCP decides whether to accept or reject a
-segment based on a 64-bit identifier that has the ``SequenceNum`` field
-in the low-order 32 bits and the timestamp in the high-order 32 bits.
+This timestamp extensions serves a dual purpose, in that it also
+provides a means to define a 64-bit sequence number field, addressing
+the shortcomings of TCP's 32-bit timestamp outlined in Section 2.2.
+Specifically, TCP decides whether to accept or reject a segment based
+on a logical 64-bit identifier that has the ``SequenceNum`` field in
+the low-order 32 bits and the timestamp in the high-order 32 bits.
 Since the timestamp is always increasing, it serves to distinguish
 between two different incarnations of the same sequence number. Note
-that the timestamp is being used in this setting only to protect against
-wraparound; it is not treated as part of the sequence number for the
-purpose of ordering or acknowledging data.
+that the timestamp is being used in this setting only to protect
+against wraparound; it is not treated as part of the sequence number
+for the purpose of ordering or acknowledging data.
 
-The third extension allows TCP to advertise a larger window, thereby
-allowing it to fill larger delay × bandwidth pipes that are made
-possible by high-speed networks. This extension involves an option that
-defines a *scaling factor* for the advertised window. That is, rather
-than interpreting the number that appears in the ``AdvertisedWindow``
-field as indicating how many bytes the sender is allowed to have
-unacknowledged, this option allows the two sides of TCP to agree that
-the ``AdvertisedWindow`` field counts larger chunks (e.g., how many
-16-byte units of data the sender can have unacknowledged). In other
-words, the window scaling option specifies how many bits each side
-should left-shift the ``AdvertisedWindow`` field before using its
-contents to compute an effective window.
+The second extension allows TCP to augment its cumulative
+acknowledgment with selective acknowledgments of any additional
+segments that have been received but aren’t contiguous with all
+previously received segments.  This is the *selective acknowledgment*,
+or *SACK*, option. When the SACK option is used, the receiver
+continues to acknowledge segments normally—the meaning of the
+``Acknowledge`` field does not change—but it also extends the header
+with additional acknowledges for any blocks received out-of-order.
+This allows the sender to retransmit just the segments that are
+missing according instead of all the segments that follow a dropped
+segment. Receiving multiple segments out-of-order (after a dropped
+segment) becomes increasingly likely as networks become faster and the
+delay × bandwidth product of networks increases.
 
-The fourth extension allows TCP to augment its cumulative acknowledgment
-with selective acknowledgments of any additional segments that have been
-received but aren’t contiguous with all previously received segments.
-This is the *selective acknowledgment*, or *SACK*, option. When the SACK
-option is used, the receiver continues to acknowledge segments
-normally—the meaning of the ``Acknowledge`` field does not change—but it
-also uses optional fields in the header to acknowledge any additional
-blocks of received data. This allows the sender to retransmit just the
-segments that are missing according to the selective acknowledgment.
+Without SACK, there are only two reasonable strategies for a sender to
+deal with segments that are received out-of-order. The pessimistic
+strategy responds to a timeout by retransmitting not just the segment
+that timed out, but any segments transmitted subsequently.  In effect,
+the pessimistic strategy assumes the worst: that all those segments
+were lost. The disadvantage of the pessimistic strategy is that it may
+unnecessarily retransmit segments that were successfully received the
+first time. The other strategy is to respond to a timeout by
+retransmitting only the segment that timed out.  This optimistic
+approach assumes the rosiest scenario: that only the one segment has
+been lost. The disadvantage of the optimistic strategy is that it is
+very slow to recover when a series of consecutive segments has been
+lost, as might happen when there is congestion. It is slow because
+each segment’s loss is not discovered until the sender receives an ACK
+for its retransmission of the previous segment. This means it consumes
+one RTT per segment until it has retransmitted all the segments in the
+lost series. With the SACK option, a better strategy is available to
+the sender: retransmit just the segments that fill the gaps between
+the segments that have been selectively acknowledged.
 
-Without SACK, there are only two reasonable strategies for a
-sender. The pessimistic strategy responds to a timeout by
-retransmitting not just the segment that timed out, but any segments
-transmitted subsequently.  In effect, the pessimistic strategy assumes
-the worst: that all those segments were lost. The disadvantage of the
-pessimistic strategy is that it may unnecessarily retransmit segments
-that were successfully received the first time. The other strategy is
-to respond to a timeout by retransmitting only the segment that timed
-out.  This optimistic approach assumes the rosiest scenario: that only
-the one segment has been lost. The disadvantage of the optimistic
-strategy is that it is very slow to recover when a series of
-consecutive segments has been lost, as might happen when there is
-congestion. It is slow because each segment’s loss is not discovered
-until the sender receives an ACK for its retransmission of the
-previous segment. This means it consumes one RTT per segment until it
-has retransmitted all the segments in the lost series. With the SACK
-option, a better strategy is available to the sender: retransmit just
-the segments that fill the gaps between the segments that have been
-selectively acknowledged.
-
-4.3 Additive Increase/Multiplicative Decrease
+4.2 Additive Increase/Multiplicative Decrease
 ---------------------------------------------
 
 A better way to compute timeouts is a necessary building block, but it
@@ -448,7 +404,7 @@ measuring each transmission with an accurate clock, TCP only samples
 the round-trip time once per RTT (rather than once per packet) using a
 coarse-grained (500-ms) clock.
 
-4.4 Slow Start
+4.3 Slow Start
 --------------
 
 The additive increase mechanism just described is the right approach to
@@ -660,7 +616,7 @@ could be a long time before these types of enhancements could make it
 into the Internet; for now, they are more likely to be used in
 controlled network environments (e.g., research networks).
 
-4.5 Fast Retransmit and Fast Recovery
+4.4 Fast Retransmit and Fast Recovery
 -------------------------------------
 
 ..
@@ -761,7 +717,7 @@ a connection and whenever a coarse-grained timeout occurs. At all
 other times, the congestion window is following a pure additive
 increase/multiplicative decrease pattern.
 
-4.6 TCP CUBIC 
+4.5 TCP CUBIC 
 --------------
 
 .. 
@@ -830,7 +786,7 @@ that standard TCP uses. Looking back at :numref:`Figure %s
 function to being convex (whereas standard TCP’s additive function is 
 only convex). 
 
-4.7 Retrospective
+4.6 Retrospective
 --------------------
 
 ..
