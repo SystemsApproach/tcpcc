@@ -356,7 +356,7 @@ Finally, much of the theoretical work on congestion control has framed
 the problem as *"a distributed algorithm to share network resources
 among competing sources, where the goal is to choose source rate so as
 to maximize aggregate source utility subject to capacity
-constraints."* Formuling a congestion-control mechanism as an algorithm
+constraints."* Formulating a congestion-control mechanism as an algorithm
 to optimize an objective function is traceable to a paper by Frank
 Kelly in 1997, and later extended by Sanjeewa Athuraliya and Steven
 Low to take into account both traffic sources (TCP) and the Active
@@ -369,7 +369,7 @@ Queue Management (AQM) techniques implemented by network routers.
    <http://www.statslab.cam.ac.uk/~frank/elastic.pdf>`__.
    European Transactions on Telecommunications, 8:33–37, 1997.
 
-   S. Athuraliya and S. Low, `An Emperical Validation of a Duality
+   S. Athuraliya and S. Low, `An Empirical Validation of a Duality
    Model of TCP and Active Queue Management Algorithms
    <https://ieeexplore.ieee.org/document/977445>`__.  Proceedings of the
    Winter Simulation Conference, 2001.
@@ -378,15 +378,63 @@ This book does not pursue the mathematical formulation outlined in
 these papers (and the large body of work that followed), but we do
 find it helpful to recognize that there is an established connection
 between optimizing a utility function and the pragmatic aspects of the
-mechanisms described in this book.
+mechanisms described in this book. Congestion control is an area of
+networking in which theory and practice have been productively linked
+to explore the solution space and develop robust approaches to the
+problem. 
 
 1.4 Congestion Control Today
 ----------------------------
 
-identify broader factors that impact the approach: increased
-bandwidth, wireless links, new applications, new use domains (i.e.,
-previous point). The point is that the problem is not fixed; the
-target keeps moving.
+It sometimes feels like networking protocols have all been nailed down
+and standardized for decades, but few areas have remained as dynamic
+as congestion control. While the early work by Jacobson, Karels and
+others laid the foundation, there has been a long series of
+innovations that continue today. We'll cover many of these in detail
+in subsequent chapters, but you can rest assured that new ideas in congestion
+control will continue to emerge for years to come.
+
+Sometimes innovations are necessitated by changes in the
+landscape. For example, as bandwidths increased from megabits to
+gigabits per second, the amount of data in flight at any instant
+increased, which raises the stakes for detecting and responding to
+congestion quickly.  High latency links, such as trans-oceanic cables
+and satellite links added to this problem by raising the round-trip
+time (RTT). These
+situations led to such innovations as using delay (and changes to
+delay) as a congestion signal (first seen in TCP Vegas). Also, with these "fatter pipes", there is a
+greater incentive to get the pipe filled quickly; you don't want to
+spend 10 RTTs figuring out how quickly you can send data
+if your message could have been sent in one or two RTTs. This led to
+efforts to more quickly determine the bottleneck bandwidth, such as
+XCP, RCP, and Quick-start for TCP.
+
+Wireless networks, which became mainstream long after the early days
+of TCP, added a new issue to the mix: loss was no longer a reliable
+congestion signal. This led to a range of approaches to either hide
+the loss from the TCP hosts or to improve the mechanisms by which TCP
+detects congestion.
+
+New applications have also contributed to the interest in improving
+congestion control. One salient example is the rise of video streaming
+as the (currently) dominant source of traffic on the Internet. Again,
+there were many approaches developed to make video work better under
+conditions of congestion. One that has enjoyed great success is
+*Dynamic Adaptive Streaming over HTTP* (DASH), in which the server
+delivering the video switches from one quality of encoding to another
+(and hence from one bit-rate to another) in response to the measured
+congestion on the path to the receiver. This moves the congestion
+control loop up to the application layer, or rather, it adds a second
+control loop on top of the one already provided by TCP. 
+
+This quick tour of innovations is hardly exhaustive, and we will see
+more detail on these and other approaches in the coming chapters. The
+important thing to understand at this point is that congestion control
+continues to evolve as the technology landscape and application
+requirements change.
+
+
+
 
 1.5 Visualizing Congestion Control
 -----------------------------------
