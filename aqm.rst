@@ -1,32 +1,49 @@
 Chapter 7:  Active Queue Management
 ===================================
 
-We now look at *Active Queue Management* (AQM), an approach that
-requires changes to routers, which has never been the Internet’s
-preferred way of introducing new features, but nonetheless, has been a
-constant source of consternation over the last 20 years. The problem
-is that while it’s generally agreed that routers are in an ideal
-position to detect the onset of congestion—i.e., their queues start to
-fill up—there has not been a consensus on exactly what the best
-algorithm is. The following describes two of the classic mechanisms,
-and concludes with a brief discussion of where things stand today.
+We now look at the role routers can play in congestion control, an
+appproach often referred to as *Active Queue Management* (AQM).  By
+their very nature, AQM introduces an element of avoidance to the
+end-to-end solution, even when paired with a contro-based approach
+like TCP Reno.
+
+Changing router behavior has never been the Internet’s preferred way
+of introducing new features, but nonetheless, has been a constant
+source of consternation over the last 30 years. The problem is that
+while it’s generally agreed that routers are in an ideal position to
+detect the onset of congestion—i.e., their queues start to fill
+up—there has not been a consensus on exactly what the best algorithm
+is. The following describes two of the classic mechanisms, and
+concludes with a brief discussion of where things stand today.
 
 7.1 DECbit
 ----------
 
 The first mechanism was developed for use on the Digital Network
-Architecture (DNA), a connectionless network with a connection-oriented
-transport protocol. This mechanism could, therefore, also be applied to
-TCP and IP. As noted above, the idea here is to more evenly split the
-responsibility for congestion control between the routers and the end
-nodes. Each router monitors the load it is experiencing and explicitly
-notifies the end nodes when congestion is about to occur. This
-notification is implemented by setting a binary congestion bit in the
-packets that flow through the router, hence the name *DECbit*. The
-destination host then copies this congestion bit into the ACK it sends
-back to the source. Finally, the source adjusts its sending rate so as
-to avoid congestion. The following discussion describes the algorithm in
-more detail, starting with what happens in the router.
+Architecture (DNA), an early peer of the TCP/IP Internet that also
+adopted a connectionless/best-effort network model. A description
+of the approach, published by K.K. Ramakrishnan and Raj Jain, was
+presented at the same SIGCOMM as the Jacobson/Karels paper in 1988.
+
+.. _reading_decbit:
+.. admonition:: Further Reading 
+
+      K.K. Ramakrishnan and R. Jain.
+      `A Binary Feedback Scheme for
+      Congestion Avoidance in Computer Networks with a Connectionless
+      Network Layer <https://dl.acm.org/doi/pdf/10.1145/52324.52355>`__.
+      ACM SIGCOMM, August 1988.
+
+The idea was to more evenly split the responsibility for congestion
+control between the routers and the end hosts. Each router monitors
+the load it is experiencing and explicitly notifies the end nodes when
+congestion is about to occur. This notification was implemented by
+setting a binary congestion bit in the packets that flow through the
+router, which came to be known as the *DECbit*. The destination host
+then copies this congestion bit into the ACK it sends back to the
+source. Finally, the source adjusts its sending rate so as to avoid
+congestion. The following discussion describes the algorithm in more
+detail, starting with what happens in the router.
 
 A single congestion bit is added to the packet header. A router sets
 this bit in a packet if its average queue length is greater than or
@@ -72,6 +89,13 @@ queue length and, when it detects that congestion is imminent, to notify
 the source to adjust its congestion window. RED, invented by Sally Floyd
 and Van Jacobson in the early 1990s, differs from the DECbit scheme in
 two major ways.
+
+.. _reading_red:
+.. admonition:: Further Reading 
+
+	S. Floyd and V.  Jacobson `Random Early Detection (RED)
+	Gateways for Congestion Avoidance <http://www.icir.org/floyd/papers/early.twocolumn.pdf>`__.
+	IEEE/ACM Transactions on Networking. August 1993.
 
 The first is that rather than explicitly sending a congestion
 notification message to the source, RED is most commonly implemented
@@ -249,23 +273,20 @@ high-bandwidth flows more than low-bandwidth flows, it increases the
 probability of a TCP restart, which is doubly painful for those
 high-bandwidth flows.
 
-.. _key-red:
-.. admonition:: Key Takeaway
 
-   Note that a fair amount of analysis has gone into setting the
-   various RED parameters—for example, ``MaxThreshold``,
-   ``MinThreshold``, ``MaxP`` and ``Weight``—all in the name of
-   optimizing the power function (throughput-to-delay ratio). The
-   performance of these parameters has also been confirmed through
-   simulation, and the algorithm has been shown not to be overly
-   sensitive to them. It is important to keep in mind, however, that
-   all of this analysis and simulation hinges on a particular
-   characterization of the network workload. The real contribution of
-   RED is a mechanism by which the router can more accurately manage
-   its queue length. Defining precisely what constitutes an optimal
-   queue length depends on the traffic mix and is still a subject of
-   research, with real information now being gathered from operational
-   deployment of RED in the Internet.
+A fair amount of analysis has gone into setting the various RED
+parameters—for example, ``MaxThreshold``, ``MinThreshold``, ``MaxP``
+and ``Weight``—all in the name of optimizing the power function
+(throughput-to-delay ratio). The performance of these parameters has
+also been confirmed through simulation, and the algorithm has been
+shown not to be overly sensitive to them. It is important to keep in
+mind, however, that all of this analysis and simulation hinges on a
+particular characterization of the network workload. The real
+contribution of RED is a mechanism by which the router can more
+accurately manage its queue length. Defining precisely what
+constitutes an optimal queue length depends on the traffic mix and is
+still a subject of research, with real information now being gathered
+from operational deployment of RED in the Internet.
 
 Consider the setting of the two thresholds, ``MinThreshold`` and
 ``MaxThreshold``. If the traffic is fairly bursty, then ``MinThreshold``
@@ -310,6 +331,19 @@ traffic from others. There is also the possibility that a variant of RED
 could drop more heavily from flows that are unresponsive to the initial
 hints that it sends.
 
+As a footnote, 15 prominant network researcher urged for the
+widespread adoption of RED-inspired AQM in 1998. The recommendation
+was largely ignored, although subsequently, the approach has been
+applied with success in datacenters.
+
+.. _reading_rfc:
+.. admonition:: Further Reading 
+
+      R. Braden, et. al. 
+      `Recommendations on Queue Management and Congestion Avoidance in the Internet
+      <https://tools.ietf.org/html/rfc2309>`__.
+      RFC 2309, April 1998.
+
 7.3 Explicit Congestion Notification
 ------------------------------------
 
@@ -349,9 +383,8 @@ recommended, it is not required. Moreover, there is no single
 recommended AQM algorithm, but instead, there is a list of requirements
 a good AQM algorithm should meet. Like TCP congestion control
 algorithms, every AQM algorithm has its advantages and disadvantages,
-and so we need a lot of them. There is one particular scenario, however,
-where the TCP congestion control algorithm and AQM algorithm are
-designed to work in concert: the datacenter. We return to this use case
-at the end of this section.
+and so we need a lot of them.
+
+
 
 
