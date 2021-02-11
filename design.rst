@@ -167,11 +167,20 @@ onset of queue build-up and slow down before they actually overflow.
 We refer to the mechanisms of the first type as *control-based*, and
 we refer to mechanisms of the second type as *avoidance-based*.
 
-This distinction is often overlooked—and the term "congestion control"
-is used generically to refer to both—but our take is that the
-distinction represents and important difference, and so we will call
-it out when appropriate.  Admittedly, we will also fall back to the
-generic use of "congestion control" when the distinction is not
+.. _reading_avoidance:
+.. admonition:: Further Reading 
+
+	R. Jain aad K. K. Ramakrishnan. `Congestion Avoidance in
+	Computer Networks with a Counectionless Network Layer:
+	Concepts, Goals and Methodology. <https://arxiv.org/pdf/cs/9809095.pdf>`__.
+	Computer Networking Symposium, April 1988.  SIGCOMM 1988.
+
+This distinction was first called out by Raj Jain and
+K.K. Ramakrishnan Jain in 1988.  It is often overlooked—and the term
+"congestion control" is used generically to refer to both—but our take
+is that the distinction represents and important difference, and so we
+will call it out when appropriate.  Admittedly, we will also fall back
+to the generic use of "congestion control" when the distinction is not
 critical to the discussion, but we will say "control-based" or
 "avoidance-based" when the distinction is relevant.
 

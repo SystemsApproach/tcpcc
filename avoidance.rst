@@ -1,45 +1,42 @@
 Chapter 5:  Avoidance-Based Algorithms
 ======================================
 
-..
-	The following is cut-and-pasted, and still needs attention.
+A review of the academic literature on TCP congestion control shows a
+notiable gap between the original TCP Tahoe and Reno mechanisms
+introduced in 1988 and 1990, respectively, and the next major flurry
+of activity starting in 1994, marked by the introduction of an
+alternative approach known as TCP Vegas. This triggered an avalanche
+of comparative studies and alternative designs that would persist for
+the next 25+ years.
 
-..
-	If the "Original Algorithm" is reframed as a case studty on
-	control-based approaches, then this one could be framed as a
-	case study of avoidance-based approaches: Vegas / NV / BBR.
-	This would imply introducing another chapter on "other"
-	algorithms target at more specific use cases: Datacenters
-	(DCTCP) and Scavengers (LEDBAT). -llp
-
+TCP Vegas takes an *avoidance-based* approach to congestion control in
+that it tries to detect changes in the measured throughput rate, and
+adjust the sending rate before congestion becomes severe enough to
+cause packet loss. This chapter describes the general "Vegas strategy"
+and—as we did with Tahoe/Reno in the previous chapter—walks through
+the incremental changes applied to that strategy over time. This case
+study culminates in the BBR algorithm championed by Google today.
 
 5.1 TCP Vegas
 -------------
 
-The mechanism we are going to describe looks at changes in the
-throughput rate or, more specifically, changes in the sending
-rate. However, it differs from the previous algorithm in the way it
-calculates throughput, and instead of looking for a change in the
-slope of the throughput it compares the measured throughput rate with
-an expected throughput rate. The algorithm, TCP Vegas, is not widely
-deployed in the Internet today, but the strategy it uses has been
-adopted by other implementations that are now being deployed.
-
-The intuition behind the Vegas algorithm can be seen in the trace of
-standard TCP given in :numref:`Figure %s <fig-trace3>`. The top graph
-shown in :numref:`Figure %s <fig-trace3>` traces the connection’s
-congestion window; it shows the same information as the traces given
-earlier in this section.  The middle and bottom graphs depict new
-information: The middle graph shows the average sending rate as
-measured at the source, and the bottom graph shows the average queue
-length as measured at the bottleneck router. All three graphs are
-synchronized in time. In the period between 4.5 and 6.0 seconds
-(shaded region), the congestion window increases (top graph). We
-expect the observed throughput to also increase, but instead it stays
-flat (middle graph). This is because the throughput cannot increase
-beyond the available bandwidth. Beyond this point, any increase in the
-window size only results in packets taking up buffer space at the
-bottleneck router (bottom graph).
+The essential idea behind TCP Vegas is to adapt the sending rate based
+on a comparison of the *measured* throughput rate with the *expected*
+throughput rate. The intuition can be seen in the trace of TCP Reno
+given in :numref:`Figure %s <fig-trace3>`. The top graph shown in
+:numref:`Figure %s <fig-trace3>` traces the connection’s congestion
+window; it shows the same information as the traces given earlier in
+this section.  The middle and bottom graphs depict new information:
+The middle graph shows the average sending rate as measured at the
+source, and the bottom graph shows the average queue length as
+measured at the bottleneck router. All three graphs are synchronized
+in time. In the period between 4.5 and 6.0 seconds (shaded region),
+the congestion window increases (top graph). We expect the observed
+throughput to also increase, but instead it stays flat (middle
+graph). This is because the throughput cannot increase beyond the
+available bandwidth. Beyond this point, any increase in the window
+size only results in packets taking up buffer space at the bottleneck
+router (bottom graph).
 
 .. _fig-trace3:
 .. figure:: figures/f06-18-9780123850591.png
@@ -58,7 +55,7 @@ A useful metaphor that describes the phenomenon illustrated in
 :numref:`Figure %s <fig-trace3>` is driving on ice. The speedometer
 (congestion window) may say that you are going 30 miles an hour, but
 by looking out the car window and seeing people pass you on foot
-(measured sending rate) you know that you are going no more than 5
+(measured throughput rate) you know that you are going no more than 5
 miles an hour. The extra energy is being absorbed by the car’s tires
 (router buffers).
 
@@ -172,9 +169,17 @@ dropped.
 5.2 New Vegas
 ---------------
 
+..
+	Case-study mode: Highlight experience/limitations/solutions.
+	Maybe mention other derivatives, including TCP FAST. -llp
+
 5.3 TCP BBR 
 ---------------
 
+..
+	This is too brief. Exposing the churn of ideas and ongoing
+	tweaks is fine. -llp
+	
 BBR (Bottleneck Bandwidth and RTT) is a new TCP congestion control
 algorithm developed by researchers at Google. Like Vegas, BBR is delay
 based, which means it tries to detect buffer growth so as to avoid
