@@ -3,13 +3,15 @@ Chapter 2:  Background
 
 ..
 	This chapter still includes too much detail.
+        For my taste, including the IP header is overkill - bsd
 
 To understand the Internet's approach to congestion, it's necessary to
 first talk about the assumptions and design decisions built into the
 Internet architecture. This chapter does that, and in doing so, gives
 enough detail about the TCP/IP protocol stack to understand the
 specifics of the congestion control mechanisms introduced in later
-chapters. For more complete coverage of TCP and IP, we recommend
+chapters. For more complete coverage of TCP and IP, we recommend the
+following. 
 
 .. _reading_tcpip:
 .. admonition:: Further Reading 
@@ -25,11 +27,16 @@ service model, as specified by the Internet Protocol (IP) and
 implemented by switches and routers. Being *connectionless* means
 every IP packet carries enough information for the network to forward
 it to its correct destination; there is no setup mechanism to tell the
-network what to do when packets arrive.  Being *best-effort* means
+network what to do when packets arrive.   *Best-effort* means
 that if something goes wrong and the packet gets lost, corrupted, or
-misdelivered while enroute, the network does nothing to recover from
+misdelivered while en route, the network does nothing to recover from
 the failure. This approach was intentionally designed to keep routers
-as simple as possible.
+as simple as possible, and is generally viewed as an implementation
+based on the *end-to-end argument* [#]_.
+
+.. [#] `End-to-End Arguments in System Design
+       <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__,
+       J. Saltzer, D. Clark and D. Reed, 1981. 
 
 Best-effort delivery does not just mean that packets can get lost.
 Sometimes they can get delivered out of order, and sometimes the same
@@ -37,14 +44,16 @@ packet can get delivered more than once. The higher-level protocols or
 applications that run above IP need to be aware of all these possible
 failure modes.
 
-One consequence of this design is that a given source may have more
-than enough capacity on the immediate outgoing link to send a packet,
+One consequence of this design is that a given source may have ample
+capacity to send traffic into the network at some rate,
 but somewhere in the middle of a network its packets encounter a link
 that is being used by many different traffic sources. :numref:`Figure
-%s <fig-congestion>` illustrates this situation—two high-speed links
-are feeding a low-speed link. The router is able to queue (buffer)
-packets for a while, but if the problem persists, the queue will
-overflow.  This is the very definition of congestion.
+%s <fig-congestion>` illustrates an acute example of this situation—two high-speed links
+are leading into a router which then feeds outgoing traffic onto a low-speed link. The router is able to queue (buffer)
+packets for a while, but if the problem persists, the queue will first
+grow to some length, and eventually (because it is finite) it will
+overflow, leading to packet loss.  This situation, where offered load
+exceeds link capacity, is the very definition of congestion.
 
 .. _fig-congestion:
 .. figure:: figures/f06-01-9780123850591.png
@@ -53,35 +62,38 @@ overflow.  This is the very definition of congestion.
 
    Congestion at a bottleneck router.
 
-Note that avoiding congestion is a different problem than routing.
-While it is true that a congested link could be assigned a large edge
-weight by the routing protocol, and, as a consequence, routers would
-route around it, “routing around” a congested link does not generally
-solve the congestion problem. To see this, we need look no further
+Note that avoiding congestion is generally not a problem that can be fully
+addressed by routing. 
+While it is true that a congested link could be assigned a large
+"cost" by a routing protocol, in an effort to make traffic avoid that
+link, this can't solve the overall problem of too much traffic being
+offered to a bottleneck link. To see this, we need look no further
 than the simple network depicted in :numref:`Figure %s
 <fig-congestion>`, where all traffic has to flow through the same
 router to reach the destination. Although this is an extreme example,
-it is common to have a certain router that it is not possible to route
-around. This router can become congested, and there is nothing the
+it is common to have at least one link that it is not possible to route
+around. This link, and the router that feeds packets into it, can become congested, and there is nothing the
 routing mechanism can do about it. This congested router is said to be
-the *bottleneck* router.
+the *bottleneck* router, and it feeds the bottleneck link.
 
 Flows and Soft State
 ~~~~~~~~~~~~~~~~~~~~
 
 Because the Internet assumes a connectionless model, any
 connection-oriented service is implemented by an end-to-end transport
-protocol running on the end hosts. There is no connection setup phase
-implemented within the network (corresponding, for example, to
-establishing a virtual circuit), and as a consequence, there is no
+protocol running on the end hosts (such as TCP). There is no connection setup phase
+implemented within the network (in contrast to some other packet
+networks that use virtual circuits), and as a consequence, there is no
 mechanism for individual routers to pre-allocate buffer space or link
 bandwidth to active connections.
 
 The lack of an explicit connection setup phase does not imply that
 routers must be completely unaware of end-to-end connections. IP
-packets are switched independently, but it is usually the case that a
-stream of packets between a given pair of hosts flows through a
-particular set of routers. This idea of a *flow*—a sequence of packets
+packets are switched independently, but it is often the case that a
+given pair hosts exchange many packets consecutively, e.g. as a large
+video file is downloaded by a client from a server. Furthermore, a given
+stream of packets between a pair of hosts often flows through a
+consistent set of routers. This idea of a *flow*—a sequence of packets
 sent between a source/destination pair and following the same route
 through the network—is an important abstraction that we will use in
 later chapters.
@@ -101,9 +113,9 @@ passing through a series of routers.
    Multiple flows passing through a set of routers.
    
 Because multiple related packets flow through each router, it sometimes
-makes sense to maintain some state information for each flow,
-information that can be used to make resource allocation decisions about
-the packets that belong to the flow. This state is sometimes called
+makes sense to maintain some state information for each flow, which
+can be used to make resource allocation decisions about
+the packets of that flow. This state is sometimes called
 *soft state*. The main difference between soft state and hard state is
 that soft state need not always be explicitly created and removed by
 signalling. Soft state represents a middle ground between a purely
@@ -170,13 +182,16 @@ The most common queuing algorithm is *First-In/First-Out (FIFO)*.  The
 idea is simple: The first packet that arrives at a router is the first
 packet to be transmitted. This is illustrated in :numref:`Figure %s(a)
 <fig-fifo>`, which shows a FIFO with “slots” to hold up to eight
-packets. Given that the amount of buffer space at each router is
+packets. Packets are added at the tail as they arrive, and transmitted
+from the head. Thus, FIFO ordering is preserved.
+
+Given that the amount of buffer space at each router is
 finite, if a packet arrives and the queue (buffer space) is full, then
 the router discards that packet, as shown in :numref:`Figure %s(b)
 <fig-fifo>`. This is done without regard to which flow the packet
 belongs to or how important the packet is. This is sometimes called
 *tail drop*, since packets that arrive at the tail end of the FIFO are
-dropped.
+dropped if the queue is full.
 
 .. _fig-fifo:
 .. figure:: figures/f06-05-9780123850591.png
@@ -191,7 +206,7 @@ transmitted. Tail drop is a *drop policy*—it determines which packets
 get dropped. Because FIFO and tail drop are the simplest instances of
 scheduling discipline and drop policy, respectively, they are
 sometimes viewed as a bundle—the default queuing
-implementation. Chapter 7 presents another drop policy, which uses a
+implementation. Chapter 7 examines other drop policies, which use a
 more complex algorithm than “Is there a free buffer?” to decide when
 to drop packets. Such a drop policy may be used with FIFO, or with
 more complex scheduling disciplines.
@@ -201,13 +216,14 @@ more complex scheduling disciplines.
 	*Fair Queuing (FQ) is an alternative to FIFO queuing, commonly
         used to implement QoS guarantees.  The idea of FQ is to
         maintain a separate queue for each flow currently being
-        handled by the router. The router then services these queues
-        in round-robin order. When a flow sends packets too quickly,
-        the queue assigned to it fills up. When a queue reaches a
-        particular length, additional packets belonging to that flow
-        are discarded. In this way, a given source cannot arbitrarily
-        increase its share of the network’s capacity at the expense
-        of other flows.*
+        handled by the router (for some flow granularity). The router
+        then services these queues in round-robin order (in the
+        simplest version of FQ). If the router is congested with
+        traffic from several flows, FQ ensures that no single flow can
+        dominate the outgoing link—each flow will get a share of the
+        link.  In this way, a given source cannot arbitrarily increase
+        its share of the network’s capacity at the expense of other
+        flows.*
 
 	*FQ can be used in conjunction with an end-to-end
         congestion-control mechanism. It simply segregates traffic so
@@ -229,11 +245,11 @@ End-to-End Issues
 ~~~~~~~~~~~~~~~~~
 
 At the heart of TCP is the sliding window algorithm, which in addition
-to its familiar acknowledgement/timeout/retransmit mechanism, has to
+to its familiar acknowledgment/timeout/retransmit mechanism, has to
 address the following complications.
 
-First, because TCP supports logical connections between processes that
-are running on any two computers in the Internet, it needs an explicit
+First, because TCP supports logical connections between two processes that
+are running on any two computers connected to the Internet, it needs an explicit
 connection establishment phase during which the two sides agree to
 exchange data with each other. One of the things that happens during
 connection establishment is that the two parties establish some shared
@@ -258,9 +274,13 @@ not cause a problem since the sliding window algorithm can reorder
 packets correctly using the sequence number. The real issue is how far
 out of order packets can get or, said another way, how late a packet
 can arrive at the destination. In the worst case, a packet can be
-delayed in the Internet until the IP time to live (``TTL``) field
-expires, at which time the packet is discarded (and hence there is no
-danger of it arriving late). Knowing that IP throws packets away after
+delayed in the Internet almost arbitrarily. Each time a packet is
+forwarded by a router, the IP time to live (``TTL``) field is
+decremented, and eventually it reaches zero, at which time the
+packet is discarded (and hence there is no 
+danger of it arriving late). Note that TTL is something of a misnomer
+and was renamed to the more accurate Hop Count in IPv6. Knowing that
+IP throws packets away after 
 their ``TTL`` expires, TCP assumes that each packet has a maximum
 lifetime. The exact lifetime, known as the *maximum segment lifetime*
 (MSL), is an engineering choice. The current recommended setting is
@@ -283,9 +303,10 @@ Fifth, the sending side of a TCP connection has no idea what links
 will be traversed to reach the destination. For example, the sending
 machine might be directly connected to a relatively fast Ethernet—and
 capable of sending data at a rate of 10 Gbps—but somewhere out in the
-middle of the network, a 1.5-Mbps link must be traversed. And, to make
+middle of the network, a 1.5 Mbps link must be traversed. And, to make
 matters worse, data being generated by many different sources might be
-trying to traverse this same slow link. This is the essential factor
+trying to traverse this same slow link. Even a fast link will get
+congested if enough flows converge on it. This is the essential factor
 leading to congestion, which we will address in later chapters.
 
 Segment Format
@@ -341,16 +362,16 @@ send and receive data, and closed, and then at a later time for the same
 pair of ports to be involved in a second connection. We sometimes refer
 to this situation as two different *incarnations* of the same connection.
 
-The ``Acknowledgement``, ``SequenceNum``, and ``AdvertisedWindow``
+The ``Acknowledgment``, ``SequenceNum``, and ``AdvertisedWindow``
 fields are all involved in TCP’s sliding window algorithm. Because TCP
 is a byte-oriented protocol, each byte of data has a sequence number.
 The ``SequenceNum`` field contains the sequence number for the first
-byte of data carried in that segment, and the ``Acknowledgement`` and
+byte of data carried in that segment, and the ``Acknowledgment`` and
 ``AdvertisedWindow`` fields carry information about the flow of data
 going in the other direction. To simplify our discussion, we ignore
 the fact that data can flow in both directions, and we concentrate on
 data that has a particular ``SequenceNum`` flowing in one direction
-and ``Acknowledgement`` and ``AdvertisedWindow`` values flowing in the
+and ``Acknowledgment`` and ``AdvertisedWindow`` values flowing in the
 opposite direction, as illustrated in :numref:`Figure %s
 <fig-tcp-flow>`.
 
@@ -366,7 +387,7 @@ opposite direction, as illustrated in :numref:`Figure %s
 The 6-bit ``Flags`` field is used to relay control information between
 TCP peers. They include the ``SYN`` and ``FIN`` flags, which are used
 when establishing and terminating a connection, and the ``ACK`` flag,
-which is set any time the ``Acknowledgement`` field is valid (implying
+which is set any time the ``Acknowledgment`` field is valid (implying
 that the receiver should pay attention to it).
 
 Finally, the TCP header is of variable length (options can be attached
@@ -388,8 +409,8 @@ Reliable and Ordered Delivery
 TCP’s variant of the sliding window algorithm serves two main
 purposes: (1) it guarantees the reliable, in-order delivery of data,
 and (2) it enforces flow control between the sender and the receiver.
-On latter point, rather than having a fixed-size sliding window,
-the receiver *advertises* a window size to the sender. This is done
+To implement flow control, 
+the receiver chooses a sliding window size and *advertises* it to the sender
 using the ``AdvertisedWindow`` field in the TCP header. The sender is
 then limited to having no more than a value of ``AdvertisedWindow``
 bytes of unacknowledged data at any given time. The receiver selects a
@@ -397,8 +418,9 @@ suitable value for ``AdvertisedWindow`` based on the amount of memory
 allocated to the connection for the purpose of buffering data. The
 idea is to keep the sender from over-running the receiver’s buffer.
 
-To see how the sending and receiving sides of TCP interact with each
-other to implement reliable and ordered delivery, consider the
+
+
+To see how TCP's sliding window works, consider the
 situation illustrated in :numref:`Figure %s <fig-tcp-fc>`. TCP on the
 sending side maintains a send buffer. This buffer is used to store
 data that has been sent but not yet acknowledged, as well as data that
@@ -421,6 +443,11 @@ the fact that both the buffers and the sequence numbers are of some
 finite size and hence will eventually wrap around. Also, we do not
 distinguish between a pointer into a buffer where a particular byte of
 data is stored and the sequence number for that byte.
+
+..
+      Let's double check all of this as we seem to get it wrong
+      periodically
+      
 
 Looking first at the sending side, three pointers are maintained into
 the send buffer, each with an obvious meaning: ``LastByteAcked``,
@@ -455,9 +482,17 @@ Flow Control
 
 The discussion up to this point assumes the receiver is able to keep
 pace with the sender, but because this is not necessarily the case and
-the both the sender and receiver have buffers of some fixes size, the
+the both the sender and receiver have buffers of some fixed size, the
 receiver needs some way to slow down the sender. This is the essence
 of flow control.
+
+While we have already pointed out that flow control and congestion
+control are different problems, it's important to understand how flow
+control works first, because the windowing mechanism used to implement
+flow control turns out to have an important role in congestion control
+too. Windowing provides the sender with clear instructions on how much
+data can be "in flight" (not yet acknowledged) which is essential for
+both problems. 
 
 In what follows, we reintroduce the fact that both buffers are of some
 finite size, denoted ``SendBufferSize`` and ``RcvBufferSize``,
@@ -552,7 +587,7 @@ since the last time they were sent. The problem is this. Once the
 receive side has advertised a window size of 0, the sender is not
 permitted to send any more data, which means it has no way to discover
 that the advertised window is no longer 0 at some time in the
-future. TCP on the receive side does not spontaneously send nondata
+future. TCP on the receive side does not spontaneously send non-data
 segments; it only sends them in response to an arriving data segment.
 
 TCP deals with this situation as follows. Whenever the other side
