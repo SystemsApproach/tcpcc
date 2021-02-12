@@ -9,6 +9,15 @@ alternative approach known as TCP Vegas. This triggered an avalanche
 of comparative studies and alternative designs that would persist for
 the next 25+ years.
 
+.. _reading_vegas:
+.. admonition:: Further Reading 
+
+      L. Brakmo, S. O'Malley and L. Peterson
+      `TCP Vegas: New Technique for Congestion Detection and Avoidance
+      <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
+      ACM SIGCOMM. August 1994. (Reprinted in IEEE/ACM Transactions on
+      Networking, October 1995).
+
 TCP Vegas takes an *avoidance-based* approach to congestion control in
 that it tries to detect changes in the measured throughput rate, and
 adjust the sending rate before congestion becomes severe enough to
@@ -22,18 +31,7 @@ study culminates in the BBR algorithm championed by Google today.
 
 The essential idea behind TCP Vegas is to adapt the sending rate based
 on a comparison of the *measured* throughput rate with the *expected*
-throughput rate. The algorithm was described by the authors in 1995
-(after being presented at SIGCOMM in 1994):
-
-.. _reading_vegas:
-.. admonition:: Further Reading 
-
-      L. Brakmo and L. Peterson
-      `TCP Vegas: End-to-End Congestion Avoidance on a Global Internet
-      <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
-      IEEE Journal on Selected Areas in Communications. October 1995.
-
-The intuition can be seen in the trace of TCP Reno
+throughput rate. The intuition can be seen in the trace of TCP Reno
 given in :numref:`Figure %s <fig-trace3>`. The top graph shown in
 :numref:`Figure %s <fig-trace3>` traces the connection’s congestion
 window; it shows the same information as the traces given earlier in
