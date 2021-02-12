@@ -1,6 +1,5 @@
 Chapter 1:  Introduction
 ========================
-
 	
 The Internet is considered an engineering success with few peers, and
 rightfully so. It has scaled to connect billions of devices, supports
@@ -20,16 +19,14 @@ deployed in the early 1980s.  By the end of the decade, however, with the
 Internet gaining serious use in universities (but predating
 the World Wide Web's invention by several years), the network began
 to experience a
-phenomenon known as *congestion collapse* [#]_. A solution—congestion
+phenomenon known as *congestion collapse* . A solution—congestion
 control—was developed and deployed in the late 1980s and the
 immediate crisis was addressed. The
 Internet community has been studying and refining its approach to
 congestion control ever since. This book is about that journey.
 
-.. [#] Ten years earlier a similar effect, called *thrashing*, had plagued the pioneers in time-shared computing systems.
-   
 The most famous early efforts to manage congestion were undertaken by two
-researchers, Jacobson and Karels. The resulting paper, 
+researchers, Van Jacobson and Mike Karels. The resulting paper, 
 *Congestion Avoidance and Control*, published in 1988, is one of the
 most cited papers in networking of all time. There are
 good reasons for that. One is that congestion collapse really did
@@ -55,9 +52,9 @@ have been developed over the last three decades.
 .. _reading_vj:
 .. admonition:: Further Reading
 
-   V.Jacobson `Congestion Avoidance and Control
+   V. Jacobson `Congestion Avoidance and Control
    <https://dl.acm.org/doi/10.1145/52324.52356>`__.
-   SIGCOMM '88 Symposium, August 1988.
+   ACM SIGCOMM '88 Symposium, August 1988.
 
 
 1.1 What is Congestion?
@@ -92,17 +89,15 @@ packet networks than for highways, but it is equally problematic [#]_.
        congestion and network congestion, but it's important to
        recognize that analogies are imperfect.
    
-This book focuses on congestion control for packet-switched networks. A
-fundamental aspect in packet switching is *multiplexing*, which means
-that a system resource—such as a link or a queue in a router—
-is shared among multiple users or applications. Furthermore, packet networks are *statistically
-multiplexed*, which means that they are based on the idea that packets
-show up somewhat randomly, and we rely on the statistical properties
-of those arrivals to ensure that we don't run out of resources. The
-existence of congestion collapse shows that sometimes the statistics
-don't quite work out as we'd like.
-
-
+This book focuses on congestion control for packet-switched
+networks. A fundamental aspect in packet switching is *multiplexing*,
+which means that a system resource—such as a link or a queue in a
+router— is shared among multiple users or applications. Furthermore,
+packet networks are *statistically multiplexed*, which means that, as
+packets show up somewhat randomly, we rely on the statistical
+properties of those arrivals to ensure that we don't run out of
+resources. The existence of congestion collapse shows that sometimes
+the statistics don't quite work out as we'd like.
 
 To see how this might work, consider the simple network illustrated in
 :numref:`Figure %s <fig-mux>`, where the three hosts on the left side
@@ -113,9 +108,8 @@ is sending data to host R1, and so on.) In this situation, three flows
 of data—corresponding to the three pairs of hosts—are multiplexed onto
 a single physical link by switch 1 and then *demultiplexed* back into
 separate flows by switch 2. Note that we are being intentionally vague
-about exactly what a “flow of data” corresponds to. For the purposes
-of this discussion, assume that each host on the left has a large
-supply of data that it wants to send to its counterpart on the right.
+about exactly what a “flow of data” corresponds to for now, but we
+will make this more precise in later chapters.
 
 .. _fig-mux:
 .. figure:: figures/f01-05-9780123850591.png
@@ -124,7 +118,6 @@ supply of data that it wants to send to its counterpart on the right.
    
    Multiplexing multiple logical flows over a single
    physical link.
-
 
 Statistical multiplexing means that all the hosts in this network send
 packets whenever it suits them, and if it happens that several packets
@@ -166,8 +159,8 @@ in a round-robin manner. This might be done to ensure that certain
 flows receive a particular share of the link’s bandwidth or that they
 never have their packets delayed in the switch for more than a certain
 length of time. A network that attempts to allocate bandwidth to
-particular flows is sometimes said to support *quality of service*
-(QoS).
+particular flows is sometimes said to support *Quality-of-Service
+(QoS)*.
 
 One thing to take away from this discussion is that it is in the
 nature of packet-switched networks that they will sometimes be
@@ -175,12 +168,8 @@ congested. The focus of this book is on the large body of work that
 has been done to mitigate congestion, either by responding to it in
 effective ways to lessen it, or by preventing it before it occurs.
 
-
-
 1.2 Controlling Congestion
 ---------------------------
-
-  
 
 Resource allocation and congestion control are complex issues that have
 been the subject of much study ever since the first network was
@@ -192,7 +181,7 @@ transport protocol running on the end hosts. End systems may use
 signalling protocols to convey their resource requirements to network
 nodes, which respond with information about resource
 availability. Application protocols may themselves be designed to mitigate
-congestion, e.g. by changing the resolution of video transmission
+congestion, for example, by changing the resolution of video transmission
 based on the current network conditions. This is a canonical example
 of a *systems issue*: you can't fully understand congestion without
 looking at all the places in the system that it touches.
@@ -236,7 +225,8 @@ as they arrived, placed them in a queue whenever the outbound link
 capacity was less than the arrival rate, served the queue by the FIFO
 discipline, and dropped arriving packets if they queue was full
 ("tail-drop"). This is still common today, although other approaches
-are also common now.
+to managing router queues—a technical pursuit often referred to
+*Active Queue Management (AQM)*\—have also been deployed.
 
 The reason that congestion collapse occurred in this scenario is that
 dropped packets are not just discarded and forgotten. When the
@@ -276,7 +266,6 @@ physical realms such as supermarket checkouts and road congestion. The
 standard reference on queueing for packet networks was written by one
 of the early pioneers of the ARPANET, Leonard Kleinrock.
 
-
 .. _reading_queue:
 .. admonition:: Further Reading
 
@@ -299,30 +288,28 @@ models, of which the following are two.
 
    V. Paxson and S. Floyd, `Wide-Area Traffic: The Failure of Poisson Modeling
    <https://www.icir.org/vern/papers/poisson.TON.pdf>`__.
-   IEEE/ACM Transactions on Networking, Jun 1995.
+   IEEE/ACM Transactions on Networking, June 1995.
 
          
    W. Leland *et al*,  `On the self-similar nature of Ethernet
    traffic
    <https://doi.org/10.1145/167954.166255>`__.
-   ACM SIGCOMM, 1993.
-          
-         
+   ACM SIGCOMM '93 Symposium, August 1993.
 
 These papers and others contributed to the consensus that Internet
 traffic is much more “bursty”—packets arrive in clumps—than had been
 assumed by early models.  Furthermore, this burstiness displays
-*self-similarity*. Self-similarity is a property of fractals—when
-you zoom in, you keep on seeing similar complexity at finer
-resolutions. For Internet traffic, this means that at any time scale,
-from microseconds to hours, you will see similar sorts of complexity.
+*self-similarity*—a property of fractals, whereby when you zoom in,
+you keep seeing similar complexity at finer resolutions. For Internet
+traffic, this means that at any time scale, from microseconds to
+hours, you will see similar sorts of patterns.
 
 This research had a number of practical consequences, such as the
 realization that packet queues might get to be very long indeed, and
 thus routers and switches should have reasonably large packet
 buffers. (Correctly sizing those buffers became its own research
 topic.) Link utilizations could not be reliably kept close to 100% all
-the time, because you had to allow room for an unforeseen burst.
+the time, because you had to allow room for unpredictable bursts.
 
 Two topics of particular importance when thinking about congestion
 avoidance are *fairness* and *stability*. When the network is
@@ -349,9 +336,6 @@ over the decades. The quest for stability features heavily in the
 early work of Jacobson and Karels and stability remains a requirement that 
 subsequent approaches have to meet. 
 
-..
-	I'd like to include some version of the following. -llp
-
 Finally, much of the theoretical work on congestion control has framed
 the problem as *"a distributed algorithm to share network resources
 among competing sources, where the goal is to choose source rate so as
@@ -359,8 +343,8 @@ to maximize aggregate source utility subject to capacity
 constraints."* Formulating a congestion-control mechanism as an algorithm
 to optimize an objective function is traceable to a paper by Frank
 Kelly in 1997, and later extended by Sanjeewa Athuraliya and Steven
-Low to take into account both traffic sources (TCP) and the Active
-Queue Management (AQM) techniques implemented by network routers.
+Low to take into account both traffic sources (TCP) and router queuing
+techniques (AQM).
 
 .. _reading_kelly_low:
 .. admonition:: Further Reading
@@ -410,10 +394,21 @@ efforts to more quickly determine the bottleneck bandwidth, such as
 XCP, RCP, and Quick-start for TCP.
 
 Wireless networks, which became mainstream long after the early days
-of TCP, added a new issue to the mix: loss was no longer a reliable
-congestion signal. This led to a range of approaches to either hide
-the loss from the TCP hosts or to improve the mechanisms by which TCP
+of TCP, added a new issue to the mix: packet loss was no longer a
+reliable congestion signal, but could instead be attributed to a noisy
+radio channel. This led to a range of approaches to either hide the
+loss from the TCP hosts or to improve the mechanisms by which TCP
 detects congestion.
+
+Cloud datacenters became another "use case" for congestion-control
+mechanisms. Unlike the Internet in general, where end-to-end latencies
+are highly variable, the RTT in a datacenter is both predictable and
+relatively small (<10ms). And because the network is highly regular in
+structure (e.g., a leaf-spine fabric) it is well-understood where and
+under what circumstances congestion is likely to occur. This makes TCP
+running in a datacenter ripe for a purpose-tuned algorithm rather than
+having to use the general-purpose mechanism that runs on the global
+Internet.
 
 New applications have also contributed to the interest in improving
 congestion control. One salient example is the rise of video streaming
@@ -434,9 +429,11 @@ continues to evolve as the technology landscape and application
 requirements change.
 
 
-
-
 1.5 Visualizing Congestion Control
 -----------------------------------
 
-Preview the graphical data presented later in the book to illustrate the dynamic behavior of various algorithms. Related to the evaluation criteria from the previous paragraph. This data serves two purposes: (a) helps reader visualize the algorithms dynamic behavior, and (b) helps us evaluate and compare different algorithms.
+Preview the graphical data presented later in the book to illustrate
+the dynamic behavior of various algorithms. Related to the evaluation
+criteria from the previous paragraph. This data serves two
+purposes: (a) helps reader visualize the algorithms dynamic behavior,
+and (b) helps us evaluate and compare different algorithms.
