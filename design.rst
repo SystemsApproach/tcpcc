@@ -337,8 +337,8 @@ fairness index drops to \ *k/n*.
 	<https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
 	DEC Research Report TR-301, 1984.
 
-Comparative Analysis
-~~~~~~~~~~~~~~~~~~~~~~~
+3.3 Comparative Analysis
+---------------------------
 
 The first step in evaluating any congestion control mechanism is to
 measure its performance in isolation, including:
@@ -355,15 +355,19 @@ measure its performance in isolation, including:
 * The degree to which flows receive a fair share of the available
   capacity.
 
-The inevitable second step is to compare two or more mechanisms.
+The inevitable second step is to compare two or more mechanisms. This
+is because, given the decentralized nature of the Internet, there is
+no way to ensure uniform adoption of a just one mechanism.
 Comparing quantitative metrics like throughput is easy. The problem is
 how to evaluate multiple mechanism that might coexist, competing with
-each other for network resources. Here, the question not whether a
-given mechanism treats all of its flows fairly, but whether mechanism
-A is fair to flows managed by mechanism B. If mechanism A is able to
-measure improved throughput over B, but it does so by being more
-aggressive, and hence, stealing bandwidth from B's flows, then A's
-improvement is not fairly gained and may be discounted.
+each other for network resources.
+
+The question not whether a given mechanism treats all of its flows
+fairly, but whether mechanism A is fair to flows managed by
+mechanism B. If mechanism A is able to measure improved throughput
+over B, but it does so by being more aggressive, and hence, stealing
+bandwidth from B's flows, then A's improvement is not fairly gained
+and may be discounted.
 
 .. _reading_ware:
 .. admonition:: Further Reading
@@ -407,7 +411,3 @@ flows cause other A-managed flows, we can consider B deployable
 alongside A without harm. Ware goes on to propose concrete measures of
 acceptable harm, which we revisit for specific pairwise comparisons
 throughout the book.
-
-..
-	Should we give the proposed measures of harm here? -llp
-	

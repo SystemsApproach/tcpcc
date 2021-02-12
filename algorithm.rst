@@ -619,9 +619,6 @@ controlled network environments (e.g., research networks).
 4.4 Fast Retransmit and Fast Recovery
 -------------------------------------
 
-..
-	Where does New Reno fit into this history? -llp
-
 The mechanisms described so far were part of the original proposal to
 add congestion control to TCP, and they have collectively become know
 as *TCP Tahoe* because they were included in the *Tahoe* release of

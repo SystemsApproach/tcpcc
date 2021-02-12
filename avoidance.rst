@@ -15,8 +15,8 @@ the next 25+ years.
       L. Brakmo, S. O'Malley and L. Peterson
       `TCP Vegas: New Technique for Congestion Detection and Avoidance
       <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
-      ACM SIGCOMM. August 1994. (Reprinted in IEEE/ACM Transactions on
-      Networking, October 1995).
+      ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in IEEE/ACM Transactions 
+      on Networking, October 1995).
 
 TCP Vegas takes an *avoidance-based* approach to congestion control in
 that it tries to detect changes in the measured throughput rate, and
@@ -32,20 +32,19 @@ study culminates in the BBR algorithm championed by Google today.
 The essential idea behind TCP Vegas is to adapt the sending rate based
 on a comparison of the *measured* throughput rate with the *expected*
 throughput rate. The intuition can be seen in the trace of TCP Reno
-given in :numref:`Figure %s <fig-trace3>`. The top graph shown in
-:numref:`Figure %s <fig-trace3>` traces the connection’s congestion
-window; it shows the same information as the traces given earlier in
-this section.  The middle and bottom graphs depict new information:
-The middle graph shows the average sending rate as measured at the
-source, and the bottom graph shows the average queue length as
-measured at the bottleneck router. All three graphs are synchronized
-in time. In the period between 4.5 and 6.0 seconds (shaded region),
-the congestion window increases (top graph). We expect the observed
-throughput to also increase, but instead it stays flat (middle
-graph). This is because the throughput cannot increase beyond the
-available bandwidth. Beyond this point, any increase in the window
-size only results in packets taking up buffer space at the bottleneck
-router (bottom graph).
+given in :numref:`Figure %s <fig-trace3>`. The top graph traces the
+connection’s congestion window; it shows the same information as the
+traces given earlier in this section.  The middle and bottom graphs
+depict new information: The middle graph shows the average sending
+rate as measured at the source, and the bottom graph shows the average
+queue length as measured at the bottleneck router. All three graphs
+are synchronized in time. In the period between 4.5 and 6.0 seconds
+(shaded region), the congestion window increases (top graph). We
+expect the observed throughput to also increase, but instead it stays
+flat (middle graph). This is because the throughput cannot increase
+beyond the available bandwidth. Beyond this point, any increase in the
+window size only results in packets taking up buffer space at the
+bottleneck router (bottom graph).
 
 .. _fig-trace3:
 .. figure:: figures/f06-18-9780123850591.png
