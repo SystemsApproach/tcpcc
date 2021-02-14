@@ -336,17 +336,18 @@ over the decades. The quest for stability features heavily in the
 early work of Jacobson and Karels and stability remains a requirement that 
 subsequent approaches have to meet.
 
-Once the initial congestion control algorithms of TCP were implemented and
-deployed, researchers began to build mathematical models of TCP's
+Once the initial congestion control algorithms of TCP were implemented
+and deployed, researchers began to build mathematical models of TCP's
 behavior. This enabled the relationship between packet loss rate,
 round-trip time, and throughput to be established. The foundation was
 laid in the paper by Mathis *et al.* below, but there has been a body
 of work that is ongoing as the congestion control algorithms
 evolve. The idea that TCP would converge to a certain throughput given
 stable conditions of RTT and loss also formed the basis for
-"TCP-friendly rate control", the idea that applications that didn't
-use TCP could still share available capacity in a fair way
-with those that did. We'll return to this topic in a later chapter. 
+"TCP-friendly rate control" (TFRC). TFRC extends TCP-like congestion
+control to applications that don't use TCP, based on the idea that
+they can still share available capacity in a fair way with those that
+do. We'll return to this topic in a later chapter.
 
 .. _reading_mathis_eqn:
 .. admonition:: Further Reading
