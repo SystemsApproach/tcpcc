@@ -224,11 +224,11 @@ no awareness of flows or applications, so they simply accepted packets
 as they arrived, placed them in a queue whenever the outbound link
 capacity was less than the arrival rate, served the queue by the FIFO
 discipline, and dropped arriving packets if they queue was full
-("tail-drop"). This is still common today, although other approaches
-to managing router queues—a technical pursuit often referred to
-*Active Queue Management (AQM)*\—have also been deployed.
+("tail-drop"). This is still the most common form of queueing
+today; we will discuss other approaches to queuing including
+*Active Queue Management* in a later chapter.
 
-The reason that congestion collapse occurred in this scenario is that
+The reason that congestion collapse occurred in the early Internet is that
 dropped packets are not just discarded and forgotten. When the
 end-to-end transport protocol is TCP, as it is for most Internet
 traffic, a dropped packet will be retransmitted. So as congestion
@@ -334,7 +334,27 @@ congestion collapse occurs. Finding these stable control loops has
 been one of the key challenges for congestion control system designers
 over the decades. The quest for stability features heavily in the
 early work of Jacobson and Karels and stability remains a requirement that 
-subsequent approaches have to meet. 
+subsequent approaches have to meet.
+
+Once the initial congestion control algorithms of TCP were implemented and
+deployed, researchers began to build mathematical models of TCP's
+behavior. This enabled the relationship between packet loss rate,
+round-trip time, and throughput to be established. The foundation was
+laid in the paper by Mathis *et al.* below, but there has been a body
+of work that is ongoing as the congestion control algorithms
+evolve. The idea that TCP would converge to a certain throughput given
+stable conditions of RTT and loss also formed the basis for
+"TCP-friendly rate control", the idea that applications that didn't
+use TCP could still share available capacity in a fair way
+with those that did. We'll return to this topic in a later chapter. 
+
+.. _reading_mathis_eqn:
+.. admonition:: Further Reading
+
+   M. Mathis, J. Semke, J. Mahdavi, and T. Ott. `The macroscopic
+      behavior of the TCP congestion avoidance algorithm
+      <https://dl.acm.org/doi/abs/10.1145/263932.264023>`__.
+      SIGCOMM CCR, 27(3), July 1997.                
 
 Finally, much of the theoretical work on congestion control has framed
 the problem as *"a distributed algorithm to share network resources
