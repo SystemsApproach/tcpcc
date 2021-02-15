@@ -422,3 +422,99 @@ flows cause other A-managed flows, we can consider B deployable
 alongside A without harm. Ware goes on to propose concrete measures of
 acceptable harm, which we revisit for specific pairwise comparisons
 throughout the book.
+
+3.4 Experimental Methodology
+--------------------------------
+
+As described in Chapter 1, our approach to evaluating
+congestion-control mechanisms is to measure their perfomance on real
+systems. The TCP implementations are real, and correspond to the
+version running in the Linux kernel (4.14.0-rc5). The TCP maximum
+buffer sizes were set to 32MB so as not to affect the behavior of the
+algorithms. Performance data is collected using ``tcpdump``.  The
+network is constructed from a combination of real switches and
+emulated components (e.g., wide-area delays, low-bandwidth links).
+
+The experiments can be broken into two orthogonal dimensions. One is
+the topology of the network. This includes link bandwidths, RTTs,
+buffer sizes, and so on. The other dimension are the set of measured
+flows. This includes the number of active senders and flows, and the
+characteristics of each flow (e.g., stream vs. RPC).
+
+We evaluate the various algorithms on three specific topologies:
+
+* LAN with 20us RTT and 10-Gbps link bandwidth. This scenario
+  represents servers in same rack (datacenter).
+
+* WAN with 10ms RTT and 10-Gbps link bandwidth. Introduce delay on the
+  receiver (its sending queue) using a 20,000 packet buffer for
+  ``netem``.  The bottleneck is a real switch with shallow buffers
+  (1-2 MB). This is a good scenario to visualize the algorithm’s
+  dynamics when looking at 2-3 flows.
+  
+*  WAN 40ms RTT and 10/100-Mbps. An intermediate host (emulating a
+   router) uses ``tbf qdisc`` to reduce the rate to 10 or 100 Mbps.
+   The scenario reflects a connection an end-user might experience
+   on a modern network.
+
+Figure XX shows the topology for the first two scenarios where the
+senders and receivers are connected through a switch. Delay is
+achieved through Netem in the Receiver so it only affects the ACKs
+being sent back. Figure YY shows the topology for the third scenario
+and, where links between hosts also go through a rack switch not shown
+in the figure.
+
+The following tests help to visualize the dynamics of the congestion
+control (or avoidance), as well as to examine how each TCP variant
+competes against itself and against other flavors in terms of fairness
+and stability.
+
+* 2-flow tests: the 1st flow lasts 60 seconds, and the 2nd flow lasts
+  20 seconds and starts 22 seconds after the 1st one.
+  
+* 3-flow tests: the 1st flow lasts 60 seconds, the 2nd flow lasts 40
+  seconds and starts 12 seconds after the 1st one, the 3rd flow lasts
+  20 seconds and starts 26 seconds after the 1st one.
+
+We use these two- and three-flow test to
+
+* Examine how quickly existing flow adapt to new flows.
+  
+* Examine how quickly flows adapt to released bandwdith from terminating flows.
+
+* Measure fairness between flows with the same (or different) congestion algorithm(s)
+
+* Measure levels of congestion.
+
+* Identify conditions under which performance changes abruptly,
+  signalling an instability.
+
+Additional tests include a combination of streaming, plus 10-KB and
+1-MB RPCs, allowing us to see if the smaller RPC flows penalized, and
+if so, by how much. We use these tests to
+
+* Study behavior under increasing loads.
+  
+* Measure the performance (throughput and latency) of 1-MB and 10-KB
+  flows, as well as how fairly is the available bandwidth divided
+  between them?
+  
+* Identify conditions when the retransmissions or latency change
+  abruptly, signalling an instability.
+
+We use ``Netesto`` to run the experiments, collect the data, and
+produce the following graphs:
+
+* Goodput (payload throughput) graphs. These include output for each
+  flow as well as the aggregate goodput.
+
+* Cwnd graphs. These include the cwnd for each flow. Red vertical
+  lines indicate the time when one or more packets are
+  retransmitted. they are a visual indicator of when congestion is
+  occurring.
+
+* RTT graphs. As seen by each server sending data.
+
+* Graph of cumulative losses per flow.
+
+Chapter 8 describes ``Netesto`` and associated software tools in more detail.
