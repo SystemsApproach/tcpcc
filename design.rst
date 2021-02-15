@@ -14,23 +14,25 @@ Because the Internet originally adopted a best-effort service model,
 and users (or more precisely, TCP running on their behalf) were free
 to send as many packets into the network as they could generate, it
 was not surprising that the Internet eventually suffered from the
-*tragedy of the commons*. And with starting to experience congestion
+*tragedy of the commons*. And with users starting to experience congestion
 collapse, the natural response was to try to control it. Hence the
 term *congestion control*, which can be viewed as an implicit
-mechanism for allocating resources. One that is reactive to resources
-becoming scarce.
+mechanism for allocating resources. It is implicit in the sense that
+as the control mechanism detects resources
+becoming scarce, it reacts in an effort to alleviate congestion.
 
-A network service model in which resources are explicitly allocated to
-packet flows is the obvious alternative, but given the best-effort
-assumption of IP, such an approach was not viable at the time
-congestion became a worrisome issue. Subsequently, work has been done
+A network service model in which resources are *explicitly* allocated to
+packet flows is the obvious alternative; for example, an application
+could make an explicit request for resources before sending traffic.  The best-effort
+assumption of IP meant such an approach was not immediately viable at the time
+congestion became a serious issue. Subsequently, work has been done
 to retrofit more explicit resource allocation mechanisms to the
 Internet's best-effort delivery model. These include the ability to
 make *Quality-of-Service (QoS)* guarantees. It is instructive to
 consider the Internet's approach to congestion in the context of such
 efforts. The first section does so as it explores the set of design
 decisions that underlie the control mechanisms outlined in this book.
-The following section then defines the criteria by which different
+We then define the criteria by which different
 congestion-control mechanisms can be quantitatively evaluated and
 compared.
 
@@ -50,8 +52,15 @@ Centralized versus Distributed
 In principle, the first design decision is whether a network's
 approach to resource allocation is centralized or distributed. In
 practice, the Internet's scale—along with the autonomy of the
-organizations that connect to it—dictated a distributed approach.  But
+organizations that connect to it—dictated a distributed
+approach. Indeed, distributed management of resources was an
+explicitly stated goal of the Internet's design [#]_. But
 acknowledging this default decision is important for two reasons.
+
+.. [#] See D. Clark, `The Design Philosophy of the DARPA Internet
+       Protocols
+       <https://dl.acm.org/doi/10.1145/52324.52336`__.
+       ACM SIGCOMM, 1988.
 
 First, while the Internet's approach to congestion control is
 distributed across its millions of hosts and routers, it is fair to
@@ -90,7 +99,7 @@ Router-Centric versus Host-Centric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given a distributed approach to resource allocation, the next question
-is whether to implement the mechanism it inside the network (i.e., at
+is whether to implement the mechanism inside the network (i.e., at
 the routers or switches) or at the edges of the network (i.e., in the
 hosts, perhaps as part of the transport protocol). This is not
 strictly an either/or situation. Both locations are involved, and the
@@ -102,7 +111,8 @@ decision is made, or learning how this decision was made.
 
 At one end of the spectrum, routers can allow hosts to reserve
 capacity and then ensure each flow's packets are delivered
-accordingly.  It might do this, for example, by implementing Fair
+accordingly.  It might do this, for example, by implementing a
+signalling protocol along with Fair
 Queuing, accepting new flows only when there is sufficient capacity,
 and policing hosts to make sure their flows stay within their
 reservations. This would correspond to a reservation-based approach in
@@ -128,12 +138,12 @@ Window-Based versus Rate-Based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Having settled on a host-centric approach, the next implementation
-choice is whether the mechanism is *window based* or *rate based*.
+choice is whether the mechanism is *window-based* or *rate-based*.
 TCP uses a window-based mechanism to implement flow control, so the
 design decision for TCP congestion control seems obvious.  And in
 fact, the congestion-control mechanisms described in Chapter 4 are
 centered around an algorithm for computing a *congestion window*,
-where the sender is throttled by whichever is lesser: the advertized
+where the sender is throttled by whichever is lesser: the advertised
 flow-control window or the computed congestion-control window.
 
 But is also possible to compute the rate at which the network is able
@@ -157,11 +167,11 @@ Control-based versus Avoidance-based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final implementation choice we draw attention to is somewhat
-subtle.  The challenge is for the the end-host, based on feedback and
+subtle.  The challenge is for the end-host, based on feedback and
 observations, to compute how much capacity is available in the
-network, and throttle its sending rate accordingly. There are two
+network, and adjust its sending rate accordingly. There are two
 general strategies for doing this: an aggressive approach that
-purposely sends packet at a rate that causes packet loss and then
+purposely sends packets at a rate that causes packet loss and then
 responds to it, and a conservative approach that tries to detect the
 onset of queue build-up and slow down before they actually overflow.
 We refer to the mechanisms of the first type as *control-based*, and
@@ -170,15 +180,15 @@ we refer to mechanisms of the second type as *avoidance-based*.
 .. _reading_avoidance:
 .. admonition:: Further Reading 
 
-	R. Jain aad K. K. Ramakrishnan. `Congestion Avoidance in
-	Computer Networks with a Counectionless Network Layer:
+	R. Jain and K. K. Ramakrishnan. `Congestion Avoidance in
+	Computer Networks with a Connectionless Network Layer:
 	Concepts, Goals and Methodology. <https://arxiv.org/pdf/cs/9809095.pdf>`__.
-	Computer Networking Symposium, April 1988.  SIGCOMM 1988.
+	Computer Networking Symposium, April 1988.  
 
 This distinction was first called out by Raj Jain and
 K.K. Ramakrishnan Jain in 1988.  It is often overlooked—and the term
 "congestion control" is used generically to refer to both—but our take
-is that the distinction represents and important difference, and so we
+is that the distinction represents an important difference, and so we
 will call it out when appropriate.  Admittedly, we will also fall back
 to the generic use of "congestion control" when the distinction is not
 critical to the discussion, but we will say "control-based" or
@@ -253,8 +263,8 @@ curve in :numref:`Figure %s <fig-power>`. Ideally, we would like to
 avoid the situation in which the system throughput approaches
 zero. The goal is for the mechanism to be *stable*\ —where packets
 continue to get through the network even when it is operating under
-heavy load. For a mechanism to not be stable under certain
-circumstances is the very definition of *congestion collapse*.
+heavy load. If a mechanism is not stable under heavy load, the
+network will suffer from *congestion collapse*.
 
 Fairness
 ~~~~~~~~~~~~~
@@ -286,7 +296,8 @@ three one-hop flows?
 
    One four-hop flow competing with three one-hop flows.
 
-Assuming that fair implies equal and that all paths are of equal length,
+Assuming that the most fair situation would be one in which all flows
+receive the same bandwidth,
 networking researcher Raj Jain proposed a metric that can be used to
 quantify the fairness of a congestion-control mechanism. Jain’s fairness
 index is defined as follows. Given a set of flow throughputs
