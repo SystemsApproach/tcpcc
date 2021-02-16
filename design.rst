@@ -427,60 +427,66 @@ throughout the book.
 --------------------------------
 
 As described in Chapter 1, our approach to evaluating
-congestion-control mechanisms is to measure their perfomance on real
-systems. The TCP implementations are real, and correspond to the
-version running in the Linux kernel (4.14.0-rc5). The TCP maximum
-buffer sizes were set to 32MB so as not to affect the behavior of the
-algorithms. Performance data is collected using ``tcpdump``.  The
-network is constructed from a combination of real switches and
-emulated components (e.g., wide-area delays, low-bandwidth links).
+congestion-control mechanisms is to measure their performance on real
+systems. We now describe one specific way to do that, which we use in
+later chapters to understand (and quantify) how the mechanisms work in
+practice.
 
-The experiments can be broken into two orthogonal dimensions. One is
-the topology of the network. This includes link bandwidths, RTTs,
-buffer sizes, and so on. The other dimension are the set of measured
-flows. This includes the number of active senders and flows, and the
-characteristics of each flow (e.g., stream vs. RPC).
+Our approach runs real TCP sending/receiving hosts, where the
+implementation of the various congestion-control mechanisms are those
+found in the Linux kernel. A range of behaviors are studied using a
+combination of kernel packages like ``netem`` and ``tbf qdisc``,
+with performance data collected using ``tcpdump``. The network
+connecting the end-hosts is constructed from a combination of real
+switches and emulated elements, supporting for example, wide-area
+delays and low-bandwidth links.
 
-We evaluate the various algorithms on three specific topologies:
+The experiments can be characterized along two orthogonal
+dimensions. One is the topology of the network. This includes link
+bandwidths, RTTs, buffer sizes, and so on. The other dimension is the
+traffic workload we run on the network. This includes the number and
+duration of flows, as well as the characteristics of each flow (e.g.,
+stream vs. RPC).
+
+With respect to network topology, we evaluate the various algorithms
+on three specific configurations:
 
 * LAN with 20us RTT and 10-Gbps link bandwidth. This scenario
-  represents servers in same rack (datacenter).
+  represents servers in the same datacenter rack.
 
-* WAN with 10ms RTT and 10-Gbps link bandwidth. Introduce delay on the
-  receiver (its sending queue) using a 20,000 packet buffer for
-  ``netem``.  The bottleneck is a real switch with shallow buffers
-  (1-2 MB). This is a good scenario to visualize the algorithm’s
-  dynamics when looking at 2-3 flows.
+* WAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
+  on the receiver by configuring a 20,000 packet send queue. The
+  bottleneck is a real switch with shallow buffers (1-2 MB). This is a
+  good scenario to visualize the algorithm’s dynamics when looking at
+  two to three flows.
   
-*  WAN 40ms RTT and 10/100-Mbps. An intermediate host (emulating a
-   router) uses ``tbf qdisc`` to reduce the rate to 10 or 100 Mbps.
-   The scenario reflects a connection an end-user might experience
-   on a modern network.
+* WAN 40ms RTT and 10/100-Mbps, with an intermediate router is
+  introduced to reduce the link bandwidth to 10 or 100 Mbps.  This
+  scenario reflects a connection an end-user might experience on a
+  modern network.
 
-Figure XX shows the topology for the first two scenarios where the
-senders and receivers are connected through a switch. Delay is
-achieved through Netem in the Receiver so it only affects the ACKs
-being sent back. Figure YY shows the topology for the third scenario
-and, where links between hosts also go through a rack switch not shown
-in the figure.
+Figure XX shows the topology for the first two scenarios, where the
+senders and receivers are connected through a single switch. Delay is
+achieved using ``netem`` in the Receiver, which affects only the ACKs
+being sent back. Figure YY shows the topology for the third scenario,
+where the router is a server that throttles outgoing link bandwidth
+using ``tbf qdisc``.
 
-The following tests help to visualize the dynamics of the congestion
-control (or avoidance), as well as to examine how each TCP variant
-competes against itself and against other flavors in terms of fairness
-and stability.
+With respect to traffic workload, we evaluate the dynamics and
+fairness of various mechanisms with the following tests:
 
-* 2-flow tests: the 1st flow lasts 60 seconds, and the 2nd flow lasts
+* 2-flow Test: The 1st flow lasts 60 seconds, and the 2nd flow lasts
   20 seconds and starts 22 seconds after the 1st one.
   
-* 3-flow tests: the 1st flow lasts 60 seconds, the 2nd flow lasts 40
+* 3-flow Test: The 1st flow lasts 60 seconds, the 2nd flow lasts 40
   seconds and starts 12 seconds after the 1st one, the 3rd flow lasts
   20 seconds and starts 26 seconds after the 1st one.
 
-We use these two- and three-flow test to
+These tests make it possible to:
 
-* Examine how quickly existing flow adapt to new flows.
+* Examine how quickly existing flows adapt to new flows.
   
-* Examine how quickly flows adapt to released bandwdith from terminating flows.
+* Examine how quickly flows adapt to released bandwidth from terminating flows.
 
 * Measure fairness between flows with the same (or different) congestion algorithm(s)
 
@@ -490,31 +496,30 @@ We use these two- and three-flow test to
   signalling an instability.
 
 Additional tests include a combination of streaming, plus 10-KB and
-1-MB RPCs, allowing us to see if the smaller RPC flows penalized, and
-if so, by how much. We use these tests to
+1-MB RPCs. These tests allow us to see if the smaller RPC flows are
+penalized, and if so, by how much. These tests make it possible to:
 
 * Study behavior under increasing loads.
   
 * Measure the performance (throughput and latency) of 1-MB and 10-KB
   flows, as well as how fairly is the available bandwidth divided
-  between them?
+  between them.
   
 * Identify conditions when the retransmissions or latency change
   abruptly, signalling an instability.
 
-We use ``Netesto`` to run the experiments, collect the data, and
-produce the following graphs:
+Finally, we use ``Netesto`` to configure and run the experiments,
+collect the data, and produce the following graphs:
 
 * Goodput (payload throughput) graphs. These include output for each
   flow as well as the aggregate goodput.
 
-* Cwnd graphs. These include the cwnd for each flow. Red vertical
-  lines indicate the time when one or more packets are
-  retransmitted. they are a visual indicator of when congestion is
-  occurring.
+* Cwnd graphs. These include the cwnd for each flow, annotated to
+  indicate the time when one or more packets are retransmitted.
 
-* RTT graphs. As seen by each server sending data.
+* RTT graphs, as seen by each server sending data.
 
 * Graph of cumulative losses per flow.
 
-Chapter 8 describes ``Netesto`` and associated software tools in more detail.
+Chapter 8 describes ``Netesto`` and the associated software tools in
+more detail.
