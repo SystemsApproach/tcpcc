@@ -450,3 +450,104 @@ flows cause other A-managed flows, we can consider B deployable
 alongside A without harm. Ware goes on to propose concrete measures of
 acceptable harm, which we revisit for specific pairwise comparisons
 throughout the book.
+
+3.4 Experimental Methodology
+--------------------------------
+
+As described in Chapter 1, our approach to evaluating
+congestion-control mechanisms is to measure their performance on real
+systems. We now describe one specific way to do that, which we use in
+later chapters to understand (and quantify) how the mechanisms work in
+practice.
+
+Our approach runs real TCP sending/receiving hosts, where the
+implementation of the various congestion-control mechanisms are those
+found in the Linux kernel. A range of behaviors are studied using a
+combination of kernel packages like ``netem`` and ``tbf qdisc``,
+with performance data collected using ``tcpdump``. The network
+connecting the end-hosts is constructed from a combination of real
+switches and emulated elements, supporting for example, wide-area
+delays and low-bandwidth links.
+
+The experiments can be characterized along two orthogonal
+dimensions. One is the topology of the network. This includes link
+bandwidths, RTTs, buffer sizes, and so on. The other dimension is the
+traffic workload we run on the network. This includes the number and
+duration of flows, as well as the characteristics of each flow (e.g.,
+stream vs. RPC).
+
+With respect to network topology, we evaluate the various algorithms
+on three specific configurations:
+
+* LAN with 20us RTT and 10-Gbps link bandwidth. This scenario
+  represents servers in the same datacenter rack.
+
+* WAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
+  on the receiver by configuring a 20,000 packet send queue. The
+  bottleneck is a real switch with shallow buffers (1-2 MB). This is a
+  good scenario to visualize the algorithm’s dynamics when looking at
+  two to three flows.
+  
+* WAN 40ms RTT and 10/100-Mbps, with an intermediate router is
+  introduced to reduce the link bandwidth to 10 or 100 Mbps.  This
+  scenario reflects a connection an end-user might experience on a
+  modern network.
+
+Figure XX shows the topology for the first two scenarios, where the
+senders and receivers are connected through a single switch. Delay is
+achieved using ``netem`` in the Receiver, which affects only the ACKs
+being sent back. Figure YY shows the topology for the third scenario,
+where the router is a server that throttles outgoing link bandwidth
+using ``tbf qdisc``.
+
+With respect to traffic workload, we evaluate the dynamics and
+fairness of various mechanisms with the following tests:
+
+* 2-flow Test: The 1st flow lasts 60 seconds, and the 2nd flow lasts
+  20 seconds and starts 22 seconds after the 1st one.
+  
+* 3-flow Test: The 1st flow lasts 60 seconds, the 2nd flow lasts 40
+  seconds and starts 12 seconds after the 1st one, the 3rd flow lasts
+  20 seconds and starts 26 seconds after the 1st one.
+
+These tests make it possible to:
+
+* Examine how quickly existing flows adapt to new flows.
+  
+* Examine how quickly flows adapt to released bandwidth from terminating flows.
+
+* Measure fairness between flows with the same (or different) congestion algorithm(s)
+
+* Measure levels of congestion.
+
+* Identify conditions under which performance changes abruptly,
+  signalling an instability.
+
+Additional tests include a combination of streaming, plus 10-KB and
+1-MB RPCs. These tests allow us to see if the smaller RPC flows are
+penalized, and if so, by how much. These tests make it possible to:
+
+* Study behavior under increasing loads.
+  
+* Measure the performance (throughput and latency) of 1-MB and 10-KB
+  flows, as well as how fairly is the available bandwidth divided
+  between them.
+  
+* Identify conditions when the retransmissions or latency change
+  abruptly, signalling an instability.
+
+Finally, we use ``Netesto`` to configure and run the experiments,
+collect the data, and produce the following graphs:
+
+* Goodput (payload throughput) graphs. These include output for each
+  flow as well as the aggregate goodput.
+
+* Cwnd graphs. These include the cwnd for each flow, annotated to
+  indicate the time when one or more packets are retransmitted.
+
+* RTT graphs, as seen by each server sending data.
+
+* Graph of cumulative losses per flow.
+
+Chapter 8 describes ``Netesto`` and the associated software tools in
+more detail.
