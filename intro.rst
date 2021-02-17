@@ -470,10 +470,10 @@ implementation?* The answer has been the dominant open source
 implementation of the day. This was originally the *Berkeley Software
 Distribution (BSD)* implementation of Unix, and in fact, the initial
 algorithm proposed by Jacobson and Karels was a noteworthy feature of
-the Tahoe release of BSD 4.3 in 1998. This connection between BSD Unix
+the Tahoe release of BSD 4.3 in 1988. This connection between BSD Unix
 and the TCP congestion-control algorithms was so strong that the
-variants of algorithm became known (named) according to the release:
-e.g., TCP Tahoe, and later TCP Reno.
+variants of algorithm became known (named) according to the BSD
+release: e.g., TCP Tahoe, and later TCP Reno.
 
 .. _reading_bsd:
 .. admonition:: Further Reading
