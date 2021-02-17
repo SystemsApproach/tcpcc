@@ -161,7 +161,11 @@ system that supports different QoS levels, but even in a best-effort
 network like the Internet, it is possible to implement an adaptive
 rate-based congestion-control mechanism that informs the application
 when it needs to adjust it transmission rate, for example by adjusting
-its codec. We will see an example of such a mechanism in Chapter 6.
+its codec. This is the core idea of TCP-friendly rate control (TFRC),
+which extends the concepts of TCP congestion avoidance to applications
+that more naturally send packets at a specific rate (e.g., the bitrate
+produced by a video codec at a given quality level). We will see
+examples of such mechanisms in Chapter 6. 
 
 Control-based versus Avoidance-based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -348,7 +352,22 @@ fairness index drops to \ *k/n*.
 	<https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
 	DEC Research Report TR-301, 1984.
 
-3.3 Comparative Analysis
+In the next section we revisit the notion of fairness as it applies to
+the deployment of new congestion control algorithms. As noted above,
+it is not as clear-cut as it might first appear.
+
+TCP-friendly rate control (TFRC) also uses the notion of
+fairness. TFRC uses the TCP throughput equation (discussed in Section
+1.3) to estimate the share of a
+congested link's bandwidth that
+would be obtained by a flow that implemented TCP's congestion control
+scheme, and sets that as a target rate for an application to
+send data. The application can then make decisions to help it hit that
+target rate. For example, a video streaming application might choose among a
+set of different encoding quality levels to try to maintain an
+average rate at the "fair" level as determined by TFRC.
+
+        3.3 Comparative Analysis
 ---------------------------
 
 The first step in evaluating any congestion control mechanism is to
@@ -378,7 +397,12 @@ fairly, but whether mechanism A is fair to flows managed by
 mechanism B. If mechanism A is able to measure improved throughput
 over B, but it does so by being more aggressive, and hence, stealing
 bandwidth from B's flows, then A's improvement is not fairly gained
-and may be discounted.
+and may be discounted. It should be evident that the Internet's highly
+decentralized approach to congestion control
+works because a large number of flows respond in a cooperative way to
+congestion, which opens the door to more aggressive flows improving
+their performance at the expense of those which implement the
+accepted, less aggresive algorithms.
 
 .. _reading_ware:
 .. admonition:: Further Reading
@@ -389,8 +413,12 @@ and may be discounted.
    ACM SIGCOMM HotNets. November 2019.
 
 Arguments like this have been made many times over the last 30 years,
-almost always to the advantage of the incumbent algorithm. But such
-analysis suffers from three problems, as identified by Ranysh Ware and
+which has raised a high bar to the deployment of new algorithms. Even
+if global deployment of a new algorithm would be a net positive,
+incremental deployment (which is the only real option) could
+negatively impact flows using existing algorithms, leading to a
+reluctance to deploy new approaches. But such
+analysis suffers from three problems, as identified by Ranysha Ware and
 colleagues:
 
 * **Ideal-Driven Goalposting:** A fairness-based threshold asserts
