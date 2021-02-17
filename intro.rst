@@ -340,22 +340,22 @@ Once the initial congestion control algorithms of TCP were implemented
 and deployed, researchers began to build mathematical models of TCP's
 behavior. This enabled the relationship between packet loss rate,
 round-trip time, and throughput to be established. The foundation was
-laid in the paper by Mathis *et al.* below, but there has been a body
+laid in the paper by Mathis and colleagues, but there has been a body
 of work that is ongoing as the congestion control algorithms
 evolve. The idea that TCP would converge to a certain throughput given
 stable conditions of RTT and loss also formed the basis for
-"TCP-friendly rate control" (TFRC). TFRC extends TCP-like congestion
+*TCP-friendly rate control (TFRC)*. TFRC extends TCP-like congestion
 control to applications that don't use TCP, based on the idea that
 they can still share available capacity in a fair way with those that
-do. We'll return to this topic in a later chapter.
+do. We return to this topic in a later chapter.
 
 .. _reading_mathis_eqn:
 .. admonition:: Further Reading
 
-   M. Mathis, J. Semke, J. Mahdavi, and T. Ott. `The macroscopic
-      behavior of the TCP congestion avoidance algorithm
-      <https://dl.acm.org/doi/abs/10.1145/263932.264023>`__.
-      SIGCOMM CCR, 27(3), July 1997.                
+   M. Mathis, J. Semke, J. Mahdavi, and T. Ott. `The Macroscopic
+   Behavior of the TCP Congestion Avoidance Algorithm
+   <https://dl.acm.org/doi/abs/10.1145/263932.264023>`__.
+   SIGCOMM CCR, 27(3), July 1997.                
 
 Finally, much of the theoretical work on congestion control has framed
 the problem as *"a distributed algorithm to share network resources
@@ -436,7 +436,7 @@ congestion control. One salient example is the rise of video streaming
 as the (currently) dominant source of traffic on the Internet. Again,
 there were many approaches developed to make video work better under
 conditions of congestion. One that has enjoyed great success is
-*Dynamic Adaptive Streaming over HTTP* (DASH), in which the server
+*Dynamic Adaptive Streaming over HTTP (DASH)*, in which the server
 delivering the video switches from one quality of encoding to another
 (and hence from one bit-rate to another) in response to the measured
 congestion on the path to the receiver. This moves the congestion
@@ -450,11 +450,74 @@ continues to evolve as the technology landscape and application
 requirements change.
 
 
-1.5 Visualizing Congestion Control
------------------------------------
+1.5 Reference Implementation
+-------------------------------
 
-Preview the graphical data presented later in the book to illustrate
-the dynamic behavior of various algorithms. Related to the evaluation
-criteria from the previous paragraph. This data serves two
-purposes: (a) helps reader visualize the algorithms dynamic behavior,
-and (b) helps us evaluate and compare different algorithms.
+We saw in Section 1.3 that there is a rich body of literature studying
+the mathematical properties of congestion-control algorithms, yet
+congestion control remains a highly pragmatic concern. It is estimated
+that TCP connections carry 85% of the traffic on the Internet, and
+those connections are anchored in software implementations of TCP
+running in every imaginable OS (e.g., Linux, Window, iOS, Android). As
+a practical matter, the very specification of the congestion-control
+mechanisms we discuss in this book is represented in kernel-level
+code, typically implemented in C. The theory defines abstract models
+of this code, but the code *specifies* the algorithm.
+
+If the implementation is effectively the specification, then which
+implementation is authoritative; which is the *reference
+implementation?* The answer has been the dominant open source
+implementation of the day. This was originally the *Berkeley Software
+Distribution (BSD)* implementation of Unix, and in fact, the initial
+algorithm proposed by Jacobson and Karels was a noteworthy feature of
+the Tahoe release of BSD 4.3 in 1998. This connection between BSD Unix
+and the TCP congestion-control algorithms was so strong that the
+variants of algorithm became known (named) according to the release:
+e.g., TCP Tahoe, and later TCP Reno.
+
+.. _reading_bsd:
+.. admonition:: Further Reading
+
+   S.J. Leffler, M.K. McKusick, M.J. Karels, and J.S Quarterman.
+   *The Design and Implementation of the 4.3 BSD Unix Operating
+   System.* Addison-Wesley. January 1989.
+
+.. sidebar:: Berkeley Unix
+
+	*Any student of the Internet should have an appreciation for
+	the role Berkeley Unix (aka BSD) played in the success of the
+	Internet. Unix, of course, originated at AT&T Bell Labs in the
+	1970s, but it was an investment by DARPA to support an open
+	source implementation of Unix that proved to be transformative.*
+
+	*At the time, the success of the Internet was not a foregone
+	conclusion. It was because Universities (and their students)
+	had access to an open implementation of the Internet protocol
+	stack, and affordable hardware to run it on, that TCP/IP took root.*
+
+BSD Unix continues to this day, but it was eventually overtaken by
+Linux as the de facto open source Unix-based OS. All the variants of
+TCP congestion control described in this book are available (can can
+be optionally enabled) in the Linux kernel. They have become the
+reference implementation of those algorithms, which leads us to our
+final point: The standard for evaluating TCP congestion-control
+mechanisms is empirical, by running real traffic between Linux-based
+implementations of TCP senders and receivers. The open question is:
+What traffic, and over what network?
+
+While useful insights can often be gained by observing the behavior of
+TCP connections running across the actual Internet, the wide
+variability (in both time and space) of "the Internet" makes
+controlled experiments virtually impossible. Instead, the current
+best-practice is to run a collection of "representative flows" over
+isolated but "representative network topologies." There is no
+established gold standard for either the set of flows or the set of
+network topologies, so experimental results are never definitive.  But
+the body of evidence collected using this methodology as proven
+sufficient to advance the state-of-the-art over the years.
+
+For the purposes of this book, we use the experimental methodology
+described in Chapter 3. We use it to both visualize the behavior of
+the various algorithms (helping to build intuition) and to highlight
+problematic scenarios that continue to make congestion control such a
+challenging and interesting technical problem.

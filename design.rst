@@ -95,13 +95,13 @@ open mind about the spectrum of options that are available.
    <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
    ACM SIGCOMM, August 2013.
 
-Centralized control has also been used effectively in data centers,
+Centralized control has also been used effectively in datacenters,
 which are an interesting environment for congestion control. First,
-they have very low RTTs (for traffic between servers in the data
-center, if not for flows heading in or out of the data
-center). Second, in many cases a data center can be treated as a
-greenfield, raising the possibility to try new approaches that don't
-coexist fairly with incumbent algorithms. Fastpass, developed in
+they have very low RTTs (for traffic between servers in the
+datacenter, if not for flows heading in or out of the datacenter).
+Second, in many cases a datacenter can be treated as a greenfield,
+raising the possibility to try new approaches that don't have to
+coexist fairly with incumbent algorithms. Fastpass, developed in a
 collaboration between MIT and Facebook researchers, is a good example
 of such a centralized approach.
 
@@ -407,7 +407,7 @@ target rate. For example, a video streaming application might choose among a
 set of different encoding quality levels to try to maintain an
 average rate at the "fair" level as determined by TFRC.
 
-        3.3 Comparative Analysis
+3.3 Comparative Analysis
 ---------------------------
 
 The first step in evaluating any congestion control mechanism is to
