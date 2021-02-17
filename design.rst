@@ -533,12 +533,28 @@ on three specific configurations:
   scenario reflects a connection an end-user might experience on a
   modern network.
 
-Figure XX shows the topology for the first two scenarios, where the
-senders and receivers are connected through a single switch. Delay is
-achieved using ``netem`` in the Receiver, which affects only the ACKs
-being sent back. Figure YY shows the topology for the third scenario,
-where the router is a server that throttles outgoing link bandwidth
-using ``tbf qdisc``.
+:numref:`Figure %s <fig-10gig>` shows the topology for the first two
+scenarios, where the senders and receivers are connected through a
+single switch. Delay is achieved using ``netem`` in the Receiver,
+which affects only the ACKs being sent back.
+
+.. _fig-10gig:
+.. figure:: figures/Fig2.png 
+   :width: 300px 
+   :align: center 
+
+   Topology for 10-Gbps Tests.
+
+:numref:`Figure %s <fig-100meg>` shows the topology for the third
+scenario, where the router is implemented by a server-based forwarder
+that throttles outgoing link bandwidth using ``tbf qdisc``.
+
+.. _fig-100meg:
+.. figure:: figures/Fig3.png 
+   :width: 500px 
+   :align: center 
+
+   Topology for 10- and 100-Mbps Tests.   
 
 With respect to traffic workload, we evaluate the dynamics and
 fairness of various mechanisms with the following tests:
