@@ -458,11 +458,11 @@ the mathematical properties of congestion-control algorithms, yet
 congestion control remains a highly pragmatic concern. It is estimated
 that TCP connections carry 85% of the traffic on the Internet, and
 those connections are anchored in software implementations of TCP
-running in every imaginable OS (e.g., Linux, Window, iOS, Android). As
-a practical matter, the very specification of the congestion-control
-mechanisms we discuss in this book is represented in kernel-level
-code, typically implemented in C. The theory defines abstract models
-of this code, but the code *specifies* the algorithm.
+running in every imaginable OS (e.g., Linux, Windows, MacOS, iOS,
+Android). As a practical matter, the very specification of the
+congestion-control mechanisms we discuss in this book is represented
+in kernel-level code, typically implemented in C. The theory defines
+abstract models of this code, but the code *specifies* the algorithm.
 
 If the implementation is effectively the specification, then which
 implementation is authoritative; which is the *reference
@@ -487,23 +487,31 @@ e.g., TCP Tahoe, and later TCP Reno.
 	*Any student of the Internet should have an appreciation for
 	the role Berkeley Unix (aka BSD) played in the success of the
 	Internet. Unix, of course, originated at AT&T Bell Labs in the
-	1970s, but it was an investment by DARPA to support an open
-	source implementation of Unix that proved to be transformative.*
+	early 1970s, but it was an investment by DARPA to support an
+	open source implementation of Unix—which was to include the
+	fledgling TCP/IP protocol stack—that proved to be
+	transformative.*
 
 	*At the time, the success of the Internet was not a foregone
-	conclusion. It was because Universities (and their students)
-	had access to an open implementation of the Internet protocol
-	stack, and affordable hardware to run it on, that TCP/IP took root.*
+	conclusion. It was viewed as a research curiosity, and
+	certainly did not enjoy any support within the computing and
+	telecommunication incumbents of the day. It was only because
+	Universities (and their students) had access to an open
+	implementation of the Internet protocol stack, and affordable
+	hardware to run it on, that TCP/IP took root. Seeding
+	transformative technology through open source software and
+	readily available hardware has proven to be a powerful
+	strategy, with BSD paving the way.*
 
-BSD Unix continues to this day, but it was eventually overtaken by
-Linux as the de facto open source Unix-based OS. All the variants of
-TCP congestion control described in this book are available (can can
-be optionally enabled) in the Linux kernel. They have become the
-reference implementation of those algorithms, which leads us to our
-final point: The standard for evaluating TCP congestion-control
-mechanisms is empirical, by running real traffic between Linux-based
-implementations of TCP senders and receivers. The open question is:
-What traffic, and over what network?
+BSD and its decendents continue to this day, but it was eventually
+overtaken by Linux, in the early 2000s, as the de facto open source
+Unix-based OS. All the variants of TCP congestion control described in
+this book are available (can can be optionally activated) in the Linux
+kernel. They have become the reference implementation of those
+algorithms, which leads us to our final point: The standard for
+evaluating TCP congestion-control mechanisms is empirical, by running
+real traffic between Linux-based implementations of TCP senders and
+receivers. The open question is: What traffic, and over what network?
 
 While useful insights can often be gained by observing the behavior of
 TCP connections running across the actual Internet, the wide
