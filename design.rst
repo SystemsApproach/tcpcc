@@ -95,6 +95,24 @@ open mind about the spectrum of options that are available.
    <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
    ACM SIGCOMM, August 2013.
 
+Centralized control has also been used effectively in data centers,
+which are an interesting environment for congestion control. First,
+they have very low RTTs (for traffic between servers in the data
+center, if not for flows heading in or out of the data
+center). Second, in many cases a data center can be treated as a
+greenfield, raising the possibility to try new approaches that don't
+coexist fairly with incumbent algorithms. Fastpass, developed in
+collaboration between MIT and Facebook researchers, is a good example
+of such a centralized approach.
+
+.. _reading_fastpass:
+.. admonition:: Further Reading 
+
+   J. Perry, et. al. `Fastpass: A Centralized "Zero-Queue" Datacenter Network 
+   <http://fastpass.mit.edu/Fastpass-SIGCOMM14-Perry.pdf>`__.
+   ACM SIGCOMM, August 2014.
+
+
 Router-Centric versus Host-Centric 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -402,7 +420,7 @@ decentralized approach to congestion control
 works because a large number of flows respond in a cooperative way to
 congestion, which opens the door to more aggressive flows improving
 their performance at the expense of those which implement the
-accepted, less aggresive algorithms.
+accepted, less aggressive algorithms.
 
 .. _reading_ware:
 .. admonition:: Further Reading
