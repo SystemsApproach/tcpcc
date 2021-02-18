@@ -3,20 +3,21 @@ Chapter 4:  Control-Based Algorithms
 	
 This chapter describes the dominant congestion-control algorithm in
 use today on the Internet. The approach was introduced in 1988 by Van
-Jacobson, and refined multiple times by him and others over the years.
+Jacobson and Mike Karels, and refined multiple times over the years.
 The variant in widespread use today is called CUBIC, for reasons that
-will become clear when we introduce it at the end of the chapter.
+will become clear at the end of the chapter.
 
 The general idea is straightforward. Having transmitted a set of
 packets according to its current estimate of the available bandwidth,
 a TCP sender reacts to two "signals" from the network. On the one
-hande, the arrival of an ACK signals that one of its packets packets
+hand, the arrival of an ACK signals that one of its packets
 has left the network and that it is therefore safe to transmit a new
 packet without adding to the level of congestion.  By using ACKs to
 pace the transmission of packets, TCP is said to be *self-clocking*.
-On the other hand, a timeout signals that the network is congested,
-indicating that it needs to reduce its sending rate. By using packet
-loss as an indication of congestion, we refer to the approach as
+On the other hand, a timeout signals that a packet was lost, implying that the network is congested,
+and thus TCP needs to reduce its sending rate. Because using packet
+loss as a signal means congestion has already occurred and we are
+reacting after the fact, we refer to this approach as
 *control-based*.
 
 There are many subtle issues that must be addressed to make this a
@@ -35,6 +36,13 @@ in congestion control because they signal packet loss, which in turn
 indicates the likelihood of congestion. In other words, TCP's timeout
 mechanism is a building block for its overall approach to congestion
 control.
+
+Note that a timeout can happen because a packet was lost, or
+because the corresponding acknowledgment was lost, or because nothing
+was lost but the ACK took longer to arrive than we were
+expecting. Hence it is important to know how long it might take an ACK
+to arrive, because otherwise we risk responding as if there was
+congestion when there was not.
 
 TCP has an adaptive approach to setting a timeout, computed as a
 function of the measured RTT. As simple as this sounds, the full
@@ -97,27 +105,29 @@ second transmission but it was actually for the first, then the
    Associating the ACK with (a) original transmission
    versus (b) retransmission.
 
-The solution is surprisingly simple.  Whenever TCP retransmits a
-segment, it stops taking samples of the RTT; it only measures
-``SampleRTT`` for segments that have been sent only once. This
-solution is known as the Karn/Partridge algorithm, after its
-inventors. Their proposed fix also includes a second small change to
-TCP’s timeout mechanism. Each time TCP retransmits, it sets the next
-timeout to be twice the last timeout, rather than basing it on the
-last ``EstimatedRTT``. That is, Karn and Partridge proposed that TCP
-use exponential backoff. The motivation for using exponential backoff
-is that congestion the most likely cause of lost segments, meaning
-that the TCP source should not react too aggressively to a timeout. In
-fact, the more times the connection times out, the more cautious the
-source should become. We will see this idea again, embodied in a much
+The solution at first looks surprisingly simple. It is known as the
+Karn/Partridge algorithm, after its inventors. With this algorithm,
+whenever TCP retransmits a segment, it stops taking samples of the
+RTT; it only measures ``SampleRTT`` for segments that have been sent
+only once.  But the algorithm also includes a second change to TCP’s
+timeout mechanism. Each time TCP retransmits, it sets the next timeout
+to be twice the last timeout, rather than basing it on the last
+``EstimatedRTT``. That is, Karn and Partridge proposed that RTT
+estimation use exponential backoff. The motivation for using
+exponential backoff is that timeouts cause retransmission, and
+retransmitted segments are no longer contributing to an update in the
+RTT estimate. So the idea is to be more cautious in declaring that a
+packet has been lost, rather than getting into a possible cycle of
+aggressively timing out and then retransmitting.  We will see this
+idea of exponential backoff again, embodied in a much
 more sophisticated mechanism, in a later section.
 
 Jacobson/Karels Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Karn/Partridge algorithm was an improvement, but it did not
+The Karn/Partridge algorithm was an improvement to RTT estimation, but it did not
 eliminate congestion. The 1988 congestion-control mechanism proposed
-by Jacobson and Karels include a new way to decide when to time out
+by Jacobson and Karels includes (along with several other components) a new way to decide when to time out
 and retransmit a segment.
 
 The main problem with the original computation is that it does not
@@ -160,7 +170,7 @@ TCP. The first is that it is possible to implement the calculation for
 ``EstimatedRTT`` and ``Deviation`` without using floating-point
 arithmetic. Instead, the whole calculation is scaled by 2\ :sup:`n`, 
 with delta selected to be 1/2\ :sup:`n`. This allows us to do integer 
-arithmetic, implementing multiplicationand division using shifts, 
+arithmetic, implementing multiplication and division using shifts, 
 thereby achieving higher performance. The resulting calculation is given 
 by the following code fragment, where n=3
 (i.e., ``delta = 1/8``). Note that ``EstimatedRTT`` and ``Deviation`` are
@@ -244,9 +254,9 @@ previously received segments.  This is the *selective acknowledgment*,
 or *SACK*, option. When the SACK option is used, the receiver
 continues to acknowledge segments normally—the meaning of the
 ``Acknowledge`` field does not change—but it also extends the header
-with additional acknowledges for any blocks received out-of-order.
+with additional acknowledgments for any blocks received out-of-order.
 This allows the sender to retransmit just the segments that are
-missing according instead of all the segments that follow a dropped
+missing instead of all the segments that follow a dropped
 segment. Receiving multiple segments out-of-order (after a dropped
 segment) becomes increasingly likely as networks become faster and the
 delay × bandwidth product of networks increases.
@@ -719,7 +729,7 @@ increase/multiplicative decrease pattern.
 
 .. 
 	Lots of intervening years not accounted for here. More about the 
-	BSD-to-Linux transistion might also be helpful. -llp
+	BSD-to-Linux transition might also be helpful. -llp
 
 .. 
 	And, this section is pretty thin, but I don't have enough
@@ -747,7 +757,7 @@ short-RTT flows, which will have ACKs arriving more frequently.
    :width: 500px 
    :align: center 
 
-   Generic cubic function illustrsting the change in the congestion 
+   Generic cubic function illustrating the change in the congestion 
    window as a function of time. 
 
 The second important aspect of CUBIC is its use of a cubic function to 
