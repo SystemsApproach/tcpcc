@@ -39,7 +39,8 @@ Another reason for the citation impact of this work is that congestion
 control has been an amazingly fruitful area of research for over three
 decades. Congestion control, and resource allocation more broadly, are
 wide open design spaces with plenty of room for innovation. Decades of
-research and implementation have built on the early foundations, and it seems fair to assume that new approaches
+research and implementation have built on the early foundations, and
+it seems fair to assume that new approaches 
 or refinements to the existing approaches will continue to appear for
 as long as the Internet exists.
 
@@ -493,20 +494,20 @@ release: e.g., TCP Tahoe, and later TCP Reno.
 	transformative.*
 
 	*At the time, the success of the Internet was not a foregone
-	conclusion. It was viewed as a research curiosity, and
-	certainly did not enjoy any support within the computing and
-	telecommunication incumbents of the day. It was only because
-	Universities (and their students) had access to an open
+	conclusion. It was viewed by many as a research curiosity, and
+	certainly did not enjoy much support within the computing and
+	telecommunication incumbents of the day. It was largely because
+	universities (and their students) had access to an open
 	implementation of the Internet protocol stack, and affordable
 	hardware to run it on, that TCP/IP took root. Seeding
 	transformative technology through open source software and
 	readily available hardware has proven to be a powerful
-	strategy, with BSD paving the way.*
+	strategy, of which BSD is an early success story.*
 
-BSD and its decendents continue to this day, but it was eventually
-overtaken by Linux, in the early 2000s, as the de facto open source
+BSD and its descendants continue to this day (notably as FreeBSD), but it was eventually
+overtaken by Linux, in the early 2000s, as the *de facto* open source,
 Unix-based OS. All the variants of TCP congestion control described in
-this book are available (can can be optionally activated) in the Linux
+this book are available (and can be optionally activated) in the Linux
 kernel. They have become the reference implementation of those
 algorithms, which leads us to our final point: The standard for
 evaluating TCP congestion-control mechanisms is empirical, by running

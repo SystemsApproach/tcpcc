@@ -59,7 +59,7 @@ acknowledging this default decision is important for two reasons.
 
 .. [#] See D. Clark, `The Design Philosophy of the DARPA Internet
        Protocols
-       <https://dl.acm.org/doi/10.1145/52324.52336`__.
+       <https://dl.acm.org/doi/10.1145/52324.52336>`__.
        ACM SIGCOMM, 1988.
 
 First, while the Internet's approach to congestion control is
