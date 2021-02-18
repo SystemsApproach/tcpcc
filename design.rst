@@ -519,7 +519,7 @@ stream vs. RPC).
 With respect to network topology, we evaluate the various algorithms
 on three specific configurations:
 
-* LAN with 20us RTT and 10-Gbps link bandwidth. This scenario
+* LAN with :math:`20\mu\rm{s}` RTT and 10-Gbps link bandwidth. This scenario
   represents servers in the same datacenter rack.
 
 * WAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
@@ -528,7 +528,7 @@ on three specific configurations:
   good scenario to visualize the algorithm’s dynamics when looking at
   two to three flows.
   
-* WAN 40ms RTT and 10/100-Mbps, with an intermediate router is
+* WAN with 40ms RTT and 10/100-Mbps bottleneck bandwidth, with an intermediate router 
   introduced to reduce the link bandwidth to 10 or 100 Mbps.  This
   scenario reflects a connection an end-user might experience on a
   modern network.
@@ -572,12 +572,12 @@ These tests make it possible to:
   
 * Examine how quickly flows adapt to released bandwidth from terminating flows.
 
-* Measure fairness between flows with the same (or different) congestion algorithm(s)
+* Measure fairness between flows with the same (or different) congestion algorithm(s).
 
 * Measure levels of congestion.
 
 * Identify conditions under which performance changes abruptly,
-  signalling an instability.
+  signalling a possible instability.
 
 Additional tests include a combination of streaming, plus 10-KB and
 1-MB RPCs. These tests allow us to see if the smaller RPC flows are
@@ -598,12 +598,13 @@ collect the data, and produce the following graphs:
 * Goodput (payload throughput) graphs. These include output for each
   flow as well as the aggregate goodput.
 
-* Cwnd graphs. These include the cwnd for each flow, annotated to
+* Cwnd graphs. These include the congestion window (cwnd) for each flow, annotated to
   indicate the time when one or more packets are retransmitted.
 
 * RTT graphs, as seen by each server sending data.
 
 * Graph of cumulative losses per flow.
 
-Chapter 8 describes ``Netesto`` and the associated software tools in
-more detail.
+You will see examples of these graphs in the following
+chapters. Chapter 8 describes ``Netesto`` and the associated software
+tools in more detail.
