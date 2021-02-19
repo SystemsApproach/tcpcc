@@ -213,17 +213,18 @@ refer the reader to the authoritative RFC:
    `RFC 6298: Computing TCP's Retransmission Timer
    <https://tools.ietf.org/html/rfc6298>`__. June 2011.
 
-TCP Extensions
-~~~~~~~~~~~~~~~
+TCP Timestamp Extension
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The changes to TCP described up to this point have been adjustments to
 how the sender computes timeouts, with no changes to the over-the-wire
-protocol. But there are also two extensions to the TCP header that help
+protocol. But there are also extensions to the TCP header that help
 improve its ability to manage timeouts and retransmissions. We discuss
-them here. (A third TCP extension, establishing a scaling factor the
-``AdvertizedWindow``, was described in Section 2.2.)
+one that relates to RTT estimation here. Another extension, establishing a scaling factor the
+``AdvertizedWindow``, was described in Section 2.2., and a third,
+selective acknowledgment or SACK is discussed below.
 
-The first extension helps to improve TCP’s timeout mechanism. Instead of
+The TCP timestamp extension helps to improve TCP’s timeout mechanism. Instead of
 measuring the RTT using a coarse-grained event, TCP can read the actual
 system clock when it is about to send a segment, and put this time—think
 of it as a 32-bit *timestamp*\ —in the segment’s header. The receiver then
@@ -233,9 +234,10 @@ RTT. In essence, the timestamp option provides a convenient place for
 TCP to store the record of when a segment was transmitted; it stores the
 time in the segment itself. Note that the endpoints in the connection do
 not need synchronized clocks, since the timestamp is written and read at
-the same end of the connection.
+the same end of the connection. This improves the measurement of RTT
+and hence reduces the risk of incorrect timeouts due to poor RTT estimates.
 
-This timestamp extensions serves a dual purpose, in that it also
+This timestamp extensions serves a second purpose, in that it also
 provides a means to define a 64-bit sequence number field, addressing
 the shortcomings of TCP's 32-bit timestamp outlined in Section 2.2.
 Specifically, TCP decides whether to accept or reject a segment based
@@ -247,39 +249,6 @@ that the timestamp is being used in this setting only to protect
 against wraparound; it is not treated as part of the sequence number
 for the purpose of ordering or acknowledging data.
 
-The second extension allows TCP to augment its cumulative
-acknowledgment with selective acknowledgments of any additional
-segments that have been received but aren’t contiguous with all
-previously received segments.  This is the *selective acknowledgment*,
-or *SACK*, option. When the SACK option is used, the receiver
-continues to acknowledge segments normally—the meaning of the
-``Acknowledge`` field does not change—but it also extends the header
-with additional acknowledgments for any blocks received out-of-order.
-This allows the sender to retransmit just the segments that are
-missing instead of all the segments that follow a dropped
-segment. Receiving multiple segments out-of-order (after a dropped
-segment) becomes increasingly likely as networks become faster and the
-delay × bandwidth product of networks increases.
-
-Without SACK, there are only two reasonable strategies for a sender to
-deal with segments that are received out-of-order. The pessimistic
-strategy responds to a timeout by retransmitting not just the segment
-that timed out, but any segments transmitted subsequently.  In effect,
-the pessimistic strategy assumes the worst: that all those segments
-were lost. The disadvantage of the pessimistic strategy is that it may
-unnecessarily retransmit segments that were successfully received the
-first time. The other strategy is to respond to a timeout by
-retransmitting only the segment that timed out.  This optimistic
-approach assumes the rosiest scenario: that only the one segment has
-been lost. The disadvantage of the optimistic strategy is that it is
-very slow to recover when a series of consecutive segments has been
-lost, as might happen when there is congestion. It is slow because
-each segment’s loss is not discovered until the sender receives an ACK
-for its retransmission of the previous segment. This means it consumes
-one RTT per segment until it has retransmitted all the segments in the
-lost series. With the SACK option, a better strategy is available to
-the sender: retransmit just the segments that fill the gaps between
-the segments that have been selectively acknowledged.
 
 4.2 Additive Increase/Multiplicative Decrease
 ---------------------------------------------
@@ -709,7 +678,7 @@ blocks the sender until a timeout occurs. In practice, TCP’s fast
 retransmit mechanism can detect up to three dropped packets per
 window.
 
-There is one last improvement we can make. When the fast retransmit
+There is one further improvement we can make. When the fast retransmit
 mechanism signals congestion, rather than drop the congestion window
 all the way back to one packet and run slow start, it is possible to
 use the ACKs that are still in the pipe to clock the sending of
@@ -723,6 +692,64 @@ increase. In other words, slow start is only used at the beginning of
 a connection and whenever a coarse-grained timeout occurs. At all
 other times, the congestion window is following a pure additive
 increase/multiplicative decrease pattern.
+
+TCP SACK
+--------
+The original TCP specification uses cumulative
+acknowledgments, meaning that the receiver acknowledges the last
+packet it received prior to any lost packets. You can think of the
+receiver having a collection of received packets where any lost
+packets are represented by holes in the received byte stream. With the
+original specification, it's only possible to tell the sender where
+the first hole starts, even if several packets have 
+been lost. Intuitively, this lack of detail could limit the sender's
+ability to respond effectively to packet loss. The approach taken to
+address this is called selective acknowledgments or SACK.
+SACK is another optional extension to TCP that was first proposed soon
+after the early work of Jacobson and Karels but took some years to
+gain acceptance, as it was hard to prove that it would be beneficial.
+
+Without SACK, there are only two reasonable strategies for a sender to
+adopt when segments are received out-of-order. The pessimistic
+strategy responds to a duplicate ACK or a timeout by retransmitting not just the segment
+that was clearly lost (the first packet missing at the receiver), but
+any segments transmitted subsequently.  In effect, 
+the pessimistic strategy assumes the worst: that all those segments
+were lost. The disadvantage of the pessimistic strategy is that it may
+unnecessarily retransmit segments that were successfully received the
+first time. The other strategy is to respond to a loss signal (timeout
+or duplicate ACK) by
+retransmitting only the segment that triggered that signal.  This optimistic
+approach assumes the rosiest scenario: that only the one segment has
+been lost. The disadvantage of the optimistic strategy is that it is
+very slow to recover when a series of consecutive segments has been
+lost, as might happen when there is congestion. It is slow because
+each segment’s loss is not discovered until the sender receives an ACK
+for its retransmission of the previous segment. This means it consumes
+one RTT per segment until it has retransmitted all the segments in the
+lost series. With the SACK option, a better strategy is available to
+the sender: retransmit just the segments that fill the gaps between
+the segments that have been selectively acknowledged.
+
+SACK is first negotiated at the start of a connection by the sender
+telling the receiver that it can handle the SACK option. When the SACK
+option is used, the receiver continues to acknowledge segments
+normally—the meaning of the ``Acknowledge`` field does not change—but
+it also extends the header with additional acknowledgments for any
+blocks received out-of-order.  This allows the sender to identify the
+holes that exist at the receiver, and retransmit just the segments
+that are missing instead of all the segments that follow a dropped
+segment.
+
+SACK was shown to improve the performance of TCP Reno particularly in
+the case where multiple packets were dropped in a single RTT, as would
+be expected (since cumulative ACK and SACK are the same thing when only
+one packet is dropped). This scenario became more likely over time as
+bandwidth x delay products increased, leaving more packets in the pipe
+for a given RTT. Hence SACK, which became a proposed IETF standard in
+1996, was a timely addition to TCP. 
+
+
 
 4.5 TCP CUBIC 
 --------------
