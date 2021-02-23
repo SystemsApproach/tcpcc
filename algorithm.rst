@@ -757,6 +757,43 @@ for a given RTT. Hence SACK, which became a proposed IETF standard in
 1996, was a timely addition to TCP. 
 
 
+The NewReno Enhancement
+------------------------
+The mechanisms in TCP Reno were by no means the last word in TCP
+congestion control. Starting with some research by Janey Hoe at MIT in
+the mid-1990s, the enhancement known as NewReno incrementally improves
+the performance of TCP by making more intelligent decisions about
+which packets to retransmit under certain packet loss conditions.
+
+The key insight behind NewReno is that even without SACK, duplicate
+ACKs can convey information to the sender about how many packets have
+been dropped and which ones they were, so that the sender can make
+more intelligent choices and when to retransmit a packet. Furthermore,
+in the presence of multiple losses from a single window, NewReno can
+avoids multiple halvings of the congestion window that occurred in
+prior versions.
+
+The details of NewReno are extensive, but the intuition is as
+follows. If a single packet is lost, then after three duplicate ACKs,
+the sender will retransmit the lost packet. When it arrives, the
+receiver will acknowledge all the outstanding data, as it has now
+filled the one hole in its receive buffer. Conversely, if multiple
+packets were lost, the first ACK after that retransmitted packet is
+received will only partially cover the outstanding packets. From this,
+the sender can infer that there were more packets lost, and
+immediately start to try to fill the gaps by sending the next packet
+that has not yet been acknowledged. This can lead to fewer timeouts
+and hence less idle time and fewer reductions in the congestion
+window.
+
+It's worth noting that NewReno was documented in three RFCs published
+between 1999 and 2012, each one of which fixed some issues in its
+predecessor's algorithms. This is a case study in how complex it can be
+to understand the fine detail of
+congestion control algorithms, adding to the challenges of getting new
+algorithms into deployment. 
+
+
 
 4.5 TCP CUBIC 
 --------------
