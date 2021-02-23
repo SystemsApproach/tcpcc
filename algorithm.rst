@@ -254,7 +254,7 @@ for the purpose of ordering or acknowledging data.
 ---------------------------------------------
 
 A better way to compute timeouts is a necessary building block, but it
-does not get at the heart controlling congestion. The central
+does not get at the heart of controlling congestion. The central
 challenge is computing an estimate of how much traffic the network
 this sender can safely transmit. To this end, TCP maintains a new
 state variable for each connection, called ``CongestionWindow``. It is
@@ -288,7 +288,7 @@ involves decreasing the congestion window when the level of congestion
 goes up and increasing the congestion window when the level of
 congestion goes down. Taken together, the mechanism is commonly called
 *additive increase/multiplicative decrease (AIMD)* due to the
-heuristic it adopts.
+approach it adopts.
 
 The key question then becomes: How does the source determine that the
 network is congested and that it should decrease the congestion
@@ -360,18 +360,22 @@ if you plot the current value of ``CongestionWindow`` as a function of
 time, you get a sawtooth pattern, as illustrated in :numref:`Figure %s
 <fig-sawtooth>`. The important concept to understand about AIMD is
 that the source is willing to reduce its congestion window at a much
-faster rate than it is willing to increase its congestion window. This
-is in contrast to an additive increase/additive decrease strategy in
+faster rate than it is willing to increase its congestion window. One
+could imagine an additive increase/additive decrease strategy in
 which the window would be increased by 1 packet when an ACK arrives
-and decreased by 1 when a timeout occurs. It has been shown that AIMD
-is a necessary condition for a congestion-control mechanism to be
-stable.
+and decreased by 1 when a timeout occurs, but this turns out to be too
+aggressive. Responding quickly to congestion 
+is important to stability. 
 
 An intuitive explanation for why TCP decreases the window aggressively
 and increases it conservatively is that the consequences of having too
 large a window are compounding. This is because when the window is too
 large, packets that are dropped will be retransmitted, making
-congestion even worse. It is important to get out of this state quickly.
+congestion even worse. It is important to get out of this state
+quickly. You can think of AIMD as gently increasing the data in flight
+to probe for the level at which congestion begins, then aggressively
+stepping back from the brink of congestion collapse when that level is
+detected by a timeout.
 
 Finally, since a timeout is an indication of congestion that triggers
 multiplicative decrease, TCP needs the most accurate timeout mechanism
@@ -386,11 +390,11 @@ coarse-grained (500-ms) clock.
 4.3 Slow Start
 --------------
 
-The additive increase mechanism just described is the right approach to
+The additive increase mechanism just described is a reasonable approach to
 use when the source is operating close to the available capacity of the
 network, but it takes too long to ramp up a connection when it is
 starting from scratch. TCP therefore provides a second mechanism,
-ironically called *slow start*, which is used to increase the congestion
+counter-intuitively called *slow start*, which is used to increase the congestion
 window rapidly from a cold start. Slow start effectively increases the
 congestion window exponentially, rather than linearly.
 
@@ -413,7 +417,7 @@ growth of additive increase illustrated in :numref:`Figure %s
    Packets in transit during slow start.
 
 Why any exponential mechanism would be called “slow” is puzzling at
-first, but it can be explained if put in the proper historical
+first, but it makes sense in its historical
 context.  We need to compare slow start not against the linear
 mechanism of the previous section, but against the original behavior
 of TCP. Consider what happens when a connection is established and the
@@ -421,7 +425,7 @@ source first starts to send packets—that is, when it currently has no
 packets in transit. If the source sends as many packets as the
 advertised window allows—which is exactly what TCP did before slow
 start was developed—then even if there is a fairly large amount of
-bandwidth available in the  network, the routers may not be able to
+bandwidth available in the network, the routers may not be able to
 consume this burst of packets. It all depends on how much buffer space
 is available at the routers. Slow start was therefore designed to
 space packets out so that this burst does not occur. In other words,
@@ -611,7 +615,8 @@ long periods of time during which the connection went dead while
 waiting for a timer to expire. A heuristic, called *fast retransmit*,
 sometimes triggers the retransmission of a dropped packet sooner than
 the regular timeout mechanism. The fast retransmit mechanism does not
-replace regular timeouts; it just enhances that facility.
+replace regular timeouts; it just adds another way of detecting lost
+packets that can be more timely.
 
 The idea is that every time a data packet arrives at the receiving
 side, the receiver responds with an acknowledgment, even if this
@@ -625,9 +630,11 @@ This second transmission of the same acknowledgment is called a
 that the other side must have received a packet out of order, which
 suggests that an earlier packet might have been lost. Since it is also
 possible that the earlier packet has only been delayed rather than
-lost, the sender waits until it sees some number of duplicate ACKs and
-then retransmits the missing packet. In practice, TCP waits until it
-has seen three duplicate ACKs before retransmitting the packet.
+lost, the sender waits until it sees some number of duplicate ACKs (in
+practice, three) and
+then retransmits the missing packet. The built-in assumption here,
+which is well tested in practice, is that out-of-order packets are
+less common by far than lost packets. 
 
 .. _fig-tcp-fast:
 .. figure:: figures/f06-12-9780123850591.png
