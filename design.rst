@@ -205,7 +205,9 @@ its codec. This is the core idea of TCP-friendly rate control (TFRC),
 which extends the concepts of TCP congestion avoidance to applications
 that more naturally send packets at a specific rate (e.g., the bitrate
 produced by a video codec at a given quality level). We will see
-examples of such mechanisms in Chapter 6. 
+examples of such mechanisms in Chapter 6. Interestingly, some video
+applications that might at first seem like a natural fit for TFRC actually
+just use TCP; see the discussion of DASH above for example.
 
 Control-based versus Avoidance-based
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
