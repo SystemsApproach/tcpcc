@@ -27,8 +27,8 @@ be read as a case study of the experience of identifying and solving a
 sequence of problems. We will trace the historical context as we visit
 each of the techniques in the sections that follow.
 
-4.1 Adaptive Retransmission
----------------------------
+4.1 Timeout Calculation
+-----------------------
 
 Timeouts and retransmissions are a central part TCP's approach to
 implementing a reliable byte-stream, but timeouts also play a key role
@@ -700,8 +700,18 @@ a connection and whenever a coarse-grained timeout occurs. At all
 other times, the congestion window is following a pure additive
 increase/multiplicative decrease pattern.
 
+4.5 Incremental Enhancements
+-------------------------------
+
+If a study of TCP congestion control teaches us one thing, it's how
+complex the problem is, and how many details you have to get right.
+This happens only through a sequence of incremental improvements that
+the result of experience. The following gives two additional examples
+of that lesson.
+
 TCP SACK
---------
+~~~~~~~~~~~~~~
+
 The original TCP specification uses cumulative
 acknowledgments, meaning that the receiver acknowledges the last
 packet it received prior to any lost packets. You can think of the
@@ -757,10 +767,10 @@ for a given RTT. Hence SACK, which became a proposed IETF standard in
 1996, was a timely addition to TCP. 
 
 
-The NewReno Enhancement
-------------------------
-The mechanisms in TCP Reno were by no means the last word in TCP
-congestion control. Starting with some research by Janey Hoe at MIT in
+NewReno
+~~~~~~~~~~~~~~
+
+Starting with some research by Janey Hoe at MIT in
 the mid-1990s, the enhancement known as NewReno incrementally improves
 the performance of TCP by making more intelligent decisions about
 which packets to retransmit under certain packet loss conditions.
@@ -794,17 +804,8 @@ congestion control algorithms, adding to the challenges of getting new
 algorithms into deployment. 
 
 
-
 4.5 TCP CUBIC 
 --------------
-
-.. 
-	Lots of intervening years not accounted for here. More about the 
-	BSD-to-Linux transition might also be helpful. -llp
-
-.. 
-	And, this section is pretty thin, but I don't have enough
-	insight into CUBIC to embellish. -llp
 
 It should be clear by now that trying to find the appropriate rate at
 which to send traffic into the network is at the heart of congestion
@@ -825,7 +826,7 @@ rethinking on how to probe for the appropriate window size.
 
 This idea that the window should open quickly at some times and more
 slowly at others was captured in a new approach called
-"Binary Increase Congestion Control" or BIC. Rather than abruptly
+*Binary Increase Congestion Control (BIC)*. Rather than abruptly
 switching from exponential window growth to linear, as TCP Reno does,
 BIC effectively does a binary search for the "right" window
 size. After a packet loss, the congestion window is cut by a multiplicative factor
@@ -833,7 +834,7 @@ size. After a packet loss, the congestion window is cut by a multiplicative fact
 the window is increased to the midpoint of its current value and the
 old value that caused congestion. In this way, it asymptotes towards
 the old value–first quickly then slowly. (Taken to the extreme, the window would
-never get back to its old value–see Zeno's paradox–but when it gets
+never get back to its old value—see Zeno's paradox—but when it gets
 within a certain threshold it is set to the old value).
 
 At this point, if there is no congestion, we can conclude that the
@@ -901,8 +902,8 @@ Interestingly, CUBIC is either more aggressive or less aggressive than
 earlier variants of TCP, depending on the conditions. Short RTT TCP
 Reno flows tend to be effective in acquiring bottleneck
 bandwidth, so CUBIC includes a "TCP-friendly" mode where it aims to be
-just as aggressive as TCP Reno. But in other circumstances–notably high
-bandwidth-delay networks–CUBIC will
+just as aggressive as TCP Reno. But in other circumstances—notably high
+bandwidth-delay networks—CUBIC will
 be able to obtain a bigger share of the bottleneck bandwidth because
 CUBIC is increasing its window size more quickly. This brings us back
 to the discussion of Section 3.3 as to whether "fairness" to incumbent
@@ -910,10 +911,3 @@ algorithms is the right design goal. Ultimately, CUBIC was extensively
 analyzed, showed good performance under many conditions without
 causing undue harm, and was widely deployed.
 
-
-4.6 Retrospective
---------------------
-
-..
-	May not be necessary if the info bridging Reno-to-CUBIC is
-	complete enough. -llp
