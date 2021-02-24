@@ -804,7 +804,7 @@ congestion control algorithms, adding to the challenges of getting new
 algorithms into deployment. 
 
 
-4.5 TCP CUBIC 
+4.6 TCP CUBIC 
 --------------
 
 It should be clear by now that trying to find the appropriate rate at
