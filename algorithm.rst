@@ -705,7 +705,7 @@ increase/multiplicative decrease pattern.
 
 If a study of TCP congestion control teaches us one thing, it's how
 complex the problem is, and how many details you have to get right.
-This happens only through a sequence of incremental improvements that
+This happens only through a sequence of incremental improvements that are
 the result of experience. The following gives two additional examples
 of that lesson.
 
@@ -833,7 +833,7 @@ size. After a packet loss, the congestion window is cut by a multiplicative fact
 :math:`\beta`. With each successful iteration of sending packets at the new window size,
 the window is increased to the midpoint of its current value and the
 old value that caused congestion. In this way, it asymptotes towards
-the old value–first quickly then slowly. (Taken to the extreme, the window would
+the old value—first quickly then slowly. (Taken to the extreme, the window would
 never get back to its old value—see Zeno's paradox—but when it gets
 within a certain threshold it is set to the old value).
 
