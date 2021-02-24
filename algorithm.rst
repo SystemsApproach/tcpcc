@@ -804,24 +804,62 @@ algorithms into deployment.
 
 .. 
 	And, this section is pretty thin, but I don't have enough
-	insight into CUBIC to embellish. -llp	
-	
-A variant of the standard TCP algorithm, called CUBIC, is the default
-congestion control algorithm distributed with Linux. CUBIC’s primary
-goal is to support networks with large delay × bandwidth products,
-which are sometimes called *long-fat networks*. Such networks suffer
-from the original TCP algorithm requiring too many round-trips to
-reach the available capacity of the end-to-end path. CUBIC does this
-by being more aggressive in how it increases the window size, but of
-course the trick is to be more aggressive without being so aggressive
-as to adversely affect other flows.
+	insight into CUBIC to embellish. -llp
 
-One important aspect of CUBIC’s approach is to adjust its congestion 
+It should be clear by now that trying to find the appropriate rate at
+which to send traffic into the network is at the heart of congestion
+control, and that it's possible to err in either direction. Send too
+little traffic and the network is underutilized leading to poor application
+performance. Send too much and the network becomes congested,
+leading to congestion collapse in the worst case. Between these two
+failure modes, sending too much traffic is generally the more serious,
+because of the way congestion can quickly compound itself as lost
+packets are retransmitted. The AIMD approach that is built into Tahoe,
+Reno and NewReno reflects this: increase the window slowly (additive
+increase) and decrease it quickly (multiplicative decrease) in an
+effort to step back from the brink of congestion collapse before it
+gets too severe. But in high bandwidth-delay environments, the cost of
+being too conservative in probing for congestion is quite high, as it
+can take many RTTs before the "pipe is full". So this has led to some
+rethinking on how to probe for the appropriate window size.
+
+This idea that the window should open quickly at some times and more
+slowly at others was captured in a new approach called
+"Binary Increase Congestion Control" or BIC. Rather than abruptly
+switching from exponential window growth to linear, as TCP Reno does,
+BIC effectively does a binary search for the "right" window
+size. After a packet loss, the congestion window is cut by a multiplicative factor
+:math:`\beta`. With each successful iteration of sending packets at the new window size,
+the window is increased to the midpoint of its current value and the
+old value that caused congestion. In this way, it asymptotes towards
+the old value–first quickly then slowly. (Taken to the extreme, the window would
+never get back to its old value–see Zeno's paradox–but when it gets
+within a certain threshold it is set to the old value).
+
+At this point, if there is no congestion, we can conclude that the
+network conditions have changed, and it is OK to probe for a new
+congestion window size. BIC does this first slowly and then more
+quickly. You can see the approximate shape of how BIC grows its
+window in :numref:`Figure %s <fig-cubic>`, asymptoting towards
+:math:`W_{max}` (the old congestion window prior to the last loss) and then moving beyond it.
+
+
+BIC eventually evolved into a new variant called CUBIC, which today is the default
+congestion control algorithm distributed with Linux. CUBIC improved
+upon BIC in a number of ways, one of which was to use a smooth curve
+described by a cubic function rather than the piece-wise linear
+function of BIC. More on this below.
+
+Another important aspect of CUBIC’s approach is to adjust its congestion 
 window at regular intervals, based on the amount of time that has 
 elapsed since the last congestion event (e.g., the arrival of a 
 duplicate ACK), rather than only when ACKs arrive (the latter being a 
-function of RTT). This allows CUBIC to behave fairly when competing with 
-short-RTT flows, which will have ACKs arriving more frequently. 
+function of RTT). This allows CUBIC to behave fairly when long-RTT
+flows compete with 
+short-RTT flows, which have ACKs arriving more frequently. This
+is an interesting departure from prior versions of TCP, in which a
+flow with a short RTT holds a definite advantage in terms of the
+share of a bottleneck link it will obtain.
 
 .. _fig-cubic:
 .. figure:: figures/Slide1.png 
@@ -831,20 +869,15 @@ short-RTT flows, which will have ACKs arriving more frequently.
    Generic cubic function illustrating the change in the congestion 
    window as a function of time. 
 
-The second important aspect of CUBIC is its use of a cubic function to 
-adjust the congestion window. The basic idea is easiest to understand 
-by looking at the general shape of a cubic function, which has three 
-phases: slowing growth, flatten plateau, increasing growth. A generic 
-example is shown in :numref:`Figure %s <fig-cubic>`, which we have 
-annotated with one extra piece of information: the maximum congestion 
-window size achieved just before the last congestion event as a target 
-(denoted :math:`W_{max}`). The idea is to start fast but slow the 
-growth rate as you get close to :math:`W_{max}`, be cautious and have 
-near-zero growth when close to :math:`W_{max}`, and then increase the 
-growth rate as you move away from :math:`W_{max}`. The latter phase is 
-essentially probing for a new achievable :math:`W_{max}`. 
+The cubic function, shown in :numref:`Figure %s <fig-cubic>`, has three 
+phases: slowing growth, flatten plateau, increasing growth. The maximum congestion 
+window size achieved just before the last congestion event is the initial target 
+(denoted :math:`W_{max}`). You can see how the window growth starts
+fast but slows as you get close to :math:`W_{max}`; then there is a
+phase of cautious growth when close to :math:`W_{max}`, and finally a
+phase of probing for a new achievable :math:`W_{max}`. 
 
-Specifically, CUBIC computes the congestion window as a function of time 
+Specifically, CUBIC computes the congestion window (CWND) as a function of time 
 (t) since the last congestion event 
 
 .. math::
@@ -862,7 +895,21 @@ decrease factor.  CUBIC sets the latter to 0.7 rather than the 0.5
 that standard TCP uses. Looking back at :numref:`Figure %s 
 <fig-cubic>`, CUBIC is often described as shifting between a concave 
 function to being convex (whereas standard TCP’s additive function is 
-only convex). 
+only convex).
+
+Interestingly, CUBIC is either more aggressive or less aggressive than
+earlier variants of TCP, depending on the conditions. Short RTT TCP
+Reno flows tend to be effective in acquiring bottleneck
+bandwidth, so CUBIC includes a "TCP-friendly" mode where it aims to be
+just as aggressive as TCP Reno. But in other circumstances–notably high
+bandwidth-delay networks–CUBIC will
+be able to obtain a bigger share of the bottleneck bandwidth because
+CUBIC is increasing its window size more quickly. This brings us back
+to the discussion of Section 3.3 as to whether "fairness" to incumbent
+algorithms is the right design goal. Ultimately, CUBIC was extensively
+analyzed, showed good performance under many conditions without
+causing undue harm, and was widely deployed.
+
 
 4.6 Retrospective
 --------------------
