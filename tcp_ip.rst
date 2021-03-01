@@ -687,7 +687,9 @@ presented in later chapters, but they were deployed in concert with
 those changes, which unfortunately, conflates the two issues. To
 further blur the line between accommodating high-speed networks and
 addressing congestion, there are extensions to the TCP header that
-play a dual role in addressing both.
+play a dual role in addressing both. Finally, note that increasing
+bandwidth-delay product *does* have an impact on congestion control,
+and some of the approaches discussed in later chapters deal with that issue.
 
 This section focuses on the challenges of high-speed networks, and we
 postpone the details about the TCP extensions used to address those
