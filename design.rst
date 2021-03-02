@@ -205,22 +205,26 @@ its codec. This is the core idea of TCP-friendly rate control (TFRC),
 which extends the concepts of TCP congestion avoidance to applications
 that more naturally send packets at a specific rate (e.g., the bitrate
 produced by a video codec at a given quality level). TFRC is typically
-integrated into RTP, an alternative transport protocol for real-time
-streaming. We will see examples of such mechanisms in Chapter 6.
+used in conjunction with RTP, a transport protocol designed for real-time
+applications. We will see examples of such mechanisms in Chapter 6.
 
-Interestingly, many video applications that might at first seem like a
-natural fit for RTP-with-TFRC actually use TCP (see the discussion of
-DASH above for example). The two approaches are similar in that the
+Somewhat surprisingly, some video applications that might seem like a
+natural fit for RTP-with-TFRC actually use TCP; see the discussion of
+DASH above for example. Whether TFRC or TCP is used, the 
 application adjusts its sending rate (by adjusting its coding rate)
-based on how the transport protocol responds to congestion. DASH runs
-on top of regular TCP (which as we'll see in Chapter 4 makes no
-attempt to sustain a smooth sending rate), where as RTP-with-TFRC
+based on how the transport protocol responds to congestion. DASH observes
+the rate that is achieved by TCP and switches among coding levels
+to roughly match the application rate to the achieved throughput over
+some time interval. TFRC, in contrast,
 tries to sustain a more consistent rate while being "fair" with
-respect to the TCP flows it is competing against. (More on fairness in
-the next section.) The key factor in whether to use RTP-with-TFRC or
+respect to the TCP flows it is competing against. The application
+tries to select coding parameters to match that fair rate. (We will
+say more on fairness in
+the next section.) The key factor in whether to use TFRC or
 DASH-over-TCP is how much buffer-induced delay the application can
-tolerate, with interactive videoconferencing preferring RTP and
-video-on-demand preferring DASH-over-TCP.
+tolerate. For this reason, interactive videoconferencing applications
+tend to use RTP-with-TFRC while
+video-on-demand applications prefer DASH. 
 
 
 Control-based versus Avoidance-based
