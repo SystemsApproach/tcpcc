@@ -62,21 +62,21 @@ and then takes the difference between these two times as a
 ``SampleRTT``. TCP then computes an ``EstimatedRTT`` as a weighted
 average between the previous estimate and this new sample. That is,
 
-::
+.. math::
 
-   EstimatedRTT = alpha x EstimatedRTT + (1 - alpha) x SampleRTT
+   \mathsf{EstimatedRTT} = \alpha \times \mathsf{EstimatedRTT} + (1 - \alpha{}) \times \mathsf{SampleRTT}
 
-The parameter ``alpha`` is selected to *smooth* the
-``EstimatedRTT``. A small ``alpha`` tracks changes in the RTT but is
+The parameter :math:`\alpha` is selected to *smooth* the
+``EstimatedRTT``. A small :math:`\alpha` tracks changes in the RTT but is
 perhaps too heavily influenced by temporary fluctuations. On the other
-hand, a large ``alpha`` is more stable but perhaps not quick enough to
+hand, a large :math:`\alpha` is more stable but perhaps not quick enough to
 adapt to real changes. The original TCP specification recommended a
-setting of ``alpha`` between 0.8 and 0.9. TCP then uses
+setting of :math:`\alpha` between 0.8 and 0.9. TCP then uses
 ``EstimatedRTT`` to compute the timeout in a rather conservative way:
 
-::
+.. math::
 
-   TimeOut = 2 x EstimatedRTT
+   \mathsf{TimeOut = 2} \times \mathsf{EstimatedRTT}
 
 Karn/Partridge Algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,23 +141,20 @@ coupled to the ``EstimatedRTT``.
 In the new approach, the sender measures a new ``SampleRTT`` as before.
 It then folds this new sample into the timeout calculation as follows:
 
-::
+.. math:: \mathsf{Difference = SampleRTT - EstimatedRTT}
 
-   Difference = SampleRTT - EstimatedRTT
-   EstimatedRTT = EstimatedRTT + ( delta x Difference)
-   Deviation = Deviation + delta (|Difference| - Deviation)
+.. math:: \mathsf{EstimatedRTT = EstimatedRTT} + ( \delta \times \mathsf{Difference)}
 
-where ``delta`` is between 0 and 1. That is, we calculate both the
-mean RTT and the variation in that mean.
+.. math:: \mathsf{Deviation = Deviation} + \delta \mathsf{(|Difference| - Deviation)}
 
-TCP then computes the timeout value as a function of both
-``EstimatedRTT`` and ``Deviation`` as follows:
+where :math:`\delta` is between 0 and 1. That is, we calculate both
+the mean RTT and the variation in that mean. TCP then computes the
+timeout value as a function of both ``EstimatedRTT`` and ``Deviation``
+as follows:
 
-::
+.. math:: \mathsf{TimeOut} = \mu \times \mathsf{EstimatedRTT} + \phi \times \mathsf{Deviation}
 
-   TimeOut = mu x EstimatedRTT + phi x Deviation
-
-where based on experience, ``mu`` is typically set to 1 and ``phi`` is
+where based on experience, :math:`\mu` is typically set to 1 and :math:`\phi` is
 set to 4.  Thus, when the variance is small, ``TimeOut`` is close to
 ``EstimatedRTT``; a large variance causes the ``Deviation`` term to
 dominate the calculation.
@@ -180,7 +177,7 @@ values. If you find the code hard to follow, you might want to try
 plugging some real numbers into it and verifying that it gives the same
 results as the equations above.
 
-::
+.. code::
 
    {
        SampleRTT -= (EstimatedRTT >> 3);
@@ -268,10 +265,9 @@ minimum of the congestion window and the advertised window. Thus,
 using the variables defined in Chapter 2, TCP’s effective window is
 revised as follows:
 
-::
-
-   MaxWindow = MIN(CongestionWindow, AdvertisedWindow)
-   EffectiveWindow = MaxWindow -  (LastByteSent - LastByteAcked)
+.. math:: \mathsf{MaxWindow = MIN(CongestionWindow, AdvertisedWindow)}
+	  
+.. math:: \mathsf{EffectiveWindow = MaxWindow -  (LastByteSent - LastByteAcked)}
 
 That is, ``MaxWindow`` replaces ``AdvertisedWindow`` in the calculation
 of ``EffectiveWindow``. Thus, a TCP source is allowed to send no
@@ -337,10 +333,9 @@ add 1 packet’s worth to the congestion window, but instead increments
 arrives. Specifically, the congestion window is incremented as follows
 each time an ACK arrives:
 
-::
+.. math:: \mathsf{Increment = MSS} \times \mathsf{(MSS\ /\ CongestionWindow)}
 
-   Increment = MSS x (MSS/CongestionWindow)
-   CongestionWindow += Increment
+.. math:: \mathsf{CongestionWindow = CongestionWindow\ +\ Increment}
 
 That is, rather than incrementing ``CongestionWindow`` by an entire
 ``MSS`` bytes each RTT, we increment it by a fraction of ``MSS`` every

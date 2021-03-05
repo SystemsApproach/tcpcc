@@ -214,7 +214,7 @@ DASH above for example). The two approaches are similar in that the
 application adjusts its sending rate (by adjusting its coding rate)
 based on how the transport protocol responds to congestion. DASH runs
 on top of regular TCP (which as we'll see in Chapter 4 makes no
-attempt to sustain a smooth sending rate), where as RTP-with-TFRC
+attempt to sustain a smooth sending rate), whereas RTP-with-TFRC
 tries to sustain a more consistent rate while being "fair" with
 respect to the TCP flows it is competing against. (More on fairness in
 the next section.) The key factor in whether to use RTP-with-TFRC or
@@ -293,9 +293,9 @@ The ratio of throughput to delay is a general metric for evaluating
 the effectiveness of a resource allocation scheme. This ratio is
 sometimes referred to as the *power* of the system:
 
-::
+.. math::
 
-   Power = Throughput / Delay
+   \mathsf{Power = Throughput / Delay}
 
 Intuitively, the objective is to maximize this ratio, which is a
 function of how much load you place on the system. The load, in turn,

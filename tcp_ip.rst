@@ -350,11 +350,7 @@ destination ports, respectively. These two fields, plus the source and
 destination IP addresses, combine to uniquely identify each TCP
 connection. All state needed to manage a TCP connection, including the
 congestion-related state introduced in later chapters, is bound to the
-4-tuple.
-
-.. code:: c
-
-   (SrcPort, SrcIPAddr, DstPort, DstIPAddr)
+4-tuple: ``(SrcPort, SrcIPAddr, DstPort, DstIPAddr)``.
 
 Note that because TCP connections come and go, it is possible for a
 connection between a particular pair of ports to be established, used to
@@ -453,9 +449,9 @@ Looking first at the sending side, three pointers are maintained into
 the send buffer, each with an obvious meaning: ``LastByteAcked``,
 ``LastByteSent``, and ``LastByteWritten``. Clearly,
 
-::
+.. math::
 
-   LastByteAcked <= LastByteSent <= LastByteWritten
+   \mathsf{LastByteAcked} \le \mathsf{LastByteSent} \le \mathsf{LastByteWritten}
 
 since the receiver cannot have acknowledged a byte that has not yet been
 sent, and TCP cannot send a byte that the application process has not yet
@@ -466,9 +462,9 @@ receiving side: ``LastByteRead``, ``NextByteExpected``, and
 ``LastByteRcvd``. The inequalities are a little less intuitive, however,
 because of the problem of out-of-order delivery. In this case:
 
-::
+.. math::
 
-   LastByteRead < NextByteExpected <= LastByteRcvd + 1
+   \mathsf{LastByteRead} \lt \mathsf{NextByteExpected} \le \mathsf{LastByteRcvd + 1}
 
 since a byte cannot be read by the application until it is received
 *and* all preceding bytes have also been received. If data has
@@ -500,16 +496,16 @@ respectively. The receiver throttles the sender by
 advertising a window that is no larger than the amount of data that it
 can buffer. Observe that TCP on the receive side must keep
 
-::
+.. math::
 
-   LastByteRcvd - LastByteRead <= RcvBufferSize
+   \mathsf{LastByteRcvd - LastByteRead} \le \mathsf{RcvBufferSize}
 
 to avoid overflowing its buffer. It therefore advertises a window size
 of
 
-::
+.. math::
 
-   AdvertisedWindow = RcvBufferSize - ((NextByteExpected - 1) - LastByteRead)
+   \mathsf{AdvertisedWindow = RcvBufferSize - ((NextByteExpected - 1) - LastByteRead)}
 
 which represents the amount of free space remaining in its buffer. As
 data arrives, the receiver acknowledges it as long as all the preceding
@@ -529,16 +525,16 @@ TCP on the send side must then adhere to the advertised window it gets
 from the receiver. This means that at any given time, it must ensure
 that
 
-::
+.. math::
 
-   LastByteSent - LastByteAcked <= AdvertisedWindow
+   \mathsf{LastByteSent - LastByteAcked} \le \mathsf{AdvertisedWindow}
 
 Said another way, the sender computes an *effective* window that limits
 how much data it can send:
 
-::
+.. math::
 
-   EffectiveWindow = AdvertisedWindow - (LastByteSent - LastByteAcked)
+   \mathsf{EffectiveWindow = AdvertisedWindow - (LastByteSent - LastByteAcked)}
 
 Clearly, ``EffectiveWindow`` must be greater than 0 before the source
 can send more data. It is possible, therefore, that a segment arrives
@@ -551,15 +547,15 @@ buffer space, but not to send any more data.
 All the while this is going on, the send side must also make sure that
 the local application process does not overflow the send buffer—that is,
 
-::
+.. math::
 
-   LastByteWritten - LastByteAcked <= SendBufferSize
+   \mathsf{LastByteWritten - LastByteAcked} \le \mathsf{SendBufferSize}
 
-If the sending process tries to write y bytes to TCP, but
+If the sending process tries to write ``b`` bytes to TCP, but
 
-::
+.. math::
 
-   (LastByteWritten - LastByteAcked) + y > SendBufferSize
+   \mathsf{(LastByteWritten - LastByteAcked) + b > SendBufferSize}
 
 then TCP blocks the sending process and does not allow it to generate
 more data.
@@ -729,8 +725,6 @@ bandwidths.
    +--------------------------+-----------------------+
    | T3 (45 Mbps)             | 13 minutes            |
    +--------------------------+-----------------------+
-   | Fast Ethernet (100 Mbps) | 6 minutes             |
-   +--------------------------+-----------------------+
    | OC-3 (155 Mbps)          | 4 minutes             |
    +--------------------------+-----------------------+
    | OC-48 (2.5 Gbps)         | 14 seconds            |
@@ -778,8 +772,6 @@ product for several network technologies.
    | T1 (1.5 Mbps)            | 18 KB                     |
    +--------------------------+---------------------------+
    | T3 (45 Mbps)             | 549 KB                    |
-   +--------------------------+---------------------------+
-   | Fast Ethernet (100 Mbps) | 1.2 MB                    |
    +--------------------------+---------------------------+
    | OC-3 (155 Mbps)          | 1.8 MB                    |
    +--------------------------+---------------------------+
