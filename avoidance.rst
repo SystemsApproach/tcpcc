@@ -2,7 +2,7 @@ Chapter 5:  Avoidance-Based Algorithms
 ======================================
 
 A review of the academic literature on TCP congestion control shows a
-notiable gap between the original TCP Tahoe and Reno mechanisms
+notable gap between the original TCP Tahoe and Reno mechanisms
 introduced in 1988 and 1990, respectively, and the next major flurry
 of activity starting in 1994, marked by the introduction of an
 alternative approach known as TCP Vegas. This triggered an avalanche
@@ -18,13 +18,15 @@ the next 25+ years.
       ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in IEEE/ACM Transactions 
       on Networking, October 1995).
 
-TCP Vegas takes an *avoidance-based* approach to congestion control in
-that it tries to detect changes in the measured throughput rate, and
-adjust the sending rate before congestion becomes severe enough to
-cause packet loss. This chapter describes the general "Vegas strategy"
-and—as we did with Tahoe/Reno in the previous chapter—walks through
-the incremental changes applied to that strategy over time. This case
-study culminates in the BBR algorithm championed by Google today.
+Whereas every approach described to date sees packet loss as a congestion
+signal and tries to react to *control* congestion after the onset, TCP Vegas takes an
+*avoidance-based* approach to congestion: it tries to detect changes
+in the measured throughput rate, and adjust the sending rate *before*
+congestion becomes severe enough to cause packet loss. This chapter
+describes the general "Vegas strategy" and—as we did with Tahoe/Reno
+in the previous chapter—walks through the incremental changes applied
+to that strategy over time. This case study culminates in the BBR
+algorithm championed by Google today.
 
 5.1 TCP Vegas
 -------------
@@ -34,7 +36,7 @@ on a comparison of the *measured* throughput rate with the *expected*
 throughput rate. The intuition can be seen in the trace of TCP Reno
 given in :numref:`Figure %s <fig-trace3>`. The top graph traces the
 connection’s congestion window; it shows the same information as the
-traces given earlier in this section.  The middle and bottom graphs
+traces given in the previous chapter.  The middle and bottom graphs
 depict new information: The middle graph shows the average sending
 rate as measured at the source, and the bottom graph shows the average
 queue length as measured at the bottleneck router. All three graphs
@@ -64,12 +66,12 @@ A useful metaphor that describes the phenomenon illustrated in
 (congestion window) may say that you are going 30 miles an hour, but
 by looking out the car window and seeing people pass you on foot
 (measured throughput rate) you know that you are going no more than 5
-miles an hour. The extra energy is being absorbed by the car’s tires
-(router buffers).
+miles an hour. The uselessly spinning wheels in this analogy are like
+the extra packets being sent only to sit uselessly in router buffers.
 
 TCP Vegas uses this idea to measure and control the amount of extra data
 this connection has in transit, where by “extra data” we mean data that
-the source would not have transmitted had it been trying to match
+the source would not have transmitted had it been able to match
 exactly the available bandwidth of the network. The goal of TCP Vegas is
 to maintain the “right” amount of extra data in the network. Obviously,
 if a source is sending too much extra data, it will cause long delays
@@ -106,7 +108,8 @@ calculation is done once per round-trip time.
 Third, TCP Vegas compares ``ActualRate`` to ``ExpectedRate`` and
 adjusts the window accordingly. We let ``Diff = ExpectedRate -
 ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
-since ``ActualRate >ExpectedRate`` implies that we need to change
+since the only way ``ActualRate > ExpectedRate`` is if the measured
+sample RTT is less than ``BaseRTT``. If that happens we change
 ``BaseRTT`` to the latest sampled RTT. We also define two thresholds,
 *α < β*, roughly corresponding to having too little and too much extra
 data in the network, respectively. When ``Diff`` < *α*, TCP Vegas
@@ -158,7 +161,7 @@ Because the algorithm, as just presented, compares the difference
 between the actual and expected throughput rates to the *α* and *β*
 thresholds, these two thresholds are defined in terms of KBps. However,
 it is perhaps more accurate to think in terms of how many extra
-*buffers* the connection is occupying in the network. For example, on a
+*packet buffers* the connection is occupying in the network. For example, on a
 connection with a ``BaseRTT`` of 100 ms and a packet size of 1 KB, if
 *α* = 30 KBps and *β* = 60 KBps, then we can think of *α* as specifying
 that the connection needs to be occupying at least 3 extra buffers in
