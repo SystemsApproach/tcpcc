@@ -36,7 +36,7 @@ The key challenge DCTCP faces is to estimate the fraction of bytes
 encountering congestion. Each switch is simple. If a packet arrives and
 the switch sees the queue length (K) is above some threshold; e.g.,
 
-.. centered:: K > (RTT × C)/7
+.. math:: \mathsf{K} \gt \mathsf{(RTT × C)\ /\ 7}
 
 where C is the link rate in packets per second, then the switch sets the
 CE bit in the IP header. The complexity of RED is not required.

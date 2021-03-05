@@ -132,9 +132,7 @@ First, RED computes an average queue length using a weighted running
 average similar to the one used in the original TCP timeout computation.
 That is, ``AvgLen`` is computed as
 
-::
-
-   AvgLen = (1 - Weight) x AvgLen + Weight x SampleLen
+.. math:: \mathsf{AvgLen = (1 - Weight)\ x\ AvgLen + Weight\ x\ SampleLen}
 
 where 0 < ``Weight`` < 1 and ``SampleLen`` is the length of the queue
 when a sample measurement is made. In most software implementations, the
@@ -214,10 +212,9 @@ little more complicated. In fact, ``P`` is a function of both
 ``AvgLen`` and how long it has been since the last packet was
 dropped. Specifically, it is computed as follows:
 
-::
+.. math:: \mathsf{TempP = MaxP\ x\ (AvgLen - MinThreshold)\ /\ (MaxThreshold - MinThreshold)}
 
-   TempP = MaxP x (AvgLen - MinThreshold) / (MaxThreshold - MinThreshold)
-   P = TempP/(1 - count x TempP)
+.. math:: \mathsf{P = TempP\ /\ (1 - count\ x\ TempP)}
 
 ``TempP`` is the variable that is plotted on the y-axis in :numref:`Figure
 %s <fig-red-prob>`, ``count`` keeps track of how many newly arriving

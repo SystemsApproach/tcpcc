@@ -145,7 +145,7 @@ It then folds this new sample into the timeout calculation as follows:
 
 .. math:: \mathsf{EstimatedRTT = EstimatedRTT} + ( \delta \times \mathsf{Difference)}
 
-.. math:: \mathsf{Deviation = Deviation} + \delta \mathsf{(|Difference| - Deviation)}
+.. math:: \mathsf{Deviation = Deviation} + \delta \mathsf{(| Difference | - Deviation)}
 
 where :math:`\delta` is between 0 and 1. That is, we calculate both
 the mean RTT and the variation in that mean. TCP then computes the
