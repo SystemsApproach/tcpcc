@@ -647,16 +647,7 @@ eventually receive an ACK. This ACK can be treated like a timer
 firing, triggering the transmission of more data. Nagle’s algorithm
 provides a simple, unified rule for deciding when to transmit:
 
-::
-
-   When the application produces data to send
-       if both the available data and the window >= MSS
-           send a full segment
-       else
-           if there is unACKed data in flight
-               buffer the new data until an ACK arrives
-           else
-               send all the new data now
+.. literalinclude:: code/nagle.c
 
 In other words, it’s always OK to send a full segment if the window
 allows. It’s also alright to immediately send a small amount of data

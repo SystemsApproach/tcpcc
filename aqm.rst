@@ -165,15 +165,7 @@ activity: ``MinThreshold`` and ``MaxThreshold``. When a packet arrives
 at the gateway, RED compares the current ``AvgLen`` with these two
 thresholds, according to the following rules:
 
-::
-
-   if AvgLen <= MinThreshold
-       queue the packet
-   if MinThreshold < AvgLen < MaxThreshold
-       calculate probability P
-       drop the arriving packet with probability P
-   if MaxThreshold <= AvgLen
-       drop the arriving packet
+.. literalinclude:: code/red.c
 
 If the average queue length is smaller than the lower threshold, no
 action is taken, and if the average queue length is larger than the

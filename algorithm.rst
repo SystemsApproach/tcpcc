@@ -177,17 +177,7 @@ values. If you find the code hard to follow, you might want to try
 plugging some real numbers into it and verifying that it gives the same
 results as the equations above.
 
-.. code::
-
-   {
-       SampleRTT -= (EstimatedRTT >> 3);
-       EstimatedRTT += SampleRTT;
-       if (SampleRTT < 0)
-           SampleRTT = -SampleRTT;
-       SampleRTT -= (Deviation >> 3);
-       Deviation += SampleRTT;
-       TimeOut = (EstimatedRTT >> 3) + (Deviation >> 1);
-   }
+.. literalinclude:: code/timeout.c
 
 The second is that the algorithm is only as good as the clock used to
 read the current time. On typical Unix implementations at the time,
@@ -473,16 +463,7 @@ packet per RTT.
 In other words, TCP increases the congestion window as defined by the
 following code fragment:
 
-.. code-block:: c
-
-   {
-       u_int    cw = state->CongestionWindow;
-       u_int    incr = state->maxseg;
-
-       if (cw > state->CongestionThreshold)
-           incr = incr * incr / cw;
-       state->CongestionWindow = MIN(cw + incr, TCP_MAXWIN);
-   }
+.. literalinclude:: code/cwin.c
 
 where ``state`` represents the state of a particular TCP connection and
 defines an upper bound on how large the congestion window is allowed to
@@ -868,10 +849,10 @@ share of a bottleneck link it will obtain.
 The cubic function, shown in :numref:`Figure %s <fig-cubic>`, has three 
 phases: slowing growth, flatten plateau, increasing growth. The maximum congestion 
 window size achieved just before the last congestion event is the initial target 
-(denoted :math:`W_{max}`). You can see how the window growth starts
-fast but slows as you get close to :math:`W_{max}`; then there is a
-phase of cautious growth when close to :math:`W_{max}`, and finally a
-phase of probing for a new achievable :math:`W_{max}`. 
+(denoted :math:`\mathsf{W}_{max}`). You can see how the window growth starts
+fast but slows as you get close to :math:`\mathsf{W}_{max}`; then there is a
+phase of cautious growth when close to :math:`\mathsf{W}_{max}`, and finally a
+phase of probing for a new achievable :math:`\mathsf{W}_{max}`. 
 
 Specifically, CUBIC computes the congestion window (CWND) as a function of time 
 (t) since the last congestion event 
