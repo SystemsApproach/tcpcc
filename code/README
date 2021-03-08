@@ -1,0 +1,11 @@
+Order code fragments are used (substituted in book.tex)
+
+tcp_ip.rst:	code/nagle.c
+
+algorithm.rst:	code/timeout.c
+algorithm.rst:	code/cwin.c
+
+aqm.rst:	code/red.c
+
+README:		code/build.sh
+
