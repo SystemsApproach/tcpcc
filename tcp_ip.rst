@@ -464,7 +464,7 @@ because of the problem of out-of-order delivery. In this case:
 
 .. math::
 
-   \mathsf{LastByteRead} \lt \mathsf{NextByteExpected} \le \mathsf{LastByteRcvd + 1}
+   \mathsf{LastByteRead} < \mathsf{NextByteExpected} \le \mathsf{LastByteRcvd + 1}
 
 since a byte cannot be read by the application until it is received
 *and* all preceding bytes have also been received. If data has
