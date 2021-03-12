@@ -175,12 +175,43 @@ decrease just described is an *early* decrease in the congestion window
 that should happen before congestion occurs and packets start being
 dropped.
 
-5.2 New Vegas
----------------
+5.2 Incremental Improvements
+------------------------------
 
-..
-	Case-study mode: Highlight experience/limitations/solutions.
-	Maybe mention other derivatives, including TCP FAST. -llp
+As with TCP Reno, TCP Vegas has undergone sequence of incremental
+improvements over the years. Vegas was never as widely deployed as
+Reno, so the improvements were driven more by lab studies than
+real-world experience, but they have collectively refined and
+contributed to our understanding avoidance-based algorithms. We
+summarize some of those contributions here.
+
+FAST TCP
+~~~~~~~~~~~~~~~~
+
+The first Vegas-inspired mechanism was FAST TCP, which modified Vegas
+to be more efficient on high-speed networks with large bandwidth-delay
+products. The idea is to increase the congestion window more
+aggressively during the phase when the algorithm is trying to find the
+available "in transit" bandwidth (before packets are buffered in the
+network), and then more conservatively as the algorithm starts to
+compete with other flows for buffers at the bottleneck router. FAST
+also recommended adjusting the value of *α* from roughly four packets
+to 30 packets. :numref:`Figure %s <fig-fast>` illustrates the
+intuition behind FAST's approach to finding the available bandwidth in
+comparison to the approach taken by TCP Reno.
+
+.. _fig-fast:
+.. figure:: figures/todo.png
+   :width: 500px
+   :align: center
+
+   FAST TCP converging more quickly on the available bandwidth.
+
+TCP Westwood 
+~~~~~~~~~~~~~~~~
+
+New Vegas
+~~~~~~~~~~~~~~~~
 
 5.3 TCP BBR 
 ---------------
@@ -211,7 +242,7 @@ control mechanisms: having accurate knowledge of the uncongested path
 RTT.
 
 BBR is actively being worked on and rapidly evolving. One major focus is
-fairness. For example, some experiments show CUBIC flows get 100× less
+fairness. For example, some experiments show CUBIC flows get 100x less
 bandwidth when competing with BBR flows, and other experiments show that
 unfairness among BBR flows is even possible. Another major focus is
 avoiding high retransmission rates, where in some cases as many as 10%
