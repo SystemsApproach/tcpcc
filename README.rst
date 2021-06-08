@@ -42,13 +42,19 @@ To build a web-viewable version, you first need to download the source:
    $ cd ~/tcpcc 
    $ git clone https://github.com/SystemsApproach/tcpcc.git 
 
-The build process is stored in the Makefile and requires Python be 
-installed. The Makefile will create a virtualenv (``doc_venv``) which 
-installs the documentation generation toolset. 
+The build process is stored in the Makefile and requires Python be
+installed. The Makefile will create a virtualenv (``doc_venv``) which
+installs the documentation generation toolset. You may also need to
+install the ``enchant`` C library using your system’s package manager
+for the spelling checker to function properly.
 
 To generate HTML in ``_build/html``,  run ``make html``.
 
 To check the formatting of the book, run ``make lint``.
+
+To check spelling, run ``make spelling``. If there are additional
+words, names, or acroynms that are correctly spelled but not in the dictionary,
+please add them to the ``dict.txt`` file.
 
 To see the other available output formats, run ``make``.
 
