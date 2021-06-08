@@ -2,9 +2,9 @@ Chapter 7:  Active Queue Management
 ===================================
 
 We now look at the role routers can play in congestion control, an
-appproach often referred to as *Active Queue Management* (AQM).  By
+approach often referred to as *Active Queue Management* (AQM).  By
 their very nature, AQM introduces an element of avoidance to the
-end-to-end solution, even when paired with a contro-based approach
+end-to-end solution, even when paired with a control-based approach
 like TCP Reno.
 
 Changing router behavior has never been the Internet’s preferred way
@@ -320,7 +320,7 @@ traffic from others. There is also the possibility that a variant of RED
 could drop more heavily from flows that are unresponsive to the initial
 hints that it sends.
 
-As a footnote, 15 prominant network researcher urged for the
+As a footnote, 15 prominent network researcher urged for the
 widespread adoption of RED-inspired AQM in 1998. The recommendation
 was largely ignored, although subsequently, the approach has been
 applied with success in datacenters.
