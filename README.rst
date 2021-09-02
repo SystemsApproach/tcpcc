@@ -53,8 +53,8 @@ To generate HTML in ``_build/html``,  run ``make html``.
 To check the formatting of the book, run ``make lint``.
 
 To check spelling, run ``make spelling``. If there are additional
-words, names, or acroynms that are correctly spelled but not in the dictionary,
-please add them to the ``dict.txt`` file.
+words, names, or acronyms that are correctly spelled but not in the
+dictionary, please add them to the ``dict.txt`` file.
 
 To see the other available output formats, run ``make``.
 

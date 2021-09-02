@@ -514,11 +514,17 @@ throughout the book.
 3.4 Experimental Methodology
 --------------------------------
 
-As described in Chapter 1, our approach to evaluating
-congestion-control mechanisms is to measure their performance on real
-systems. We now describe one specific way to do that, which we use in
-later chapters to understand (and quantify) how the mechanisms work in
-practice.
+Our approach to evaluating congestion-control mechanisms is to measure
+their performance on real systems. We now describe one specific way to
+do that, illustrating the methodology that is widely practiced today.
+Note that while the experiments described in this section measured
+real congestion control algorithms (which, of course, we have not yet
+described in any detail), the intent to describe how algorithms are
+evaluated and not to actually draw any conclusions about specific
+mechanisms.
+
+Experimental Setup
+~~~~~~~~~~~~~~~~~~
 
 Our approach runs real TCP sending/receiving hosts, where the
 implementation of the various congestion-control mechanisms are those
@@ -548,22 +554,23 @@ on three specific configurations:
   good scenario to visualize the algorithm’s dynamics when looking at
   two to three flows.
   
-* WAN with 40ms RTT and 10/100-Mbps bottleneck bandwidth, with an intermediate router 
-  introduced to reduce the link bandwidth to 10 or 100 Mbps.  This
-  scenario reflects a connection an end-user might experience on a
-  modern network.
+* WAN with 40ms RTT and 10/100-Mbps bottleneck bandwidth, with an
+  intermediate router introduced to reduce the link bandwidth to 10 or
+  100 Mbps.  This scenario reflects a connection an end-user might
+  experience on a modern network.
 
 :numref:`Figure %s <fig-10gig>` shows the topology for the first two
 scenarios, where the senders and receivers are connected through a
-single switch. Delay is achieved using ``netem`` in the Receiver,
-which affects only the ACKs being sent back.
+single switch. Delay is achieved for the second scenario using
+``netem`` in the Receiver, which affects only the ACKs being sent
+back.
 
 .. _fig-10gig:
 .. figure:: figures/Fig2.png 
    :width: 300px 
    :align: center 
 
-   Topology for 10-Gbps Tests.
+   Topology for 10-Gbps Tests, optionally with 10ms of delay introduced.
 
 :numref:`Figure %s <fig-100meg>` shows the topology for the third
 scenario, where the router is implemented by a server-based forwarder
@@ -574,7 +581,7 @@ that throttles outgoing link bandwidth using ``tbf qdisc``.
    :width: 500px 
    :align: center 
 
-   Topology for 10- and 100-Mbps Tests.   
+   Topology for 10- and 100-Mbps Tests with 40ms of delay introduced.
 
 With respect to traffic workload, we evaluate the dynamics and
 fairness of various mechanisms with the following tests:
@@ -612,19 +619,62 @@ penalized, and if so, by how much. These tests make it possible to:
 * Identify conditions when the retransmissions or latency change
   abruptly, signalling an instability.
 
-Finally, we use ``Netesto`` to configure and run the experiments,
-collect the data, and produce the following graphs:
 
-* Goodput (payload throughput) graphs. These include output for each
-  flow as well as the aggregate goodput.
+Example Results
+~~~~~~~~~~~~~~~
 
-* Cwnd graphs. These include the congestion window (cwnd) for each flow, annotated to
-  indicate the time when one or more packets are retransmitted.
+The following shows some example results, selected to illustrate the
+thought process. We start with a simple 2-flow experiment, where both
+flows are managed by the same congestion-control algorithm.
+:numref:`Figure %s <fig-graph_1a>` shows the resulting goodput
+graph. As one would hope, once the second flow (in red) starts just
+after 20 seconds, the goodput both flow experience converge towards a
+nearly equal sharing of the available bandwidth. This convergence is
+not immediate (the two plots cross over roughly ten seconds after the
+second flow begins), but other algorithms strive to reduce that delay,
+for example by using immediate feedback from the network routers.
 
-* RTT graphs, as seen by each server sending data.
+.. _fig-graph_1a:
+.. figure:: figures/Graph_1A.png 
+   :width: 500px 
+   :align: center 
 
-* Graph of cumulative losses per flow.
+   Goodput (bytes-per-second delivered end-to-end) realized by two
+   flows running under the same congestion-control algorithm.
 
-You will see examples of these graphs in the following
-chapters. Chapter 8 describes ``Netesto`` and the associated software
-tools in more detail.
+It is also possible to look more closely at these two flows, for
+example, by tracking the congestion window for each. The corresponding
+plot is shown in :numref:`Figure %s <fig-graph_1b>`. Not surprisingly,
+different algorithms would have different "patterns" to congestion
+windows over time, as we will see in the next chapter.
+
+.. _fig-graph_1b:
+.. figure:: figures/Graph_1B.png 
+   :width: 500px 
+   :align: center 
+
+   Congestion window (measured in bytes) for two flows competing for
+   bandwidth under the same congestion-contol algorithm.
+
+We could repeat these experiments but vary the algorithm used by one
+of the flows. This would allow us to visualize how the two algorithms
+interact. If they are both fair, you would expect to see results
+similar to :numref:`Figure %s <fig-graph_1a>`. If not, you might see a
+graph similar to :numref:`Figure %s <fig-graph_6c>`.
+
+.. _fig-graph_6c:
+.. figure:: figures/Graph_6C.png 
+   :width: 500px 
+   :align: center 
+
+   Goodput (bytes-per-second delivered end-to-end) realized by two
+   flows running under different congestion-control algorithms, with
+   one flow receiving significantly less bandwidth than the other.
+
+We conclude this discussion of experimental methodology by permitting
+ourselves one summary evaluation statement. When looking across a set
+of algorithms and a range of topology/traffic scenarios, we conclude
+that: *No single algorithm is better than all other algorithms under
+all conditions.* This is the main reason why congestion control
+continues to be a topic of interest for both network researchers and
+network practitioners.
