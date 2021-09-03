@@ -592,7 +592,8 @@ that throttles outgoing link bandwidth using ``tbf qdisc``.
    :width: 500px 
    :align: center 
 
-   Topology for 10- and 100-Mbps Tests with 40ms of delay introduced.
+   Topology for 10-Mbps and 100-Mbps Tests with 10ms or 40ms of delay
+   introduced.
 
 With respect to traffic workload, we evaluate the dynamics and
 fairness of algorithms with the following tests:
