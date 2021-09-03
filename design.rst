@@ -516,11 +516,22 @@ throughout the book.
 
 Our approach to evaluating congestion-control mechanisms is to measure
 their performance on real systems. We now describe one specific way to
-do that, illustrating the methodology that is widely practiced today.
-Note that while the experiments described in this section measured
-real congestion control algorithms (which, of course, we have not yet
-described in any detail), the intent to describe how algorithms are
-evaluated and not to actually draw any conclusions about specific
+do that, illustrating one methodology that is widely practiced
+today. Our approach uses *Netesto (Network Test Toolkit)*, a
+collection of software tools available on GitHub. The alternative is
+simulation-based, with NS-3 being the most popular open source tool.
+
+.. _reading_ns3:
+.. admonition:: Further Reading 
+
+		`Netesto <https://github.com/facebook/fbkutils/tree/master/netesto>`__
+
+		`NS-3 Network Simulator <https://www.nsnam.org>`__
+
+Note that while the experiments described in this section measure real
+congestion control algorithms (which, of course, we have not yet
+described in any detail), the intent to outline how algorithms are
+evaluated, and not to actually draw any conclusions about specific
 mechanisms.
 
 Experimental Setup
@@ -542,8 +553,8 @@ traffic workload we run on the network. This includes the number and
 duration of flows, as well as the characteristics of each flow (e.g.,
 stream vs. RPC).
 
-With respect to network topology, we evaluate the various algorithms
-on three specific configurations:
+With respect to network topology, we evaluate algorithms on three
+specific configurations:
 
 * LAN with :math:`20\mu\rm{s}` RTT and 10-Gbps link bandwidth. This scenario
   represents servers in the same datacenter rack.
@@ -584,7 +595,7 @@ that throttles outgoing link bandwidth using ``tbf qdisc``.
    Topology for 10- and 100-Mbps Tests with 40ms of delay introduced.
 
 With respect to traffic workload, we evaluate the dynamics and
-fairness of various mechanisms with the following tests:
+fairness of algorithms with the following tests:
 
 * 2-flow Test: The 1st flow lasts 60 seconds, and the 2nd flow lasts
   20 seconds and starts 22 seconds after the 1st one.
@@ -624,15 +635,17 @@ Example Results
 ~~~~~~~~~~~~~~~
 
 The following shows some example results, selected to illustrate the
-thought process. We start with a simple 2-flow experiment, where both
-flows are managed by the same congestion-control algorithm.
+evaluation process. We start with a simple 2-flow experiment, where
+both flows are managed by the same congestion-control algorithm.
 :numref:`Figure %s <fig-graph_1a>` shows the resulting goodput
 graph. As one would hope, once the second flow (in red) starts just
-after 20 seconds, the goodput both flow experience converge towards a
-nearly equal sharing of the available bandwidth. This convergence is
-not immediate (the two plots cross over roughly ten seconds after the
-second flow begins), but other algorithms strive to reduce that delay,
-for example by using immediate feedback from the network routers.
+after 20 seconds, the goodput of both flows converge towards a nearly
+equal sharing of the available bandwidth. This convergence is not
+immediate (the two plots cross over roughly ten seconds after the
+second flow begins), a behavior other algorithms try to correct (e.g.,
+by using explicit feedback from routers). On the plus side, the first
+flow does quickly adapt to the released bandwidth once the second flow
+terminates.
 
 .. _fig-graph_1a:
 .. figure:: figures/Graph_1A.png 
@@ -660,7 +673,9 @@ We could repeat these experiments but vary the algorithm used by one
 of the flows. This would allow us to visualize how the two algorithms
 interact. If they are both fair, you would expect to see results
 similar to :numref:`Figure %s <fig-graph_1a>`. If not, you might see a
-graph similar to :numref:`Figure %s <fig-graph_6c>`.
+graph similar to :numref:`Figure %s <fig-graph_6c>`, in which the
+second flow (Algorithm B) aggressively takes bandwidth away from the
+first flow (Algorithm A).
 
 .. _fig-graph_6c:
 .. figure:: figures/Graph_6C.png 
@@ -671,10 +686,75 @@ graph similar to :numref:`Figure %s <fig-graph_6c>`.
    flows running under different congestion-control algorithms, with
    one flow receiving significantly less bandwidth than the other.
 
+These experiments can be repeated with three concurrent flows, but we
+turn next to evaluating how various algorithms treat different
+workloads. In particular, we are interested in the question of *size
+fairness*, that is, how a given algorithm treats back-to-back 10-KB or
+1-MB RPC calls when they have to compete with an ongoing streams-based
+flows. Some example results are shown in :numref:`Figure %s
+<fig-graph_8b>` (1-MB RPCs) and :numref:`Figure %s <fig-graph_8c>`
+(10-KB RPCs). The figures show the performance of five different
+algorithms (represented by different colors), across test runs with 1,
+2, 4, 8, and 16 concurrent streaming flows.
+
+.. _fig-graph_8b:
+.. figure:: figures/Graph_8B.png 
+   :width: 500px 
+   :align: center 
+
+   Average goodput (measured in Gbps) realized by a sequence of 
+   1-MB RPC calls for five different algoritms, when competing with 
+   a varied number of TCP streams.
+
+.. _fig-graph_8c:
+.. figure:: figures/Graph_8C.png 
+   :width: 500px 
+   :align: center 
+
+   Average goodput (measured in Gbps) realized by a sequence of 
+   10-KB RPC calls for five different algoritms, when competing with 
+   a varied number of TCP streams.
+
+The 1-MB results are unsurprising, with no significant outliers across
+the five algorithms, and the average goodput decreasing as the RPCs
+compete with more and more streams. Although not shown :numref:`Figure
+%s <fig-graph_8b>`, the fourth algorithm (green), which performs best
+when all flows are stream-based, suffers a significant number of
+retransmissions when sharing the available bandwidth RPC calls.
+
+The 10-KB results do have a significant outlier, with the third
+algorithm (yellow) performing significantly better; by a factor of
+4x. If you plot latency rather than bandwidth—the more relevant metric
+for small-message RPC calls, it turns out the third algorithm both
+achieves the lowest latencies and does so consistently, with the 99th
+and 99.9th percentiles are the same.
+
+Finally, all of the preceding experiments can be repeated on a
+network topology that includes wide-area RTTs. Certainly inter-flow
+fairness and size fairness continue to be concerns, but there is also
+an increased likelihood that queuing delays become an issue. For
+example, :numref:`Figure %s <fig-graph_16b>` shows the 99% latencies
+for four different algorithms when the network topology includes a
+10-Mbps bottleneck link and a 40ms RTT. One important observation
+about this result is that the second algorithm (red) performs poorly
+when there is less than one delay-bandwidth product of buffering
+available at the bottleneck router, calling attention to another
+variable that can influence your results.
+
+.. _fig-graph_16b:
+.. figure:: figures/Graph_16B.png 
+   :width: 500px 
+   :align: center 
+
+   99th percentile latencies for 10-KB RPC calls when competing with a
+   single streaming flow on a 40ms WAN, measured for a different
+   number of buffers at the bottleneck router.
+   
 We conclude this discussion of experimental methodology by permitting
 ourselves one summary evaluation statement. When looking across a set
 of algorithms and a range of topology/traffic scenarios, we conclude
 that: *No single algorithm is better than all other algorithms under
-all conditions.* This is the main reason why congestion control
-continues to be a topic of interest for both network researchers and
-network practitioners.
+all conditions.* One explanation, as these examples demonstrate, is
+how many factors there are to take into consideration.  This also
+explains why congestion control continues to be a topic of interest
+for both network researchers and network practitioners.
