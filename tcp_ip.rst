@@ -32,7 +32,7 @@ that if something goes wrong and the packet gets lost, corrupted, or
 misdelivered while en route, the network does nothing to recover from
 the failure. This approach was intentionally designed to keep routers
 as simple as possible, and is generally viewed as an implementation
-based on the *end-to-end argument* [#]_.
+based on the *end-to-end argument*.\ [#]_
 
 .. [#] `End-to-End Arguments in System Design
        <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__,
