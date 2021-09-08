@@ -20,9 +20,9 @@ Read the Book
 -------------
 
 This book is part of the `Systems Approach Series
-<https://www.systemsapproach.org>`__, with an online version published
+<https://www.systemsapproach.org>`__, with an online version to be published
 at `https://tcpcc.systemsapproach.org
-<https://tcpcc.systemsapproach.org>`__.
+<https://tcpcc.systemsapproach.org>`__ once we have a complete draft.
 
 To track progress and receive notices about new versions, you can follow
 the project on

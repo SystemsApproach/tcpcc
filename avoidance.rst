@@ -1,6 +1,8 @@
 Chapter 5:  Avoidance-Based Algorithms
 ======================================
 
+.. include:: <isogrk3.txt>
+
 A review of the academic literature on TCP congestion control shows a
 notable gap between the original TCP Tahoe and Reno mechanisms
 introduced in 1988 and 1990, respectively, and the next major flurry
@@ -109,12 +111,12 @@ ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
 since the only way ``ActualRate > ExpectedRate`` is if the measured
 sample RTT is less than ``BaseRTT``. If that happens we change
 ``BaseRTT`` to the latest sampled RTT. We also define two thresholds,
-*α < β*, roughly corresponding to having too little and too much extra
-data in the network, respectively. When ``Diff`` < *α*, TCP Vegas
+|alpha| < |beta|, roughly corresponding to having too little and too much extra
+data in the network, respectively. When ``Diff`` < |alpha|, TCP Vegas
 increases the congestion window linearly during the next RTT, and when
-``Diff`` > *β*, TCP Vegas decreases the congestion window linearly
+``Diff`` > |beta|, TCP Vegas decreases the congestion window linearly
 during the next RTT.  TCP Vegas leaves the congestion window unchanged
-when *α* < ``Diff`` < *β*.
+when |alpha| < ``Diff`` < |beta|.
 
 Intuitively, we can see that the farther away the actual throughput
 gets from the expected throughput, the more congestion there is in the
@@ -122,8 +124,8 @@ network, which implies that the sending rate should be reduced. The
 *β* threshold triggers this decrease. On the other hand, when the
 actual throughput rate gets too close to the expected throughput, the
 connection is in danger of not utilizing the available bandwidth. The
-*α* threshold triggers this increase. The overall goal is to keep
-between *α* and *β* extra bytes in the network.
+|alpha| threshold triggers this increase. The overall goal is to keep
+between |alpha| and |beta| extra bytes in the network.
 
 .. _fig-vegas:
 .. figure:: figures/f06-19-9780123850591.png
@@ -133,7 +135,7 @@ between *α* and *β* extra bytes in the network.
    Trace of TCP Vegas congestion-avoidance mechanism.
    Top, congestion window; bottom, expected (colored line) and actual
    (black line) throughput. The shaded area is the region between the
-   α and β thresholds.
+   |alpha| and |beta| thresholds.
 
 :numref:`Figure %s <fig-vegas>` traces the TCP Vegas
 congestion-avoidance algorithm. The top graph traces the congestion
@@ -143,9 +145,9 @@ actual throughput rates that govern how the congestion window is
 set. It is this bottom graph that best illustrates how the algorithm
 works. The colored line tracks the ``ExpectedRate``, while the black
 line tracks the ``ActualRate``. The wide shaded strip gives the region
-between the *α* and *β* thresholds; the top of the shaded strip is
-*α* KBps away from ``ExpectedRate``, and the bottom of the shaded
-strip is *β* KBps away from ``ExpectedRate``.  The goal is to keep the
+between the |alpha| and |beta| thresholds; the top of the shaded strip is
+|alpha| KBps away from ``ExpectedRate``, and the bottom of the shaded
+strip is|beta| KBps away from ``ExpectedRate``.  The goal is to keep the
 ``ActualRate`` between these two thresholds, within the shaded
 region. Whenever ``ActualRate`` falls below the shaded region (i.e.,
 gets too far from ``ExpectedRate``), TCP Vegas decreases the
@@ -156,16 +158,16 @@ Vegas increases the congestion window because it fears that it is
 underutilizing the network.
 
 Because the algorithm, as just presented, compares the difference
-between the actual and expected throughput rates to the *α* and *β*
+between the actual and expected throughput rates to the |alpha| and |beta|
 thresholds, these two thresholds are defined in terms of KBps. However,
 it is perhaps more accurate to think in terms of how many extra
 *packet buffers* the connection is occupying in the network. For example, on a
 connection with a ``BaseRTT`` of 100 ms and a packet size of 1 KB, if
-*α* = 30 KBps and *β* = 60 KBps, then we can think of *α* as specifying
+|alpha| = 30 KBps and |beta| = 60 KBps, then we can think of |alpha| as specifying
 that the connection needs to be occupying at least 3 extra buffers in
-the network and *β* as specifying that the connection should occupy no
-more than 6 extra buffers in the network. In practice, a setting of *α*
-to 1 buffer and *β* to 3 buffers works well.
+the network and |beta| as specifying that the connection should occupy no
+more than 6 extra buffers in the network. In practice, a setting of |alpha|
+to 1 buffer and |beta| to 3 buffers works well.
 
 Finally, you will notice that TCP Vegas decreases the congestion window
 linearly, seemingly in conflict with the rule that multiplicative
@@ -195,7 +197,7 @@ aggressively during the phase when the algorithm is trying to find the
 available "in transit" bandwidth (before packets are buffered in the
 network), and then more conservatively as the algorithm starts to
 compete with other flows for buffers at the bottleneck router. FAST
-also recommended adjusting the value of *α* from roughly four packets
+also recommended adjusting the value of |alpha| from roughly four packets
 to 30 packets. :numref:`Figure %s <fig-fast>` illustrates the
 intuition behind FAST's approach to finding the available bandwidth in
 comparison to the approach taken by TCP Reno.

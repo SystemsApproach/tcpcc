@@ -19,5 +19,4 @@ TCP Congestion Control: A Systems Approach
    avoidance.rst
    variants.rst
    aqm.rst
-   tools.rst
    README.rst
