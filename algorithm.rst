@@ -162,20 +162,20 @@ dominate the calculation.
 Implementation
 ~~~~~~~~~~~~~~
 
-There are two items of note regarding the implementation of timeouts in
-TCP. The first is that it is possible to implement the calculation for
-``EstimatedRTT`` and ``Deviation`` without using floating-point
-arithmetic. Instead, the whole calculation is scaled by 2\ :sup:`n`, 
-with delta selected to be 1/2\ :sup:`n`. This allows us to do integer 
-arithmetic, implementing multiplication and division using shifts, 
-thereby achieving higher performance. The resulting calculation is given 
-by the following code fragment, where n=3
-(i.e., ``delta = 1/8``). Note that ``EstimatedRTT`` and ``Deviation`` are
-stored in their scaled-up forms, while the value of ``SampleRTT`` at the
-start of the code and of ``TimeOut`` at the end are real, unscaled
+There are two items of note regarding the implementation of timeouts
+in TCP. The first is that it is possible to implement the calculation
+for ``EstimatedRTT`` and ``Deviation`` without using floating-point
+arithmetic. Instead, the whole calculation is scaled by 2\ :sup:`n`,
+with :math:`\delta` selected to be 1/2\ :sup:`n`. This allows us to do
+integer arithmetic, implementing multiplication and division using
+shifts, thereby achieving higher performance. The resulting
+calculation is given by the following code fragment, where n=3 (i.e.,
+:math:`\delta` = 1/8). Note that ``EstimatedRTT`` and ``Deviation`` are
+stored in their scaled-up forms, while the value of ``SampleRTT`` at
+the start of the code and of ``TimeOut`` at the end are real, unscaled
 values. If you find the code hard to follow, you might want to try
-plugging some real numbers into it and verifying that it gives the same
-results as the equations above.
+plugging some real numbers into it and verifying that it gives the
+same results as the equations above.
 
 .. literalinclude:: code/timeout.c
 
@@ -244,9 +244,10 @@ A better way to compute timeouts is a necessary building block, but it
 does not get at the heart of controlling congestion. The central
 challenge is computing an estimate of how much traffic the network
 this sender can safely transmit. To this end, TCP maintains a new
-state variable for each connection, called ``CongestionWindow``. It is
-used by the source to limit how much data it is allowed to have in
-transit at a given time.
+state variable for each connection, which we refer to as
+``CongestionWindow`` (but you will often see called ``cwnd`` in the
+literature). It is used by the source to limit how much data it is
+allowed to have in transit at a given time.
 
 The congestion window is congestion control’s counterpart to flow
 control’s advertised window.  The TCP sender is modified such that the
@@ -816,10 +817,10 @@ within a certain threshold it is set to the old value).
 At this point, if there is no congestion, we can conclude that the
 network conditions have changed, and it is OK to probe for a new
 congestion window size. BIC does this first slowly and then more
-quickly. You can see the approximate shape of how BIC grows its
-window in :numref:`Figure %s <fig-cubic>`, asymptoting towards
-:math:`W_{max}` (the old congestion window prior to the last loss) and then moving beyond it.
-
+rapidly. You can see the approximate shape of how BIC grows its window
+in :numref:`Figure %s <fig-cubic>`, asymptoting towards
+:math:`W_{max}` (the old congestion window prior to the last loss) and
+then moving beyond it.
 
 BIC eventually evolved into a new variant called CUBIC, which today is the default
 congestion control algorithm distributed with Linux. CUBIC improved
