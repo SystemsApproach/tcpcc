@@ -1,13 +1,41 @@
-Chapter 6:  Other Algorithms
-==================================
+Chapter 6:  TCP Variants and Alternatives
+=========================================
 
-..
-	The following is cut-and-pasted, and still needs attention.
+As exploration of the design space for congestion control has
+continued, a number of new protocols that are designed for specific
+environments have emerged. These differ from TCP mostly in that they
+have targeted specific use cases, rather than the arbitrarily complex
+and heterogeneous network environments that TCP supports. The
+exception may be QUIC, which started with the goal of improving HTTP
+performance specifically, but has now developed into something of a general
+TCP alternative.
 
-..
-	Frame these algorithms as targeted at specific use cases:
-	Datacenters (DCTCP), Scavengers (LEDBAT), Transient (OnRamp).
-	The title probably isn't quite right.
+This chapter is not exhaustive, as new approaches to congestion
+control are being invented all the time. Instead we survey a few
+approaches that mark different points in the design space.
+Data Center TCP (DCTCP) draws on realizations that data centers are dominated by east-west
+(or intra-data-center) traffic and that low latency is a requirement
+for many applications in the DC, leading to a design optimized for that
+environment. Many further attempts to improve congestion behavior in data
+center environments followed.
+
+LEDBAT (Low Extra Delay Background Transport) targets a completely
+difference environment and use case: transferring large amounts of
+data across the Internet without greatly increasing the latency of other
+competing TCP connections.
+
+On-Ramp focuses on yet another part of the design space: transient
+congestion in public clouds. Again, a different set of constraints
+leads to a different point in the design space.
+
+Finally we look at the space of "TCP-friendly" congestion control,
+where the working assumption is that some applications—notably those
+involving real-time communication—can't directly
+use the reliable byte-stream model of TCP, and hence need a different
+sort of transport. At the same time, the sound operation of the
+Internet requires that these flows respond to congestion in a way that
+is sufficiently similar to TCP that actual TCP flows are not pushed aside.
+
 
 
 6.1 DCTCP
