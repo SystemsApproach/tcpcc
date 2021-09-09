@@ -152,14 +152,12 @@ IP Packet Format
 ~~~~~~~~~~~~~~~~
 
 For completeness, :numref:`Figure %s <fig-iphead>` gives the IPv4
-packet format. The ``SourceAddr`` and ``DestinationAddr`` fields
-identify packet flows at the granularity of host pairs. The other
-field that is relevant to our discussion is the 8-bit ``TOS`` (type of
-service) field. This field has been interpreted in different ways over
-the years, but its basic function is to allow packets to be treated
-differently based on application needs. We will see how various
-congestion control mechanisms have applied different meanings to the
-``TOS`` field over time.
+packet format, but it is the 8-bit ``TOS`` (Type of Service) field
+that is relevant to our discussion. This field has been interpreted in
+different ways over the years, but its basic function is to allow
+packets to be treated differently based on application needs. In later
+chapters we will see how various congestion control mechanisms have
+applied different meanings to the ``TOS`` field over time.
 
 .. _fig-iphead:
 .. figure:: figures/f03-16-9780123850591.png
@@ -352,12 +350,6 @@ connection. All state needed to manage a TCP connection, including the
 congestion-related state introduced in later chapters, is bound to the
 4-tuple: ``(SrcPort, SrcIPAddr, DstPort, DstIPAddr)``.
 
-Note that because TCP connections come and go, it is possible for a
-connection between a particular pair of ports to be established, used to
-send and receive data, and closed, and then at a later time for the same
-pair of ports to be involved in a second connection. We sometimes refer
-to this situation as two different *incarnations* of the same connection.
-
 The ``Acknowledgment``, ``SequenceNum``, and ``AdvertisedWindow``
 fields are all involved in TCP’s sliding window algorithm. Because TCP
 is a byte-oriented protocol, each byte of data has a sequence number.
@@ -389,14 +381,14 @@ that the receiver should pay attention to it).
 Finally, the TCP header is of variable length (options can be attached
 after the mandatory fields), and so the ``HdrLen`` field is included
 to give the length of the header in 32-bit words. This field is
-relevant when TCP extensions are appended to the end of the header, as
-we'll see in later sections. The significance of adding these
-extensions as options rather than changing the core of the TCP header
-is that hosts can still communicate using TCP even if they do not
-implement the options. Hosts that do implement the optional
-extensions, however, can take advantage of them. The two sides agree
-that they will use the options during TCP’s connection establishment
-phase.
+relevant when TCP extensions are appended to the end of the header,
+for example, in support of congestion control. The significance of
+adding these extensions as options rather than changing the core of
+the TCP header is that hosts can still communicate using TCP even if
+they do not implement the options. Hosts that do implement the
+optional extensions, however, can take advantage of them. The two
+sides agree that they will use the options during TCP’s connection
+establishment phase.
 
 
 Reliable and Ordered Delivery

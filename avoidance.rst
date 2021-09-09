@@ -111,12 +111,12 @@ ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
 since the only way ``ActualRate > ExpectedRate`` is if the measured
 sample RTT is less than ``BaseRTT``. If that happens we change
 ``BaseRTT`` to the latest sampled RTT. We also define two thresholds,
-|alpha| < |beta|, roughly corresponding to having too little and too much extra
-data in the network, respectively. When ``Diff`` < |alpha|, TCP Vegas
-increases the congestion window linearly during the next RTT, and when
-``Diff`` > |beta|, TCP Vegas decreases the congestion window linearly
-during the next RTT.  TCP Vegas leaves the congestion window unchanged
-when |alpha| < ``Diff`` < |beta|.
+|alpha| < |beta|, corresponding to having too little and too much
+extra data in the network, respectively. When ``Diff`` < |alpha|, TCP
+Vegas increases the congestion window linearly during the next RTT,
+and when ``Diff`` > |beta|, TCP Vegas decreases the congestion window
+linearly during the next RTT.  TCP Vegas leaves the congestion window
+unchanged when |alpha| < ``Diff`` < |beta|.
 
 Intuitively, we can see that the farther away the actual throughput
 gets from the expected throughput, the more congestion there is in the
