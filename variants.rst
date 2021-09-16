@@ -154,6 +154,100 @@ is a "test of time" award winner from SIGCOMM.
 6.2 LEDBAT 
 -----------------
 
+In sharp contrast to low-latency data center environments, there are many
+applications that just need to transfer a large amount of data over an
+extended period of time. File-sharing protocols such as BitTorrent and
+software-updates are two examples. LEDBAT (Low Extra Delay Background
+Transport) is targeted at these applications.
+
+One of the common themes among various efforts to improve TCP's
+congestion control algorithm has been the idea of co-existence with
+standard TCP. It is well-known that an algorithm could "outperform"
+TCP by simply being more aggressive in its response to
+congestion. Hence, there is an implicit assumption that new congestion
+control algorithms should be evaluated alongside standard TCP to ensure
+they are not just stealing bandwidth from less aggressive TCP
+implementations.
+
+LEDBAT takes this idea in a the opposite direction by creating a
+congestion control protocol that is *less* aggressive than TCP. The
+idea is to take advantage of bandwidth that is available when links
+are uncongested, but to quickly back off and leave the bandwidth free
+for other, standard flows when they arrive. In addition, as the name
+suggests, LEDBAT tries not to create significant queuing delays, unlike
+the typical behavior of TCP when filling a bottleneck link.
+
+Like TCP Vegas, LEDBAT aims to detect the onset of congestion before
+it is severe enough to cause loss. However, LEDBAT takes a different
+approach to making this determination, using one-way measurements of delay as
+the primary input to the process. This is a relatively novel approach
+that makes sense in an era where reasonably accurate but not perfectly
+synchronized clocks are assumed to be the norm.
+
+To calculate one-way delay, the sender puts a timestamp in each
+transmitted packet, and the receiver compares this against local
+system time to measure the delay experienced by the packet. It then
+sends this calculated value back to the sender. Even though the clocks
+are not precisely synchronized, *changes* in this delay can be used to
+infer the buildup of queues. It is assumed that the clocks do not have
+large relative "skew", i.e., their relative offset does not change too quickly, which
+is a reasonable assumption in practice.
+
+The sender monitors the measured delay, and estimates the fixed
+component (which would be due to speed of light and other fixed
+delays) to be the lowest value seen over a certain (configurable) time
+interval. Estimates from the more distant past are eliminated
+to allow for the possibility of a new routing path changing the fixed delay.  Any delay larger than this 
+minimum is assumed to be due to queuing delay.
+
+Having established a "base" delay, the sender subtracts this from the
+measured delay to obtain the queuing delay, and optionally uses a
+filtering algorithm to reduce short-term noise in the estimate. This
+estimated queuing delay is then compared to a target delay. When the delay is below target, the
+congestion window is allowed to grow, and when the delay is above
+target, the congestion window is reduced, with the rate of growth and
+decrease being proportional to the distance from the target. The
+growth rate is capped to be no faster than the growth of standard
+TCP's window in its additive increase phase. 
+
+LEDBAT's algorithm for setting the congestion window ``cwnd`` when an
+ACK is received can be summarized as follows:
+
+.. math:: \mathsf{cwnd}\  = \mathsf{cwnd + (GAIN × off\_target × bytes\_newly\_acked × MSS / cwnd)}
+
+where GAIN is a configuration parameter between 0 and 1, off\_target is
+the gap between the measured queuing delay and the target, expressed
+as a fraction of the target, and bytes\_newly\_acked is the number of
+bytes acknowledged in the current ACK. Thus, the congestion window
+grows more quickly the further the measured delay is below the target, but never
+faster one MSS per RTT. And it falls faster in proportion to how far the queue length is
+above the target. ``cwnd`` is also reduced in response to losses,
+timeouts, and long idle periods, much like with TCP.
+
+Hence, LEDBAT can do a good job of using available bandwidth that is
+free, but avoids creating long standing queues, as it aims to keep the
+delay around the target (which is a configurable number, suggested to
+be on the order of 100ms). If other traffic starts to compete with
+LEDBAT traffic, LEDBAT will back off as it aims to prevent the queue getting
+longer. 
+
+LEDBAT is defined as an experimental protocol by the IETF, and allows
+a considerable degree of implementation flexibility such as the choice
+of filtering on delay estimates and a range of configuration
+parameters. Further details can be found in the RFC.
+
+
+.. _reading_ledbat:
+.. admonition::  Further Reading
+
+   Shalunov, S., et al. `Low Extra Delay Background Transport (LEDBAT)
+   <https://www.rfc-editor.org/info/rfc6817>`__.  
+   RFC 6817, December 2012.
+
+
+
+
+
 6.3 OnRamp
 -----------------
 
