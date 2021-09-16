@@ -220,12 +220,12 @@ approach, which is pretty much what Jacobson and Karels did (although
 their solution ended up having quite a few moving parts).
 
 In the early Internet, routers implemented the most basic resource
-allocation approach possible: FIFO queueing with tail drop. There was
+allocation approach possible: FIFO queuing with tail drop. There was
 no awareness of flows or applications, so they simply accepted packets
 as they arrived, placed them in a queue whenever the outbound link
 capacity was less than the arrival rate, served the queue by the FIFO
 discipline, and dropped arriving packets if they queue was full
-("tail-drop"). This is still the most common form of queueing
+("tail-drop"). This is still the most common form of queuing
 today; we will discuss other approaches to queuing including
 *Active Queue Management* in a later chapter.
 
@@ -261,10 +261,10 @@ chapters.
 ------------------------------
 
 There has been a lot of important theoretical work done to understand
-congestion. At the core of congestion is queueing, and there is a huge
-body of theory behind queueing, much of which extends into other
+congestion. At the core of congestion is queuing, and there is a huge
+body of theory behind queuing, much of which extends into other
 physical realms such as supermarket checkouts and road congestion. The
-standard reference on queueing for packet networks was written by one
+standard reference on queuing for packet networks was written by one
 of the early pioneers of the ARPANET, Leonard Kleinrock.
 
 .. _reading_queue:
