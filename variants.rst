@@ -254,5 +254,51 @@ parameters. Further details can be found in the RFC.
 6.4 QUIC
 -----------------
 
+
+QUIC originated at Google in 2012 and was subsequently developed as a
+proposed standard at the IETF. It has already seen a moderate amount
+of deployment (in some Web browsers and quite a number of popular Web
+sites). Deployability was a key consideration for the designers of the
+protocol.
+
+The primary motivation for QUIC was to improve the performance of web
+traffic compared to running HTTP over TCP. TCP turned out to be non-optimal
+in a number of dimensions when HTTP was layered on top of it. These issues became more
+noticeable over time, due to factors such as the rise of high-latency
+wireless networks, the availability of multiple networks for a single
+device (e.g., Wi-Fi and cellular), and the increasing use of
+encrypted, authenticated connections on the Web.
+In seeking to address these issues, QUIC required a significant
+rethinking of the design of a reliable transport protocol.
+
+Like TCP, QUIC builds congestion control into the transport, but it
+does so in a way that recognizes that there is no single perfect
+congestion control algorithm. Instead, there is an assumption that
+different senders may use different algorithms. The baseline algorithm
+in the QUIC specification is similar to TCP NewReno.
+
+A number of design features of QUIC make the detection of loss and
+congestion more robust than in TCP. For example, whereas TCP uses the
+same sequence number for a packet whether it is being sent for the
+first time or retransmitted, QUIC sequence numbers (called packet
+numbers) are strictly increasing. A higher packet number signifies
+that the packet was sent later, and a lower packet number signifies
+that the packet was sent earlier. This means that it is always
+possible to distinguish between a packet that has been transmitted for
+the first time and one that has been retransmitted due to a loss or
+timeout.
+
+.. Still some work to be done here.
+
+QUIC is a most interesting development in the world of transport
+protocols. Many of the limitations of TCP have been known for decades,
+but QUIC represents one of the most successful efforts to date to
+stake out a different point in the design space. Because QUIC was
+inspired by experience with HTTP and the Web—which arose long after
+TCP was well established in the Internet—it presents a fascinating
+case study in the unforeseen consequences of layered designs and in
+the evolution of the Internet.
+
+
 6.5 TCP-Friendly Protocols
 --------------------------
