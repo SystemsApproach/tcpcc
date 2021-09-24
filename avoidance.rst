@@ -209,8 +209,8 @@ comparison to the approach taken by TCP Reno.
 
    FAST TCP converging more quickly on the available bandwidth.
 
-TCP Westwood 
-~~~~~~~~~~~~~~~~
+Westwood
+~~~~~~~~~~~~~~
 
 New Vegas
 ~~~~~~~~~~~~~~~~
@@ -250,5 +250,4 @@ unfairness among BBR flows is even possible. Another major focus is
 avoiding high retransmission rates, where in some cases as many as 10%
 of packets are retransmitted.
 
-5.4 Retrospective
---------------------
+

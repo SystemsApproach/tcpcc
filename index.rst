@@ -12,6 +12,7 @@ TCP Congestion Control: A Systems Approach
    :maxdepth: 2 
    :caption: Table of Contents 
 
+   preface.rst
    intro.rst
    tcp_ip.rst
    design.rst

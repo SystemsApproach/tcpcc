@@ -1,4 +1,4 @@
-Chapter 6:  TCP Variants and Alternatives
+Chapter 6:  Variants and Alternatives
 =========================================
 
 As exploration of the design space for congestion control has
