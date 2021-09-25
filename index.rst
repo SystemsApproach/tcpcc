@@ -8,6 +8,11 @@
 TCP Congestion Control: A Systems Approach
 =============================================
 
+Peterson, Brakmo, and Davie
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|
+
 .. toctree::
    :maxdepth: 2 
    :caption: Table of Contents 
@@ -18,6 +23,6 @@ TCP Congestion Control: A Systems Approach
    design.rst
    algorithm.rst
    avoidance.rst
+   aqm.rst 
    variants.rst
-   aqm.rst
    README.rst

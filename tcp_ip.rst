@@ -204,7 +204,7 @@ transmitted. Tail drop is a *drop policy*—it determines which packets
 get dropped. Because FIFO and tail drop are the simplest instances of
 scheduling discipline and drop policy, respectively, they are
 sometimes viewed as a bundle—the default queuing
-implementation. Chapter 7 examines other drop policies, which use a
+implementation. Chapter 6 examines other drop policies, which use a
 more complex algorithm than “Is there a free buffer?” to decide when
 to drop packets. Such a drop policy may be used with FIFO, or with
 more complex scheduling disciplines.

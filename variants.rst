@@ -1,5 +1,5 @@
-Chapter 6:  Variants and Alternatives
-=========================================
+Chapter 7:  Beyond TCP
+======================
 
 As exploration of the design space for congestion control has
 continued, a number of new protocols that are designed for specific
@@ -38,7 +38,7 @@ is sufficiently similar to TCP that actual TCP flows are not pushed aside.
 
 
 
-6.1 Data Center TCP (DCTCP)
+7.1 Data Centers (DCTCP)
 ---------------------------
 
 *Data Center TCP* was one of the first TCP
@@ -151,8 +151,8 @@ is a "test of time" award winner from SIGCOMM.
 
 
 
-6.2 LEDBAT 
------------------
+7.2 Background Transport (LEDBAT)
+----------------------------------
 
 In sharp contrast to low-latency data center environments, there are many
 applications that just need to transfer a large amount of data over an
@@ -248,11 +248,11 @@ parameters. Further details can be found in the RFC.
 
 
 
-6.3 OnRamp
------------------
+7.3 Public Cloud (OnRamp)
+-------------------------
 
-6.4 QUIC
------------------
+7.4 HTTP Performance (QUIC)
+---------------------------
 
 
 QUIC originated at Google in 2012 and was subsequently developed as a
@@ -360,5 +360,5 @@ congestion control is covered in the separate RFC 9002.
 
 
 
-6.5 TCP-Friendly Protocols
+7.5 TCP-Friendly Protocols
 --------------------------

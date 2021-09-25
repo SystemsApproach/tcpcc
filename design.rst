@@ -148,7 +148,7 @@ In the middle, routers can take more proactive action to assist the
 end hosts in doing their job, but not by reserving buffer space.  This
 involves the router sending *feedback* to the end hosts when its
 buffers are full. We describe some of these forms of *Active Queue
-Management (AQM)* in Chapter 7, but the host-centric mechanisms
+Management (AQM)* in Chapter 6, but the host-centric mechanisms
 described in the next three chapters assume routers silently tail-drop
 packets when their buffers are full.
 
@@ -206,7 +206,7 @@ which extends the concepts of TCP congestion avoidance to applications
 that more naturally send packets at a specific rate (e.g., the bitrate
 produced by a video codec at a given quality level). TFRC is typically
 used in conjunction with RTP, a transport protocol designed for real-time
-applications. We will see examples of such mechanisms in Chapter 6.
+applications. We will see examples of such mechanisms in Chapter 7.
 
 Somewhat surprisingly, some video applications that might seem like a
 natural fit for RTP-with-TFRC actually use TCP; see the discussion of
