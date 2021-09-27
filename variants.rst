@@ -434,8 +434,21 @@ application can choose among a set of coding rates, and it picks the
 highest quality that can be accommodated with the rate that TFRC
 dictates. 
 
-The specification of TFRC goes into a great detail on how best to
-implement the protocol. 
+An interesting footnote to the story of TFRC is that a great deal of
+video streaming traffic today uses a different approach referred to as
+"DASH" (Dynamic Adaptive Streaming over HTTP). DASH lets TCP (or
+potentially QUIC) take care
+of congestion control; the application measures the
+throughput that TCP is delivering, then adjusts the quality of the
+video stream accordingly to avoid starvation at the receiver. This
+approach has proven to be suitable for video entertainment, but since
+it depends on a moderately large amount of buffering at the receiver
+to smooth out the fluctuations in TCP throughput, it is not really
+suitable for interactive audio or video.
+
+
+The specification of TFRC gives useful background on the design and
+goes into considerable detail on how best to implement a TCP-friendly protocol.
 
 .. _reading_tfrc:
 .. admonition::  Further Reading
