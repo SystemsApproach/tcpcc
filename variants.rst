@@ -24,9 +24,9 @@ difference environment and use case: transferring large amounts of
 data across the Internet without greatly increasing the latency of other
 competing TCP connections.
 
-On-Ramp focuses on yet another part of the design space: transient
-congestion in public clouds. Again, a different set of constraints
-leads to a different point in the design space.
+.. On-Ramp focuses on yet another part of the design space: transient
+   congestion in public clouds. Again, a different set of constraints
+   leads to a different point in the design space.
 
 Finally we look at the space of "TCP-friendly" congestion control,
 where the working assumption is that some applications—notably those
@@ -246,12 +246,11 @@ parameters. Further details can be found in the RFC.
 
 
 
+.. for another day
+   7.3 Public Cloud (OnRamp)
+   -------------------------
 
-
-7.3 Public Cloud (OnRamp)
--------------------------
-
-7.4 HTTP Performance (QUIC)
+7.3 HTTP Performance (QUIC)
 ---------------------------
 
 
@@ -360,5 +359,99 @@ congestion control is covered in the separate RFC 9002.
 
 
 
-7.5 TCP-Friendly Protocols
---------------------------
+7.4 TCP-Friendly Protocols (TFRC)
+---------------------------------
+As noted at various points throughout this book, it is easy to make
+transport protocols that out-perform TCP, since TCP in all its forms
+backs off when it detects congestion. Any protocol which does *not*
+respond to congestion with a reduction in sending rate will eventually
+get a bigger share of the bottleneck link than any TCP or TCP-like
+traffic that it competes against. In the limit, this would likely lead
+back to the congestion collapse that was starting to become common
+when TCP congestion control was first developed. Hence, there is a
+strong interest in making sure that the vast majority of traffic on
+the Internet is in some sense "TCP-friendly".
+
+When we use the term "TCP-friendly" we are saying that we expect a
+similar congestion response to that of TCP. LEDBAT could be considered
+"more than TCP-friendly" in the sense that it backs off even more
+aggressively to congestion than TCP by reducing its window size at the
+first hint of delay. But there is a class of applications for which
+being TCP-friendly requires a bit more thought because they do not use
+a window-based congestion scheme. These are typically "real time"
+applications involving streaming multimedia.
+
+Multimedia applications such as video streaming and telephony can
+adjust their sending rate by changing coding parameters, with a
+trade-off between bandwidth and quality. However, they cannot suddenly
+reduce sending rate by a large amount without a perceptible impact on
+the quality, and they generally need to choose among a finite set of
+quality levels. These considerations lead to rate-based approaches
+rather than window-based, as discussed in Section 3.1.
+
+The approach to TCP-friendliness for these applications is to try to
+pick a sending rate similar to that which would be achieved by TCP
+under similar conditions, but to do so in a way that keeps the rate
+from fluctuating too wildly. Underpinning this idea is a body of
+research going back many years on modelling the throughput of TCP. A
+simplified version of the TCP throughput equation is given in RFC 5348
+which defines the standard for TFRC. With a few variables set to
+recommended variables, the equation for target transmit rate X in
+bits/sec is:
+
+.. math::
+
+   \mathsf{X} = \frac{s}{R\times\sqrt{2p/3} + 12\sqrt{3p/8}\times p
+   \times (1 + 32 p^2)}
+
+Where:
+
+- *s* is the segment size (excluding IP and transport headers);
+- *R* is the RTT in seconds;
+- *p* is the number of "loss events" as a fraction of packets
+  transmitted.
+
+While the derivation of this formula is interesting in its own right
+(see the second reference below),
+the key idea here is that we have a pretty good idea of how much
+bandwidth a TCP connection will be able to deliver if we know the RTT
+and the loss rate of the path. So TFRC tries to steer applications
+that cannot implement a window-based congestion control algorithm to
+arrive at the same throughput as TCP would under the same conditions.
+
+The only issues remaining to be addressed are the measurement of *p*
+and *R*, and then deciding how the application should respond to
+changes in *X*. Like some of the other protocols we have seen, TFRC
+uses timestamps to measure RTT more accurately than TCP
+originally did. Packet sequence numbers are used to determine packet
+loss at the receiver, with consecutive losses grouped into a single
+loss event. From this information the loss event rate *p* can be
+calculated at the receiver who then reflects it back to the sender.
+
+Exactly how the application responds to a change in rate will of
+course depend on the application. The basic idea would be that an
+application can choose among a set of coding rates, and it picks the
+highest quality that can be accommodated with the rate that TFRC
+dictates. 
+
+The specification of TFRC goes into a great detail on how best to
+implement the protocol. 
+
+.. _reading_tfrc:
+.. admonition::  Further Reading
+
+   Floyd, S., Handley, M., Padhye, J. and Widmer, J.
+   `TCP Friendly Rate Control (TFRC): Protocol Specification
+   <https://www.rfc-editor.org/info/rfc5348>`__.  
+   RFC 5348, September 2008.
+
+   
+.. _reading_tcpeq:
+.. admonition::  Further Reading
+
+   Padhye, J., Firoiu, V., Towsley, D. and Kurose, J.
+   `Modeling TCP Throughput: A Simple Model and its Empirical Validation
+   <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.  
+   ACM SIGCOMM, September 1998.
+
+   
