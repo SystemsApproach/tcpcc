@@ -266,7 +266,7 @@ the way it used TCP, such as the fact that every request for an object
 required a new TCP connection to be set up and then closed after the
 reply was returned. HTTP/1.1 was proposed at an early stage to make
 better use of TCP. TCP continued to be the protocol used by HTTP for
-another twenty years.
+another twenty-plus years.
 
 In fact, TCP continued to be problematic as a protocol to support the
 Web, especially because a reliable, ordered byte stream isn't exactly
@@ -274,8 +274,11 @@ the right model for Web traffic. In particular, since most web pages
 contain many objects, it makes sense to be able to request many
 objects in parallel, but TCP only provides a single byte stream. If
 one packet is lost, TCP waits for its retransmission and successful
-deliver before continuing, while HTTP would have been happy to receive
-other objects that were not affected by that single lost packet.
+delivery before continuing, while HTTP would have been happy to receive
+other objects that were not affected by that single lost
+packet. Opening multiple TCP connections would appear to be a solution to this,
+but that has its own set of drawbacks including a lack of shared
+information about congestion across connections.
 
 Other factors such as the rise of high-latency
 wireless networks, the availability of multiple networks for a single
@@ -364,7 +367,7 @@ QUIC is a most interesting development in the world of transport
 protocols. Many of the limitations of TCP have been known for decades,
 but QUIC represents one of the most successful efforts to date to
 stake out a different point in the design space. It has also 
-build in decades worth of experience refining TCP congestion control
+built in decades worth of experience refining TCP congestion control
 into the baseline specification. Because QUIC was
 inspired by experience with HTTP and the Web—which arose long after
 TCP was well established in the Internet—it presents a fascinating
