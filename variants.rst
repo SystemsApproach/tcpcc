@@ -471,9 +471,12 @@ it depends on a moderately large amount of buffering at the receiver
 to smooth out the fluctuations in TCP throughput, it is not really
 suitable for interactive audio or video.
 
-
-The specification of TFRC gives useful background on the design and
-goes into considerable detail on how best to implement a TCP-friendly protocol.
+It's worth noting that TFRC was far from the last word in this area,
+and work continues at the time of writing to define standards for
+TCP-friendly congestion control for real-time traffic. The IETF RMCAT
+(RTP Media Congestion Avoidance Techniques) working group is the home
+of this work. The specification of TFRC below gives useful background
+on how best to implement a TCP-friendly protocol.
 
 .. _reading_tfrc:
 .. admonition::  Further Reading
