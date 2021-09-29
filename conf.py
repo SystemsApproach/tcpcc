@@ -172,6 +172,7 @@ htmlhelp_basename = 'SystemsApproach'
 
 
 # -- Options for LaTeX output ------------------------------------------------
+latex_engine = 'xelatex'
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -183,6 +184,7 @@ latex_elements = {
     'pointsize': '11pt',
 
     # Additional stuff for the LaTeX preamble.
+    'preamble': r'\usepackage{unicode-math}',
     #
     # 'preamble': 'private/latex/preamble.tex',
 
