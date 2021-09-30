@@ -209,8 +209,31 @@ comparison to the approach taken by TCP Reno.
 
    FAST TCP converging more quickly on the available bandwidth.
 
-Westwood
+TCP Westwood
 ~~~~~~~~~~~~~~
+
+While Vegas was motivated by the realization that congestion can be
+detected *before* a loss occurs, TCP Westwood (TCPW) is motivated primarily
+by the realization that packet loss is not always a reliable indicator
+of congestion. This is particularly noticeable with wireless links,
+which were a novelty at the time of Vegas but becoming common by the
+time of TCPW. Wireless links often lose packets due to uncorrected
+errors on the wireless channel, which is unrelated to
+congestion. Hence, congestion needs to be detected another
+way. Interestingly, the end result is somewhat similar to 
+Vegas, in that TCPW also tries to determine the bottleneck bandwidth
+by looking at the rate at which ACKs are coming back for those packets
+that were delivered successfully.
+
+When a packet loss occurs, TCPW does not immediately cut the
+congestion window in half, as it does not yet know if the loss was due
+to congestion or a link-related packet loss. So instead it looks at
+the rate at which traffic was flowing right before the packet loss
+occurred. This is a less aggressive form of backoff that TCP Reno. If
+the loss was congestion-related, TCPW should now be sending at the
+rate that was acceptable before the loss. And if the loss was caused
+by a wireless error, TCPW has not backed off so much, and will start
+to ramp up again to fully utilize the network.
 
 New Vegas
 ~~~~~~~~~~~~~~~~
