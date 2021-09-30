@@ -177,84 +177,123 @@ decrease just described is an *early* decrease in the congestion window
 that should happen before congestion occurs and packets start being
 dropped.
 
-5.2 Incremental Improvements
-------------------------------
+5.2 Varied Assumptions
+----------------------
 
-As with TCP Reno, TCP Vegas has undergone sequence of incremental
-improvements over the years. Vegas was never as widely deployed as
-Reno, so the improvements were driven more by lab studies than
+TCP Vegas—and Vegas-like approaches to avoiding congestion—have been
+tweaked over time, often in response to different assumptions about
+the network.  Vegas was never as widely deployed as Reno, so the
+modifications were often driven more by lab studies than extensive
 real-world experience, but they have collectively refined and
 contributed to our understanding avoidance-based algorithms. We
-summarize some of those contributions here.
+summarize some of those insights here, but return to the general topic
+of targeting the congestion control algorithm for specific use cases
+in Chapter 7.
 
 FAST TCP
 ~~~~~~~~~~~~~~~~
 
 The first Vegas-inspired mechanism was FAST TCP, which modified Vegas
-to be more efficient on high-speed networks with large bandwidth-delay
-products. The idea is to increase the congestion window more
+to be more efficient on high-speed networks with large delay-bandwidth
+products. The idea was to increase the congestion window more
 aggressively during the phase when the algorithm is trying to find the
 available "in transit" bandwidth (before packets are buffered in the
 network), and then more conservatively as the algorithm starts to
 compete with other flows for buffers at the bottleneck router. FAST
-also recommended adjusting the value of |alpha| from roughly four packets
-to 30 packets. :numref:`Figure %s <fig-fast>` illustrates the
-intuition behind FAST's approach to finding the available bandwidth in
-comparison to the approach taken by TCP Reno.
+also recommended adjusting the value of |alpha| from roughly four
+packets to 30 packets.
 
-.. _fig-fast:
-.. figure:: figures/todo.png
-   :width: 500px
-   :align: center
+Beyond managing congestion in networks with large delay-bandwidth
+products, where keeping the pipe full is a substantial challenge,
+there are two other items of note about FAST. First, whereas both TCP
+Reno and TCP Vegas were the result of a little intuition and a lot of
+trial-and-error, FAST was grounded in optimization theory (which was
+subsequently used to explain why Vegas works). Second, unlike all
+other congestion control algorithms of which we are aware, an
+implementation of FAST was made available only as a proprietary
+solution.
 
-   FAST TCP converging more quickly on the available bandwidth.
+.. _reading_fast:
+.. admonition:: Further Reading
+
+	S. Low, L. Peterson, and L. Wang. `Understanding TCP Vegas: A
+	Duality Model. <https://dl.acm.org/doi/10.1145/506147.506152>`__.
+	Journal of the ACM, Volume 49, Issue 2, March 2002.
+
+
+TCP Westwood
+~~~~~~~~~~~~~~
+
+While Vegas was motivated by the idea that congestion can be detected
+and averted *before* a loss occurs, TCP Westwood (TCPW) is motivated
+primarily by the realization that packet loss is not always a reliable
+indicator of congestion. This is particularly noticeable with wireless
+links, which were a novelty at the time of Vegas but becoming common
+by the time of TCPW. Wireless links often lose packets due to
+uncorrected errors on the wireless channel, which are unrelated to
+congestion. Hence, congestion needs to be detected another
+way. Interestingly, the end result is somewhat similar to Vegas, in
+that TCPW also tries to determine the bottleneck bandwidth by looking
+at the rate at which ACKs are coming back for those packets that were
+delivered successfully.
+
+When a packet loss occurs, TCPW does not immediately cut the
+congestion window in half, as it does not yet know if the loss was due
+to congestion or a link-related packet loss. So instead it estimates
+the rate at which traffic was flowing right before the packet loss
+occurred. This is a less aggressive form of backoff that TCP Reno. If
+the loss was congestion-related, TCPW should send at the rate that was
+acceptable before the loss. And if the loss was caused by a wireless
+error, TCPW has not backed off so much, and will start to ramp up
+again to fully utilize the network. The result was a protocol which
+performed similarly to Reno for fixed links but outperformed it by
+substantial margins when lossy links were involved.
 
 New Vegas
 ~~~~~~~~~~~~~~~~
 
-Another example of follow-on work is New Vegas (NV), an adaptation of
-Vegas's delay-based approach to data centers, where link bandwidths
-are 10Gbps or higher and RTTs are typically measured in the ten's of
-microseconds.
+Our final example is New Vegas (NV), an adaptation of Vegas's
+delay-based approach to data centers, where link bandwidths are 10Gbps
+or higher and RTTs are typically measured in the ten's of
+microseconds. This is an important use case that we return to in
+Chapter 7; our goal here is to build some intuition.
 
-To understand the basic idea of NV, suppose that we plot rate vs. cwnd
-for every packet for which an ACK is received, where rate is defined
-as: cwnd bytes / RTT of packet acked. Note that we use cwnd in this
-discussion for simplicity, while in practice NV uses in-flight or
-(unacknowledged) bytes. Rather than just points, we end up with
-vertical bars for values of cwnd due to transient congestion or noise
-in the measurements, as shown in :numref:`Figure %s <fig-nv>`.
+To understand the basic idea of NV, suppose that we plot ``rate``
+versus ``cwnd`` for every packet for which an ACK is received. For the
+purpose of this exercise, ``rate`` is simply the ratio of ``cwnd`` (in
+bytes) to the RTT of packets that have been ACKed (in seconds).  Note
+that we use ``cwnd`` in this discussion for simplicity, while in
+practice NV uses in-flight (unacknowledged) bytes. When plotted over
+time, as shown in :numref:`Figure %s <fig-nv>`, we end up with
+vertical bars (rather than points) for values of ``cwnd`` due to
+transient congestion or noise in the measurements.
 
 .. _fig-nv:
-.. figure:: figures/todo.png
+.. figure:: figures/Slide5.png
    :width: 500px
    :align: center
 
-   Plotting rate vs congestion window (cwnd).
+   Plotting measured rate vs congestion window.
 
 The maximum slope of the top of the bars indicates the best we have
 been able to do in the past. In a well tuned system, the top of the
 bars is bounded by a straight line going through the origin. The idea
-is that as long as we are not congested, doubling the amount of data
-we sent per RTT will double the rate.
+is that as long as the network is not congested, doubling the amount
+of data we send per RTT should double the rate.
 
-New measurements of rate and cwnd can either fall close to the
-boundary line (blue dot) or below (red dot). A measurement above the
-line causes NV to automatically update the line by increasing its
-slope so the measurement will fall on the new line. If the new
-measurement is close to the line, then NV increase the cwnd. If the
-measurement is below the line, it means that we have seen equal
-performance in the past with a lower cwnd. In the example shown in
-:numref:`Figure %s <fig-nv>`, we similar similar performance with
-cwnd=12, so we will decrease the cwnd. The decrease is done
-multiplicative, rather than instantaneously, in case the new
-measurement is noisy. To filter out bad measurements, NV collects many
-measurements and then use the best one before making a congestion
-determination.
-   
-
-Westwood 
-~~~~~~~~~~~~~~
+New measurements of ``rate`` and ``cwnd`` can either fall close to the
+boundary line (blue diamond in the figure) or below (red diamond in the
+figure).  A measurement above the line causes NV to automatically
+update the line by increasing its slope so the measurement will fall
+on the new line. If the new measurement is close to the line, then NV
+increases ``cwnd``. If the measurement is below the line, it means
+that we have seen equal performance in the past with a lower
+``cwnd``. In the example shown in :numref:`Figure %s <fig-nv>`, we see
+similar performance with ``cwnd=12``, so we decrease ``cwnd``. The
+decrease is done multiplicative, rather than instantaneously, in case
+the new measurement is noisy. To filter out bad measurements, NV
+collects many measurements and then use the best one before making a
+congestion determination.
 
 
 5.3 TCP BBR 

@@ -28,6 +28,12 @@ competing TCP connections.
    congestion in public clouds. Again, a different set of constraints
    leads to a different point in the design space.
 
+The performance of TCP for Web traffic has been challenging since the
+very earliest days of the Web and HTTP/1.0. QUIC is the result of
+decades of experience with HTTP over TCP and is a complete reworking
+of the transport layer. In terms of congestion, it embraces many of
+the learnings of the last three decades of congestion control for TCP.    
+
 Finally we look at the space of "TCP-friendly" congestion control,
 where the working assumption is that some applications—notably those
 involving real-time communication—can't directly
@@ -227,7 +233,7 @@ timeouts, and long idle periods, much like with TCP.
 Hence, LEDBAT can do a good job of using available bandwidth that is
 free, but avoids creating long standing queues, as it aims to keep the
 delay around the target (which is a configurable number, suggested to
-be on the order of 100ms). If other traffic starts to compete with
+be on the order of 100 ms). If other traffic starts to compete with
 LEDBAT traffic, LEDBAT will back off as it aims to prevent the queue getting
 longer. 
 
@@ -253,22 +259,44 @@ parameters. Further details can be found in the RFC.
 7.3 HTTP Performance (QUIC)
 ---------------------------
 
+HTTP has been around since the invention of the World Wide Web in the
+1990s and from its inception it has run over TCP. HTTP/1.0, the
+original version, had quite a number of performance problems due to
+the way it used TCP, such as the fact that every request for an object
+required a new TCP connection to be set up and then closed after the
+reply was returned. HTTP/1.1 was proposed at an early stage to make
+better use of TCP. TCP continued to be the protocol used by HTTP for
+another twenty-plus years.
 
-QUIC originated at Google in 2012 and was subsequently developed as a
-proposed standard at the IETF. It has already seen a moderate amount
-of deployment (in some Web browsers and quite a number of popular Web
-sites). Deployability was a key consideration for the designers of the
-protocol.
+In fact, TCP continued to be problematic as a protocol to support the
+Web, especially because a reliable, ordered byte stream isn't exactly
+the right model for Web traffic. In particular, since most web pages
+contain many objects, it makes sense to be able to request many
+objects in parallel, but TCP only provides a single byte stream. If
+one packet is lost, TCP waits for its retransmission and successful
+delivery before continuing, while HTTP would have been happy to receive
+other objects that were not affected by that single lost
+packet. Opening multiple TCP connections would appear to be a solution to this,
+but that has its own set of drawbacks including a lack of shared
+information about congestion across connections.
 
-The primary motivation for QUIC was to improve the performance of web
-traffic compared to running HTTP over TCP. TCP turned out to be non-optimal
-in a number of dimensions when HTTP was layered on top of it. These issues became more
-noticeable over time, due to factors such as the rise of high-latency
+Other factors such as the rise of high-latency
 wireless networks, the availability of multiple networks for a single
 device (e.g., Wi-Fi and cellular), and the increasing use of
-encrypted, authenticated connections on the Web.
-In seeking to address these issues, QUIC required a significant
-rethinking of the design of a reliable transport protocol.
+encrypted, authenticated connections on the Web also contributed to
+the realization that the transport layer for HTTP would benefit from a
+new approach. The protocol that emerged to fill this need was QUIC.
+
+
+QUIC originated at Google in 2012 and was subsequently developed as a
+proposed standard at the IETF. It has already seen a solid amount
+of deployment (in most Web browsers and quite a number of popular Web
+sites). Deployability was a key consideration for the designers of the
+protocol. There are a lot of moving parts to QUIC—its specification
+spans three RFCs of several hundred pages—but we focus here on its
+approach to congestion control, which embraces many of the ideas we
+have seen to date in this book.
+
 
 Like TCP, QUIC builds congestion control into the transport, but it
 does so in a way that recognizes that there is no single perfect
@@ -339,7 +367,7 @@ QUIC is a most interesting development in the world of transport
 protocols. Many of the limitations of TCP have been known for decades,
 but QUIC represents one of the most successful efforts to date to
 stake out a different point in the design space. It has also 
-build in decades worth of experience refining TCP congestion control
+built in decades worth of experience refining TCP congestion control
 into the baseline specification. Because QUIC was
 inspired by experience with HTTP and the Web—which arose long after
 TCP was well established in the Internet—it presents a fascinating
@@ -446,9 +474,12 @@ it depends on a moderately large amount of buffering at the receiver
 to smooth out the fluctuations in TCP throughput, it is not really
 suitable for interactive audio or video.
 
-
-The specification of TFRC gives useful background on the design and
-goes into considerable detail on how best to implement a TCP-friendly protocol.
+It's worth noting that TFRC was far from the last word in this area,
+and work continues at the time of writing to define standards for
+TCP-friendly congestion control for real-time traffic. The IETF RMCAT
+(RTP Media Congestion Avoidance Techniques) working group is the home
+of this work. The specification of TFRC below gives useful background
+on how best to implement a TCP-friendly protocol.
 
 .. _reading_tfrc:
 .. admonition::  Further Reading
