@@ -209,11 +209,53 @@ comparison to the approach taken by TCP Reno.
 
    FAST TCP converging more quickly on the available bandwidth.
 
-Westwood
-~~~~~~~~~~~~~~
-
 New Vegas
 ~~~~~~~~~~~~~~~~
+
+Another example of follow-on work is New Vegas (NV), an adaptation of
+Vegas's delay-based approach to data centers, where link bandwidths
+are 10Gbps or higher and RTTs are typically measured in the ten's of
+microseconds.
+
+To understand the basic idea of NV, suppose that we plot rate vs. cwnd
+for every packet for which an ACK is received, where rate is defined
+as: cwnd bytes / RTT of packet acked. Note that we use cwnd in this
+discussion for simplicity, while in practice NV uses in-flight or
+(unacknowledged) bytes. Rather than just points, we end up with
+vertical bars for values of cwnd due to transient congestion or noise
+in the measurements, as shown in :numref:`Figure %s <fig-nv>`.
+
+.. _fig-nv:
+.. figure:: figures/todo.png
+   :width: 500px
+   :align: center
+
+   Plotting rate vs congestion window (cwnd).
+
+The maximum slope of the top of the bars indicates the best we have
+been able to do in the past. In a well tuned system, the top of the
+bars is bounded by a straight line going through the origin. The idea
+is that as long as we are not congested, doubling the amount of data
+we sent per RTT will double the rate.
+
+New measurements of rate and cwnd can either fall close to the
+boundary line (blue dot) or below (red dot). A measurement above the
+line causes NV to automatically update the line by increasing its
+slope so the measurement will fall on the new line. If the new
+measurement is close to the line, then NV increase the cwnd. If the
+measurement is below the line, it means that we have seen equal
+performance in the past with a lower cwnd. In the example shown in
+:numref:`Figure %s <fig-nv>`, we similar similar performance with
+cwnd=12, so we will decrease the cwnd. The decrease is done
+multiplicative, rather than instantaneously, in case the new
+measurement is noisy. To filter out bad measurements, NV collects many
+measurements and then use the best one before making a congestion
+determination.
+   
+
+Westwood 
+~~~~~~~~~~~~~~
+
 
 5.3 TCP BBR 
 ---------------
