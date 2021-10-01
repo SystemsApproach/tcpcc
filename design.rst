@@ -54,12 +54,15 @@ approach to resource allocation is centralized or distributed. In
 practice, the Internet's scale—along with the autonomy of the
 organizations that connect to it—dictated a distributed
 approach. Indeed, distributed management of resources was an
-explicitly stated goal of the Internet's design [#]_. But
-acknowledging this default decision is important for two reasons.
+explicitly stated goal of the Internet's design, as articulated by
+Dave Clark. But acknowledging this default decision is important for
+two reasons.
 
-.. [#] See D. Clark, `The Design Philosophy of the DARPA Internet
-       Protocols
-       <https://dl.acm.org/doi/10.1145/52324.52336>`__.
+.. _reading_design:
+.. admonition:: Further Reading 
+
+       D. Clark, `The Design Philosophy of the DARPA Internet
+       Protocols <https://dl.acm.org/doi/10.1145/52324.52336>`__.
        ACM SIGCOMM, 1988.
 
 First, while the Internet's approach to congestion control is
@@ -149,7 +152,7 @@ end hosts in doing their job, but not by reserving buffer space.  This
 involves the router sending *feedback* to the end hosts when its
 buffers are full. We describe some of these forms of *Active Queue
 Management (AQM)* in Chapter 6, but the host-centric mechanisms
-described in the next three chapters assume routers silently tail-drop
+described in the next two chapters assume routers silently tail-drop
 packets when their buffers are full.
 
 Historically, a host-centric approach has been implemented in the
@@ -691,7 +694,7 @@ These experiments can be repeated with three concurrent flows, but we
 turn next to evaluating how various algorithms treat different
 workloads. In particular, we are interested in the question of *size
 fairness*, that is, how a given algorithm treats back-to-back 10-KB or
-1-MB RPC calls when they have to compete with an ongoing streams-based
+1-MB RPC calls when they have to compete with an ongoing stream-based
 flows. Some example results are shown in :numref:`Figure %s
 <fig-graph_8b>` (1-MB RPCs) and :numref:`Figure %s <fig-graph_8c>`
 (10-KB RPCs). The figures show the performance of five different
@@ -726,9 +729,9 @@ retransmissions when sharing the available bandwidth RPC calls.
 The 10-KB results do have a significant outlier, with the third
 algorithm (yellow) performing significantly better; by a factor of
 4x. If you plot latency rather than bandwidth—the more relevant metric
-for small-message RPC calls, it turns out the third algorithm both
+for small-message RPC calls—it turns out the third algorithm both
 achieves the lowest latencies and does so consistently, with the 99th
-and 99.9th percentiles are the same.
+and 99.9-th percentiles being the same.
 
 Finally, all of the preceding experiments can be repeated on a
 network topology that includes wide-area RTTs. Certainly inter-flow

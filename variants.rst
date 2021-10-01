@@ -421,7 +421,7 @@ The approach to TCP-friendliness for these applications is to try to
 pick a sending rate similar to that which would be achieved by TCP
 under similar conditions, but to do so in a way that keeps the rate
 from fluctuating too wildly. Underpinning this idea is a body of
-research going back many years on modelling the throughput of TCP. A
+research going back many years on modeling the throughput of TCP. A
 simplified version of the TCP throughput equation is given in RFC 5348
 which defines the standard for TFRC. With a few variables set to
 recommended variables, the equation for target transmit rate X in

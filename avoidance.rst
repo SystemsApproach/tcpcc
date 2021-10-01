@@ -20,15 +20,15 @@ the next 25+ years.
       ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in IEEE/ACM Transactions 
       on Networking, October 1995).
 
-Whereas every approach described to date sees packet loss as a congestion
-signal and tries to react to *control* congestion after the onset, TCP Vegas takes an
-*avoidance-based* approach to congestion: it tries to detect changes
-in the measured throughput rate, and adjust the sending rate *before*
-congestion becomes severe enough to cause packet loss. This chapter
-describes the general "Vegas strategy" and—as we did with Tahoe/Reno
-in the previous chapter—walks through the incremental changes applied
-to that strategy over time. This case study culminates in the BBR
-algorithm championed by Google today.
+Whereas every approach described to date sees packet loss as a
+congestion signal and tries to react to *control* congestion after the
+onset, TCP Vegas takes an *avoidance-based* approach to congestion: it
+tries to detect changes in the measured throughput rate, and adjust
+the sending rate *before* congestion becomes severe enough to cause
+packet loss. This chapter describes the general "Vegas strategy",
+along with three example variations to that strategy introduced over
+time. This case study culminates in the BBR algorithm championed by
+Google today.
 
 5.1 TCP Vegas
 -------------
@@ -181,13 +181,13 @@ dropped.
 ----------------------
 
 TCP Vegas—and Vegas-like approaches to avoiding congestion—have been
-tweaked over time, often in response to different assumptions about
+adapted over time, often in response to different assumptions about
 the network.  Vegas was never as widely deployed as Reno, so the
 modifications were often driven more by lab studies than extensive
 real-world experience, but they have collectively refined and
 contributed to our understanding avoidance-based algorithms. We
 summarize some of those insights here, but return to the general topic
-of targeting the congestion control algorithm for specific use cases
+of customizing the congestion control algorithm for specific use cases
 in Chapter 7.
 
 FAST TCP

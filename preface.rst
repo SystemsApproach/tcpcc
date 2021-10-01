@@ -16,7 +16,7 @@ Internet's smooth functioning depends have multiplied ever since.
 This book grew out of our own involvement in developing congestion
 control algorithms over the last three decades. There have been so
 many developments in congestion control over that time that it's
-nearly impossible to include all of them. What we have aimed to do
+nearly impossible to include all of them. What we have tried to do
 in this book is provide a framework for understanding congestion
 control as a problem space, and to categorize the many approaches into
 a few main themes. For example, our work on TCP Vegas opened up a
@@ -27,12 +27,12 @@ congestion control.
 
 This is a pre-release of a still in-progress manuscript. There are a
 number of significant efforts in congestion control that are not
-currently covered in the book as we aim to help readers understand the
-problem space and the intuition behind various solutions, without
-being overwhelmed by hundreds of algorithmic details. That said, we
-have probably missed some important themes. And the approaches that we
-have covered, particularly in later chapters, are in many cases still
-evolving. We will update the book as needed.
+currently covered in the book as our goal is to help readers
+understand the problem space and the intuition behind various
+solutions, without being overwhelmed by hundreds of details. That
+said, we have probably missed some important themes. And the
+approaches that we have covered, particularly in later chapters, are
+in many cases still evolving. We will update the book as needed.
 
 Please send
 us your comments and feedback using the `Issues Link
@@ -40,6 +40,6 @@ us your comments and feedback using the `Issues Link
 <https://github.com/SystemsApproach/tcpcc/wiki>`__ for the latest todo
 list.
 
-Larry Peterson, Larry Brakmo, and Bruce Davie
-October 2021
+| Larry Peterson, Larry Brakmo, and Bruce Davie
+| October 2021
 
