@@ -1,17 +1,3 @@
-# Copyright 2019-present Open Networking Foundation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
@@ -32,9 +18,24 @@
 
 import os
 
+from subprocess import check_output, CalledProcessError
+
 def get_version():
-    with open("VERSION") as f:
-        return f.read().strip()
+    
+    try:
+        version = check_output(['cat', 'VERSION'],
+                               universal_newlines=True)
+    except CalledProcessError:
+        return 'unknown version'
+
+    return version.rstrip()
+
+# "version" is used for html build
+version = get_version()
+# "release" is used for LaTeX build
+release = version
+
+
 
 # -- Project information -----------------------------------------------------
 
@@ -42,11 +43,7 @@ project = u'TCP Congestion Control: A Systems Approach'
 copyright = u'2021'
 author = u'Peterson, Brakmo, Davie'
 
-# The short X.Y version
-version = get_version()
 
-# The full version, including alpha/beta/rc tags
-release = get_version()
 
 # -- General configuration ---------------------------------------------------
 
@@ -96,7 +93,7 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = ['.rst', '.md']
+source_suffix =  '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -228,7 +225,7 @@ texinfo_documents = [
 
 # -- Options for Epub output -------------------------------------------------
 epub_title = project
-epub_description = 'The New Network Software Stack'
+epub_description = 'Efficient Sharing of Network Resources'
 epub_cover = ('_static/cover.jpg', '')
 epub_show_urls = 'False'
 epub_use_index = False
@@ -248,31 +245,11 @@ epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
 
-# blockdiag/etc. config
-
-rackdiag_antialias = True
-rackdiag_html_image_format = "SVG"
-rackdiag_fontpath = [
-    "_static/fonts/Inconsolata-Regular.ttf",
-    "_static/fonts/Inconsolata-Bold.ttf",
-]
-
-nwdiag_antialias = True
-nwdiag_html_image_format = "SVG"
-nwdiag_fontpath = [
-    "_static/fonts/Inconsolata-Regular.ttf",
-    "_static/fonts/Inconsolata-Bold.ttf",
-]
 
 # -- Options for todo extension ----------------------------------------------
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
-# -- Configure recommonmark to use AutoStructify -----------------------------
-# Docs: https://recommonmark.readthedocs.io/en/latest/auto_structify.html
-
-#import recommonmark
-#from recommonmark.transform import AutoStructify
 
 # -- Set up Google Analytics
 # -- using approach at https://stackoverflow.com/questions/9444342/adding-a-javascript-script-tag-some-place-so-that-it-works-for-every-file-in-sph/41885884#41885884
@@ -290,9 +267,7 @@ def setup(app):
 
     app.add_css_file('css/rtd_theme_mods.css')
 
-    app.add_config_value('recommonmark_config', {
-            'auto_toc_tree_section': 'Contents',
-            }, True)
+
 
 #    app.add_transform(AutoStructify)
 
