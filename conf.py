@@ -58,10 +58,7 @@ warning_is_error = True
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones. ***Replace "mathjax" with "imgmath" for epub output.***
 extensions = [
-    'sphinx.ext.coverage',
-    'sphinx.ext.graphviz',
     'sphinx.ext.ifconfig',
-    'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinxcontrib.spelling',
