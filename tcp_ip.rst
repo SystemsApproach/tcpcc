@@ -27,16 +27,19 @@ service model, as specified by the Internet Protocol (IP) and
 implemented by switches and routers. Being *connectionless* means
 every IP packet carries enough information for the network to forward
 it to its correct destination; there is no setup mechanism to tell the
-network what to do when packets arrive.   *Best-effort* means
-that if something goes wrong and the packet gets lost, corrupted, or
+network what to do when packets arrive.  *Best-effort* means that if
+something goes wrong and the packet gets lost, corrupted, or
 misdelivered while en route, the network does nothing to recover from
 the failure. This approach was intentionally designed to keep routers
-as simple as possible, and is generally viewed as an implementation
-based on the *end-to-end argument*.\ [#]_
+as simple as possible, and is generally viewed as consistent with the
+*end-to-end argument* articulated by Saltzer, Reed, and Clark.
 
-.. [#] `End-to-End Arguments in System Design
-       <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__,
-       J. Saltzer, D. Clark and D. Reed, 1981. 
+.. _reading_e2e:
+.. admonition:: Further Reading 
+
+	J. Saltzer, D. Reed, and D. Clark. `End-to-End Arguments in System Design
+	<https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__.
+	ACM Transactions on Computer Systems, Nov. 1984.
 
 Best-effort delivery does not just mean that packets can get lost.
 Sometimes they can get delivered out of order, and sometimes the same

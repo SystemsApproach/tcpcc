@@ -242,7 +242,10 @@ purposely sends packets at a rate that causes packet loss and then
 responds to it, and a conservative approach that tries to detect the
 onset of queue build-up and slow down before they actually overflow.
 We refer to the mechanisms of the first type as *control-based*, and
-we refer to mechanisms of the second type as *avoidance-based*.
+we refer to mechanisms of the second type as *avoidance-based*.  (In
+some contexts, the two approaches are called *loss-based* and
+*delay-based*, respectively, based on the criteria used to adjust the
+congestion window.)
 
 .. _reading_avoidance:
 .. admonition:: Further Reading 
