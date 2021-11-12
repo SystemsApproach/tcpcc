@@ -509,13 +509,18 @@ colleagues:
 
 Instead of a simple calculation of Jain's fairness index, Ware
 advocates for a threshold based on *harm*, as measured by a reduction
-in throughput or an increase in latency. Intuitively, if the amount of
+in throughput or an increase in latency or jitter. Intuitively, if the amount of
 harm caused by flows using a new mechanism B on flows using existing
 mechanism A is within a bound derived from how much harm A-managed
 flows cause other A-managed flows, we can consider B deployable
 alongside A without harm. Ware goes on to propose concrete measures of
-acceptable harm, which we revisit for specific pairwise comparisons
-throughout the book.
+acceptable harm, which turns out to be more complicated than it
+might first appear. Even with a single congestion control algorithm,
+the amount of harm that one flow causes another depends on factors
+such as its RTT, start time, and duration. Thus measures of harm need
+to take into account the range of impacts that different flows have on
+each other in under the existing regime and aim to do no worse with a
+new algorithm. 
 
 3.4 Experimental Methodology
 --------------------------------
