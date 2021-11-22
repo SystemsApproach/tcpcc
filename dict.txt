@@ -75,6 +75,7 @@ goodput
 granularities
 halvings
 incrementing
+jitter
 kbps
 kilobits
 latencies

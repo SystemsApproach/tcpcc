@@ -2,53 +2,29 @@ Chapter 7:  Beyond TCP
 ======================
 
 As exploration of the design space for congestion control has
-continued, a number of new protocols that are designed for specific
-environments have emerged. These differ from TCP mostly in that they
-have targeted specific use cases, rather than the arbitrarily complex
+continued, a number of new algorithms and protocols have emerged.
+These differ from what we've seen in earlier chapters mostly in that
+they target specific use cases, rather than the arbitrarily complex
 and heterogeneous network environments that TCP supports. The
 exception may be QUIC, which started with the goal of improving HTTP
-performance specifically, but has now developed into something of a general
-TCP alternative.
+performance specifically, but has now developed into something of a
+general TCP alternative.
 
-This chapter is not exhaustive, as new approaches to congestion
-control are being invented all the time. Instead we survey a few
-approaches that mark different points in the design space.
-Data Center TCP (DCTCP) draws on realizations that data centers are dominated by east-west
-(or intra-data-center) traffic and that low latency is a requirement
-for many applications in the DC, leading to a design optimized for that
-environment. Many further attempts to improve congestion behavior in data
-center environments followed.
-
-LEDBAT (Low Extra Delay Background Transport) targets a completely
-difference environment and use case: transferring large amounts of
-data across the Internet without greatly increasing the latency of other
-competing TCP connections.
-
-.. On-Ramp focuses on yet another part of the design space: transient
-   congestion in public clouds. Again, a different set of constraints
-   leads to a different point in the design space.
-
-The performance of TCP for Web traffic has been challenging since the
-very earliest days of the Web and HTTP/1.0. QUIC is the result of
-decades of experience with HTTP over TCP and is a complete reworking
-of the transport layer. In terms of congestion, it embraces many of
-the learnings of the last three decades of congestion control for TCP.    
-
-Finally we look at the space of "TCP-friendly" congestion control,
-where the working assumption is that some applications—notably those
-involving real-time communication—can't directly
-use the reliable byte-stream model of TCP, and hence need a different
-sort of transport. At the same time, the sound operation of the
-Internet requires that these flows respond to congestion in a way that
-is sufficiently similar to TCP that actual TCP flows are not pushed aside.
-
-
+This chapter is not exhaustive, but we instead survey a few approaches
+that mark different design points. The specific use cases include the
+data center, where it is important to achieve good throughput without
+negatively impacting latency-sensitive applications; sending
+background traffic over an extended period of time by using only
+excess capacity, so as to not impact other TCP flows; optimizing
+HTTP-based web traffic without being backward-compatible with TCP; and
+supporting real-time streaming in a way that is TCP-friendly, but
+without incurring the retransmission overhead of TCP.
 
 7.1 Data Centers (DCTCP)
 ---------------------------
 
-*Data Center TCP* was one of the first TCP
-variants designed specifically to perform well in cloud data centers. There are
+There have been several efforts to optimize TCP for cloud data
+centers, where *Data Center TCP* was one of the first. There are
 several aspects of the data center environment that warrant an
 approach that differs from more traditional TCP. These include:
 
@@ -63,9 +39,9 @@ approach that differs from more traditional TCP. These include:
   
 * That traffic competes with high bandwidth flows.
 
-It should be noted that DCTCP is not just a version of TCP, but rather
-a system design that changes both the switch behavior and the end host
-response to congestion information received from switches.  
+It should be noted that DCTCP is not just a version of TCP, but
+rather, a system design that changes both the switch behavior and the
+end host response to congestion information received from switches.
 
 The central insight in DCTCP is that using loss as the main signal of
 congestion in the data center environment is insufficient. By the time a queue
@@ -160,8 +136,8 @@ is a "test of time" award winner from SIGCOMM.
 7.2 Background Transport (LEDBAT)
 ----------------------------------
 
-In sharp contrast to low-latency data center environments, there are many
-applications that just need to transfer a large amount of data over an
+In sharp contrast to low-latency data center environments, there are
+many applications that need to transfer a large amount of data over an
 extended period of time. File-sharing protocols such as BitTorrent and
 software-updates are two examples. LEDBAT (Low Extra Delay Background
 Transport) is targeted at these applications.
@@ -256,6 +232,10 @@ parameters. Further details can be found in the RFC.
    7.3 Public Cloud (OnRamp)
    -------------------------
 
+.. On-Ramp focuses on yet another part of the design space: transient
+   congestion in public clouds. Again, a different set of constraints
+   leads to a different point in the design space.   
+
 7.3 HTTP Performance (QUIC)
 ---------------------------
 
@@ -287,7 +267,6 @@ encrypted, authenticated connections on the Web also contributed to
 the realization that the transport layer for HTTP would benefit from a
 new approach. The protocol that emerged to fill this need was QUIC.
 
-
 QUIC originated at Google in 2012 and was subsequently developed as a
 proposed standard at the IETF. It has already seen a solid amount
 of deployment (in most Web browsers and quite a number of popular Web
@@ -296,7 +275,6 @@ protocol. There are a lot of moving parts to QUIC—its specification
 spans three RFCs of several hundred pages—but we focus here on its
 approach to congestion control, which embraces many of the ideas we
 have seen to date in this book.
-
 
 Like TCP, QUIC builds congestion control into the transport, but it
 does so in a way that recognizes that there is no single perfect
@@ -389,6 +367,7 @@ congestion control is covered in the separate RFC 9002.
 
 7.4 TCP-Friendly Protocols (TFRC)
 ---------------------------------
+
 As noted at various points throughout this book, it is easy to make
 transport protocols that out-perform TCP, since TCP in all its forms
 backs off when it detects congestion. Any protocol which does *not*
