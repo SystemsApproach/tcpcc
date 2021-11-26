@@ -519,7 +519,7 @@ might first appear. Even with a single congestion control algorithm,
 the amount of harm that one flow causes another depends on factors
 such as its RTT, start time, and duration. Thus measures of harm need
 to take into account the range of impacts that different flows have on
-each other in under the existing regime and aim to do no worse with a
+each other under the existing regime and aim to do no worse with a
 new algorithm. 
 
 3.4 Experimental Methodology

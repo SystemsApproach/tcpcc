@@ -310,25 +310,114 @@ congestion and packet loss. Both BBR and Vegas use the minimum RTT and
 maximum RTT, as calculated over some time interval, as their main
 control signals.
 
-BBR also introduces new mechanisms to improve performance, including
-packet pacing, bandwidth probing, and RTT probing. Packet pacing spaces
-the packets based on the estimate of the available bandwidth. This
-eliminates bursts and unnecessary queuing, which results in a better
-feedback signal. BBR also periodically increases its rate, thereby
-probing the available bandwidth. Similarly, BBR periodically decreases
-its rate, thereby probing for a new minimum RTT. The RTT probing
-mechanism attempts to be self-synchronizing, which is to say, when there
-are multiple BBR flows, their respective RTT probes happen at the same
-time. This gives a more accurate view of the actual uncongested path
-RTT, which solves one of the major issues with delay-based congestion
-control mechanisms: having accurate knowledge of the uncongested path
-RTT.
+.. _fig-bbr:
+.. figure:: figures/Slide6.png
+   :width: 500px
+   :align: center
 
-BBR is actively being worked on and rapidly evolving. One major focus is
-fairness. For example, some experiments show CUBIC flows get 100x less
+   Determining the optimal sending rate based on observed throughput
+   and RTT.
+
+To understand the philosophy of BBR, consider :numref:`Figure %s
+<fig-bbr>`. Assume a network has a single bottleneck link with some
+available bandwidth and queuing capacity. As the congestion window
+opens and more data is put in flight, initially there is an increase
+in throughput (on the lower graph) but no increase in delay as the
+bottleneck is not full. Then once the data rate reaches the bottleneck
+bandwidth, a queue starts to build. At this point, RTT rises, and no
+rise in throughput is observed. This is the beginning of the
+congestion phase. This graph is really a simplified version of what we
+see in the 4.5 to 6.0 second timeframe in :numref:`Figure %s
+<fig-trace3>`.
+
+Like Vegas, BBR aims to accurately determine that point where the
+queue has just started to build, as opposed to continuing all the way
+to the point of filling the buffer and causing packet drops as Reno
+does. A lot of the work in BBR has been around improving the
+sensitivity of the mechanisms that locate that sweet spot. There are
+numerous challenges: measurements of bandwidth and delay are noisy;
+network conditions are not static; and the perennial quest for
+fairness when competing for bandwidth against both BBR and non-BBR
+flows.
+
+One striking feature of BBR compared to the other approaches we have
+seen is that it does not rely solely on ``cwnd`` to determine how much
+data is put in flight. Notably, BBR tries to smooth out the rate at
+which a sender puts data into the network in an effort to avoid 
+bursts that would lead to excessive queuing. Under ideal conditions,
+we would like to send data exactly at the rate of the bottleneck,
+thus achieving the highest possible throughput without causing a queue
+to build up. Whereas most TCP variants use the arrival of an ACK to
+"clock" the sending of data, and thus ensuring that the amount of
+unacknowledged data in flight remains constant, BBR creates an estimate of the bottleneck
+bandwidth and uses a local scheduling algorithm to send data at that
+rate. ACKs still play an important role in updating knowledge about
+the state of the network, but they are not directly used to pace
+transmissions. This means that delayed ACKs do not lead
+to sudden bursts of transmission. ``cwnd`` is still used to ensure
+that enough data is sent to keep the pipe full.
+
+In order to maintain an up-to-date view of the current RTT and
+bottleneck bandwidth, it is necessary to keep probing above and below
+the current estimate of the bottleneck bandwidth. More bandwidth can
+become available due to a reduction in the traffic from competing
+flows, changes in link properties (e.g. on wireless links), or routing
+changes. Changes in RTT are also possible, particularly if the path
+changes. To detect a change in RTT it is necessary to send less
+traffic, hence draining queues; to detect a change in available
+bandwidth, it is necessary to send more traffic. Hence, BBR probes
+both above and below its current estimate of the bottleneck
+bandwidth. If necessary, the estimates are updated, and the sending
+rate and ``cwnd`` are updated accordingly.
+
+.. _fig-bbrstate:
+.. figure:: figures/Slide7.png
+   :width: 300px
+   :align: center
+
+   State machine diagram for BBR.
+
+The process of sequentially probing for the available bandwidth and
+the minimum RTT is captured in the state diagram of :numref:`Figure %s
+<fig-bbrstate>`. After an aggressive startup phase to try to establish
+the available bandwidth on the path, the sending rate is reduced to
+drain the queue, and then the algorithm settles into the inner loop of
+the diagram, in which it periodically checks for better delay at lower
+sending rates, or better throughput at higher sending rates. On a
+relatively long timescale (multiple seconds) the algorithm moves into
+the ``ProbeRTT`` state, lowering its sending rate by a factor of two in an
+effort to fully drain the queue and test for lower RTT.
+
+One interesting aspect of this approach is that when a large flow
+reduces its sending rate dramatically in the ``ProbeRTT`` state, that flow's contribution to queuing delay
+drops, which causes other flows to simultaneously see a new, lower RTT, and update
+their estimates. Hence flows show a tendency to synchronize their RTT
+estimation at times when the queue is actually empty or close to it,
+improving the accuracy of this estimate.
+
+
+
+BBR is actively being worked on and rapidly evolving, with version 2
+in use at the time of writing. One major focus is
+fairness. For example, some early experiments showed CUBIC flows getting 100x less
 bandwidth when competing with BBR flows, and other experiments show that
-unfairness among BBR flows is even possible. Another major focus is
-avoiding high retransmission rates, where in some cases as many as 10%
-of packets are retransmitted.
+unfairness among BBR flows is possible. BBR version 1 was insensitive
+to loss, which could lead to high loss rates particularly when the
+amount of buffering on the path was relatively low. As several
+implementations of BBR are now being tried in different environments,
+including within Google's internal backbone and in the broader
+Internet, experience is being gather to further refine the design. The
+IETF's Congestion Control Working Group is hosting discussions on the
+ongoing design and experimentation. 
 
+
+.. _reading_bbr:
+.. admonition:: Further Reading
+
+	N. Cardwell, Y. Cheng, C. S. Gunn, S. Yeganeh, V. Jacobson. `BBR: Congestion-based
+        Congestion Control
+        <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__. 
+	Communications of the ACM, Volume 60, Issue 2, February 2017.
+
+ 
 
