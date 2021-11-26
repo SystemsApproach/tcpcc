@@ -355,7 +355,9 @@ rate. ACKs still play an important role in updating knowledge about
 the state of the network, but they are not directly used to pace
 transmissions. This means that delayed ACKs do not lead
 to sudden bursts of transmission. ``cwnd`` is still used to ensure
-that enough data is sent to keep the pipe full.
+that enough data is sent to keep the pipe full, and is also limited to
+ensure that the amount of data in flight is not so much greater than
+the bandwidth-delay product as to cause queues to overflow.
 
 In order to maintain an up-to-date view of the current RTT and
 bottleneck bandwidth, it is necessary to keep probing above and below
@@ -406,7 +408,7 @@ to loss, which could lead to high loss rates particularly when the
 amount of buffering on the path was relatively low. As several
 implementations of BBR are now being tried in different environments,
 including within Google's internal backbone and in the broader
-Internet, experience is being gather to further refine the design. The
+Internet, experience is being gathered to further refine the design. The
 IETF's Congestion Control Working Group is hosting discussions on the
 ongoing design and experimentation. 
 
