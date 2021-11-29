@@ -152,12 +152,12 @@ they are not just stealing bandwidth from less aggressive TCP
 implementations.
 
 LEDBAT takes this idea in a the opposite direction by creating a
-congestion control protocol that is *less* aggressive than TCP. The
-idea is to take advantage of bandwidth that is available when links
-are uncongested, but to quickly back off and leave the bandwidth free
-for other, standard flows when they arrive. In addition, as the name
-suggests, LEDBAT tries not to create significant queuing delays, unlike
-the typical behavior of TCP when filling a bottleneck link.
+congestion control protocol that is purposely *less* aggressive than
+TCP. The idea is to take advantage of bandwidth that is available when
+links are uncongested, but to quickly back off and leave the bandwidth
+free for other, standard flows when they arrive. In addition, as the
+name suggests, LEDBAT tries not to create significant queuing delays,
+unlike the typical behavior of TCP when filling a bottleneck link.
 
 Like TCP Vegas, LEDBAT aims to detect the onset of congestion before
 it is severe enough to cause loss. However, LEDBAT takes a different
@@ -441,13 +441,13 @@ application can choose among a set of coding rates, and it picks the
 highest quality that can be accommodated with the rate that TFRC
 dictates. 
 
-While the concept of TFRC is solid, it has had
-limited deployment for a number of reasons. One is that a simpler
-solution for some types of streaming traffic emerged in the form of 
-"DASH" (Dynamic Adaptive Streaming over HTTP). DASH is only suitable
-for non-real-time media (e.g. watching movies) but that turns out to
-be a large percentage of the media traffic that runs across the
-Internet—in fact, it is a large percentage of *all* Internet traffic.
+While the concept of TFRC is solid, it has had limited deployment for
+a number of reasons. One is that a simpler solution for some types of
+streaming traffic emerged in the form of *DASH (Dynamic Adaptive
+Streaming over HTTP)*. DASH is only suitable for non-real-time media
+(e.g. watching movies) but that turns out to be a large percentage of
+the media traffic that runs across the Internet—in fact, it is a large
+percentage of *all* Internet traffic.
 
 DASH lets TCP (or potentially QUIC) take care
 of congestion control; the application measures the

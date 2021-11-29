@@ -79,7 +79,7 @@ packet networks than for highways, but it is equally problematic [#]_.
 
 .. _fig-collapse:
 .. figure:: figures/Fig1.png
-   :width: 500px
+   :width: 400px
    :align: center
 
    As load increases, throughput rises then falls at the point of

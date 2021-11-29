@@ -155,26 +155,24 @@ Management (AQM)* in Chapter 6, but the host-centric mechanisms
 described in the next two chapters assume routers silently tail-drop
 packets when their buffers are full.
 
-Historically, a host-centric approach has been implemented in the
+Historically, the host-centric approach has been implemented in the
 transport layer—usually by TCP, or by some other transport protocol
-with TCP-like congestion control, such as DCCP (datagram congestion
-control protocol) or QUIC (a relatively recent transport protocol
-designed for HTTP-based applications). However, it is also possible to
-implement congestion control in the application itself. DASH (Dynamic
-Adaptive Streaming over HTTP) is an example of this; in fact it can be
-viewed as a combination of congestion control in the transport layer
-(since it runs over TCP) and the application
-layer. Based on measured network performance, the server that is
-streaming video to a client switches among a range of different video
-encodings, thus changing the rate at which data is sent into the HTTP
-stream. In effect, TCP tries to find a sustainable bandwidth for the
-flow, and then the application adapts its sending rate to fully
-leverage that rate without sending more data than can be sustained
-under the current network conditions. Primary responsibility for
-congestion control falls to TCP, but the application aims to keep the
-pipe full while also maintaining a good user experience. 
-
-.. moved DASH to ch7
+that mimics TCP's algorithm, such as DCCP (datagram congestion control
+protocol) or QUIC (a relatively recent transport protocol designed for
+HTTP-based applications). However, it is also possible to implement
+congestion control in the application itself. *DASH (Dynamic Adaptive
+Streaming over HTTP)* is an example, although it is best viewed as a
+combination of congestion control in the transport layer (since it
+runs over TCP) and the application layer. Based on measured network
+performance, the server that is streaming video to a client switches
+among a range of different video encodings, thus changing the rate at
+which data is sent into the HTTP stream. In effect, TCP tries to find
+a sustainable bandwidth for the flow, and then the application adapts
+its sending rate to fully leverage that rate without sending more data
+than can be sustained under the current network conditions. Primary
+responsibility for congestion control falls to TCP, but the
+application aims to keep the pipe full while also maintaining a good
+user experience.
 
 
 Window-Based versus Rate-Based

@@ -299,10 +299,6 @@ congestion determination.
 5.3 TCP BBR 
 ---------------
 
-..
-	This is too brief. Exposing the churn of ideas and ongoing
-	tweaks is fine. -llp
-	
 BBR (Bottleneck Bandwidth and RTT) is a new TCP congestion control
 algorithm developed by researchers at Google. Like Vegas, BBR is delay
 based, which means it tries to detect buffer growth so as to avoid
@@ -318,11 +314,11 @@ interval, as their main control signals.
    Determining the optimal sending rate based on observed throughput
    and RTT.
 
-To understand the philosophy of BBR, consider :numref:`Figure %s
-<fig-bbr>`. Assume a network has a single bottleneck link with some
-available bandwidth and queuing capacity. As the congestion window
-opens and more data is put in flight, initially there is an increase
-in throughput (on the lower graph) but no increase in delay as the
+:numref:`Figure %s <fig-bbr>` shows the basic idea underlying
+BBR. Assume a network has a single bottleneck link with some available
+bandwidth and queuing capacity. As the congestion window opens and
+more data is put in flight, initially there is an increase in
+throughput (on the lower graph) but no increase in delay as the
 bottleneck is not full. Then once the data rate reaches the bottleneck
 bandwidth, a queue starts to build. At this point, RTT rises, and no
 rise in throughput is observed. This is the beginning of the
@@ -342,22 +338,22 @@ flows.
 
 One striking feature of BBR compared to the other approaches we have
 seen is that it does not rely solely on ``cwnd`` to determine how much
-data is put in flight. Notably, BBR tries to smooth out the rate at
-which a sender puts data into the network in an effort to avoid 
+data is put in flight. Notably, BBR also tries to smooth out the rate
+at which a sender puts data into the network in an effort to avoid
 bursts that would lead to excessive queuing. Under ideal conditions,
-we would like to send data exactly at the rate of the bottleneck,
-thus achieving the highest possible throughput without causing a queue
-to build up. Whereas most TCP variants use the arrival of an ACK to
-"clock" the sending of data, and thus ensuring that the amount of
-unacknowledged data in flight remains constant, BBR creates an estimate of the bottleneck
-bandwidth and uses a local scheduling algorithm to send data at that
-rate. ACKs still play an important role in updating knowledge about
-the state of the network, but they are not directly used to pace
-transmissions. This means that delayed ACKs do not lead
-to sudden bursts of transmission. ``cwnd`` is still used to ensure
-that enough data is sent to keep the pipe full, and is also limited to
-ensure that the amount of data in flight is not so much greater than
-the bandwidth-delay product as to cause queues to overflow.
+we would like to send data exactly at the rate of the bottleneck, thus
+achieving the highest possible throughput without causing a queue to
+build up. Whereas most TCP variants use the arrival of an ACK to
+"clock" the sending of data, thus ensuring that the amount of
+unacknowledged data in flight remains constant, BBR creates an
+estimate of the bottleneck bandwidth and uses a local scheduling
+algorithm to send data at that rate. ACKs still play an important role
+in updating knowledge about the state of the network, but they are not
+directly used to pace transmissions. This means that delayed ACKs do
+not lead to sudden bursts of transmission. Of course, ``cwnd`` is
+still used to ensure that enough data is sent to keep the pipe full,
+and to ensure that the amount of data in flight is not so much greater
+than the bandwidth-delay product as to cause queues to overflow.
 
 In order to maintain an up-to-date view of the current RTT and
 bottleneck bandwidth, it is necessary to keep probing above and below
@@ -366,7 +362,7 @@ become available due to a reduction in the traffic from competing
 flows, changes in link properties (e.g. on wireless links), or routing
 changes. Changes in RTT are also possible, particularly if the path
 changes. To detect a change in RTT it is necessary to send less
-traffic, hence draining queues; to detect a change in available
+traffic, hence draining queues. To detect a change in available
 bandwidth, it is necessary to send more traffic. Hence, BBR probes
 both above and below its current estimate of the bottleneck
 bandwidth. If necessary, the estimates are updated, and the sending
