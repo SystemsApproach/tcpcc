@@ -174,7 +174,7 @@ under the current network conditions. Primary responsibility for
 congestion control falls to TCP, but the application aims to keep the
 pipe full while also maintaining a good user experience. 
 
-.. Need to decide if DASH is getting full treatment elsewhere
+.. moved DASH to ch7
 
 
 Window-Based versus Rate-Based
@@ -211,23 +211,13 @@ produced by a video codec at a given quality level). TFRC is typically
 used in conjunction with RTP, a transport protocol designed for real-time
 applications. We will see examples of such mechanisms in Chapter 7.
 
-Somewhat surprisingly, some video applications that might seem like a
-natural fit for RTP-with-TFRC actually use TCP; see the discussion of
-DASH above for example. Whether TFRC or TCP is used, the 
-application adjusts its sending rate (by adjusting its coding rate)
-based on how the transport protocol responds to congestion. DASH observes
-the rate that is achieved by TCP and switches among coding levels
-to roughly match the application rate to the achieved throughput over
-some time interval. TFRC, in contrast,
-tries to sustain a more consistent rate while being "fair" with
-respect to the TCP flows it is competing against. The application
-tries to select coding parameters to match that fair rate. (We will
-say more on fairness in
-the next section.) The key factor in whether to use TFRC or
-DASH-over-TCP is how much buffer-induced delay the application can
-tolerate. For this reason, interactive videoconferencing applications
-tend to use RTP-with-TFRC while
-video-on-demand applications prefer DASH. 
+Finally, one of the recent advances in TCP congestion control is BBR
+(Bottleneck Bandwidth and RTT) which uses a combination of
+window-based and rate-based control, in an effort to limit the build
+up of queues within the network. We examine this approach in some
+detail in Chapter 5.
+
+
 
 
 Control-based versus Avoidance-based
@@ -679,7 +669,7 @@ windows over time, as we will see in the next chapter.
    :align: center 
 
    Congestion window (measured in bytes) for two flows competing for
-   bandwidth under the same congestion-contol algorithm.
+   bandwidth under the same congestion-control algorithm.
 
 We could repeat these experiments but vary the algorithm used by one
 of the flows. This would allow us to visualize how the two algorithms
@@ -715,7 +705,7 @@ algorithms (represented by different colors), across test runs with 1,
    :align: center 
 
    Average goodput (measured in Gbps) realized by a sequence of 
-   1-MB RPC calls for five different algoritms, when competing with 
+   1-MB RPC calls for five different algorithms, when competing with 
    a varied number of TCP streams.
 
 .. _fig-graph_8c:
@@ -724,7 +714,7 @@ algorithms (represented by different colors), across test runs with 1,
    :align: center 
 
    Average goodput (measured in Gbps) realized by a sequence of 
-   10-KB RPC calls for five different algoritms, when competing with 
+   10-KB RPC calls for five different algorithms, when competing with 
    a varied number of TCP streams.
 
 The 1-MB results are unsurprising, with no significant outliers across

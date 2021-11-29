@@ -403,7 +403,7 @@ from fluctuating too wildly. Underpinning this idea is a body of
 research going back many years on modeling the throughput of TCP. A
 simplified version of the TCP throughput equation is given in RFC 5348
 which defines the standard for TFRC. With a few variables set to
-recommended variables, the equation for target transmit rate X in
+recommended values, the equation for target transmit rate X in
 bits/sec is:
 
 .. math::
@@ -441,24 +441,48 @@ application can choose among a set of coding rates, and it picks the
 highest quality that can be accommodated with the rate that TFRC
 dictates. 
 
-An interesting footnote to the story of TFRC is that a great deal of
-video streaming traffic today uses a different approach referred to as
-"DASH" (Dynamic Adaptive Streaming over HTTP). DASH lets TCP (or
-potentially QUIC) take care
+While the concept of TFRC is solid, it has had
+limited deployment for a number of reasons. One is that a simpler
+solution for some types of streaming traffic emerged in the form of 
+"DASH" (Dynamic Adaptive Streaming over HTTP). DASH is only suitable
+for non-real-time media (e.g. watching movies) but that turns out to
+be a large percentage of the media traffic that runs across the
+Internet—in fact, it is a large percentage of *all* Internet traffic.
+
+DASH lets TCP (or potentially QUIC) take care
 of congestion control; the application measures the
 throughput that TCP is delivering, then adjusts the quality of the
 video stream accordingly to avoid starvation at the receiver. This
 approach has proven to be suitable for video entertainment, but since
 it depends on a moderately large amount of buffering at the receiver
 to smooth out the fluctuations in TCP throughput, it is not really
-suitable for interactive audio or video.
+suitable for interactive audio or video. One of the key realizations
+that made DASH feasible was the idea that one could encode video at
+multiple quality levels with different bandwidth requirements, and
+store them all in advance on a streaming server. Then, as soon as the observed
+throughput of the network drops, the server can drop to a lower
+quality stream, and then ramp up to higher quality as conditions
+permit. The client can send information back to the server, such as
+how much buffered video it still has awaiting playback, to help the
+server choose a suitable quality and bandwidth stream. The cost of
+this approach is additional media storage on the server, but that cost
+has become rather unimportant in the modern streaming video era.
 
-It's worth noting that TFRC was far from the last word in this area,
-and work continues at the time of writing to define standards for
-TCP-friendly congestion control for real-time traffic. The IETF RMCAT
-(RTP Media Congestion Avoidance Techniques) working group is the home
-of this work. The specification of TFRC below gives useful background
-on how best to implement a TCP-friendly protocol.
+Another limitation of TFRC as defined is that it uses loss as its
+primary signal of congestion but does not respond to the delay that
+precedes loss. While this was the state of the art when work on TFRC
+was undertaken, the field of TCP congestion control has now moved on
+to take delay into account, as in the case of TCP Vegas and BBR (see
+Chapter 5). And this is particularly problematic when you consider
+that the class of multimedia applications that really need something
+other than DASH are precisely those applications for which delay is
+important. For this reason, work continues at the time of writing to
+define standards for TCP-friendly congestion control for real-time
+traffic. The IETF RMCAT (RTP Media Congestion Avoidance Techniques)
+working group is the home of this work. The specification of TFRC
+below therefore is not the final work, but gives useful background on
+how one might go about implementing a TCP-friendly
+protocol.
 
 .. _reading_tfrc:
 .. admonition::  Further Reading
