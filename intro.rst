@@ -78,7 +78,7 @@ packet networks than for highways, but it is equally problematic [#]_.
 
 
 .. _fig-collapse:
-.. figure:: figures/Fig1.png
+.. figure:: figures/Slide1.png
    :width: 400px
    :align: center
 

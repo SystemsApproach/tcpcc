@@ -576,7 +576,7 @@ single switch. Delay is achieved for the second scenario using
 back.
 
 .. _fig-10gig:
-.. figure:: figures/Fig2.png 
+.. figure:: figures/Slide2.png 
    :width: 300px 
    :align: center 
 
@@ -587,7 +587,7 @@ scenario, where the router is implemented by a server-based forwarder
 that throttles outgoing link bandwidth using ``tbf qdisc``.
 
 .. _fig-100meg:
-.. figure:: figures/Fig3.png 
+.. figure:: figures/Slide3.png 
    :width: 500px 
    :align: center 
 

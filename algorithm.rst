@@ -840,7 +840,7 @@ flow with a short RTT holds a definite advantage in terms of the
 share of a bottleneck link it will obtain.
 
 .. _fig-cubic:
-.. figure:: figures/Slide1.png 
+.. figure:: figures/Slide9.png 
    :width: 500px 
    :align: center 
 

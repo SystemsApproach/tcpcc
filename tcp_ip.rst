@@ -59,8 +59,8 @@ overflow, leading to packet loss.  This situation, where offered load
 exceeds link capacity, is the very definition of congestion.
 
 .. _fig-congestion:
-.. figure:: figures/f06-01-9780123850591.png
-   :width: 500px
+.. figure:: figures/Slide7.png
+   :width: 350px
    :align: center
 
    Congestion at a bottleneck router.
@@ -109,8 +109,8 @@ pairs). :numref:`Figure %s <fig-flow>` illustrates several flows
 passing through a series of routers.
    
 .. _fig-flow:
-.. figure:: figures/f06-02-9780123850591.png
-   :width: 500px
+.. figure:: figures/Slide8.png
+   :width: 450px
    :align: center
 
    Multiple flows passing through a set of routers.
