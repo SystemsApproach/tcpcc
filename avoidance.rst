@@ -307,8 +307,8 @@ BBR (Bottleneck Bandwidth and RTT) is a new TCP congestion control
 algorithm developed by researchers at Google. Like Vegas, BBR is delay
 based, which means it tries to detect buffer growth so as to avoid
 congestion and packet loss. Both BBR and Vegas use the minimum RTT and
-maximum RTT, as calculated over some time interval, as their main
-control signals.
+the observed bottleneck bandwidth, as calculated over some time
+interval, as their main control signals.
 
 .. _fig-bbr:
 .. figure:: figures/Slide6.png
