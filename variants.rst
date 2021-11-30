@@ -112,7 +112,7 @@ causes gentle reaction to newly arrived congestion and more severe
 reaction to sustained congestion, as the congestion window is calculated
 as follows:
 
-.. math:: \mathsf{cwnd} = \mathsf{cwnd × (1 - DCTCP.Alpha / 2)}
+.. math:: \mathsf{CongestionWindow} = \mathsf{CongestionWindow × (1 - DCTCP.Alpha\ /\ 2)}
 
 To summarize, CE marking to indicate incipient congestion happens
 early and often, but the reaction to such marking is more measured
@@ -192,18 +192,18 @@ decrease being proportional to the distance from the target. The
 growth rate is capped to be no faster than the growth of standard
 TCP's window in its additive increase phase. 
 
-LEDBAT's algorithm for setting the congestion window ``cwnd`` when an
+LEDBAT's algorithm for setting ``CongestionWindow`` when an
 ACK is received can be summarized as follows:
 
-.. math:: \mathsf{cwnd}\  = \mathsf{cwnd + (GAIN × off\_target × bytes\_newly\_acked × MSS / cwnd)}
+.. math:: \mathsf{CongestionWindow}\  = \mathsf{CongestionWindow + (GAIN × off\_target × bytes\_newly\_acked × MSS / CongestionWindow)}
 
 where ``GAIN`` is a configuration parameter between 0 and 1, off\_target is
 the gap between the measured queuing delay and the target, expressed
 as a fraction of the target, and bytes\_newly\_acked is the number of
 bytes acknowledged in the current ACK. Thus, the congestion window
 grows more quickly the further the measured delay is below the target, but never
-faster one MSS per RTT. And it falls faster in proportion to how far the queue length is
-above the target. ``cwnd`` is also reduced in response to losses,
+faster one ``MSS`` per RTT. And it falls faster in proportion to how far the queue length is
+above the target. ``CongestionWindow`` is also reduced in response to losses,
 timeouts, and long idle periods, much like with TCP.
 
 Hence, LEDBAT can do a good job of using available bandwidth that is

@@ -758,7 +758,7 @@ ACKs can convey information to the sender about how many packets have
 been dropped and which ones they were, so that the sender can make
 more intelligent choices and when to retransmit a packet. Furthermore,
 in the presence of multiple losses from a single window, NewReno can
-avoids multiple halvings of the congestion window that occurred in
+avoid the multiple halvings of the congestion window that occurred in
 prior versions.
 
 The details of NewReno are extensive, but the intuition is as
@@ -776,10 +776,10 @@ window.
 
 It's worth noting that NewReno was documented in three RFCs published
 between 1999 and 2012, each one of which fixed some issues in its
-predecessor's algorithms. This is a case study in how complex it can be
-to understand the fine detail of
-congestion control algorithms, adding to the challenges of getting new
-algorithms into deployment. 
+predecessor's algorithms. This is a case study in how complex it can
+be to understand the fine detail of congestion control (especially
+with respect to the subtleties of TCP's retransmission mechanism),
+adding to the challenge of getting new algorithms into deployment.
 
 
 4.6 TCP CUBIC 
