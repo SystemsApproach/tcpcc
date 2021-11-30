@@ -113,8 +113,8 @@ about exactly what a “flow of data” corresponds to for now, but we
 will make this more precise in later chapters.
 
 .. _fig-mux:
-.. figure:: figures/f01-05-9780123850591.png
-   :width: 500px
+.. figure:: figures/Slide11.png
+   :width: 400px
    :align: center
    
    Multiplexing multiple logical flows over a single
