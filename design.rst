@@ -324,6 +324,12 @@ continue to get through the network even when it is operating under
 heavy load. If a mechanism is not stable under heavy load, the
 network will suffer from *congestion collapse*.
 
+Note that while both "persistent queues" and "congestion collapse" are
+to be avoided, there is no precise definition for the threshold at
+which a network suffers from either. They are both subjective
+judgments about an algorithm's behavior, where at the end of the day,
+latency and throughput are the two key performance indicators.
+
 Fairness
 ~~~~~~~~~~~~~
 
