@@ -269,7 +269,7 @@ vertical bars (rather than points) for values of ``cwnd`` due to
 transient congestion or noise in the measurements.
 
 .. _fig-nv:
-.. figure:: figures/Slide5.png
+.. figure:: figures/Slide4.png
    :width: 500px
    :align: center
 
@@ -307,7 +307,7 @@ the observed bottleneck bandwidth, as calculated over some time
 interval, as their main control signals.
 
 .. _fig-bbr:
-.. figure:: figures/Slide6.png
+.. figure:: figures/Slide5.png
    :width: 500px
    :align: center
 
@@ -369,8 +369,8 @@ bandwidth. If necessary, the estimates are updated, and the sending
 rate and ``cwnd`` are updated accordingly.
 
 .. _fig-bbrstate:
-.. figure:: figures/Slide7.png
-   :width: 300px
+.. figure:: figures/Slide6.png
+   :width: 200px
    :align: center
 
    State machine diagram for BBR.

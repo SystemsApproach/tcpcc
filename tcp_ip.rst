@@ -60,7 +60,7 @@ exceeds link capacity, is the very definition of congestion.
 
 .. _fig-congestion:
 .. figure:: figures/Slide7.png
-   :width: 350px
+   :width: 400px
    :align: center
 
    Congestion at a bottleneck router.

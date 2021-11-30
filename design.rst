@@ -348,8 +348,8 @@ compared? For example, as illustrated in :numref:`Figure %s
 three one-hop flows?
    
 .. _fig-path-len:
-.. figure:: figures/f06-04-9780123850591.png
-   :width: 600px
+.. figure:: figures/Slide10.png
+   :width: 550px
    :align: center
 
    One four-hop flow competing with three one-hop flows.
@@ -577,7 +577,7 @@ back.
 
 .. _fig-10gig:
 .. figure:: figures/Slide2.png 
-   :width: 300px 
+   :width: 350px 
    :align: center 
 
    Topology for 10-Gbps Tests, optionally with 10ms of delay introduced.
@@ -588,7 +588,7 @@ that throttles outgoing link bandwidth using ``tbf qdisc``.
 
 .. _fig-100meg:
 .. figure:: figures/Slide3.png 
-   :width: 500px 
+   :width: 550px 
    :align: center 
 
    Topology for 10-Mbps and 100-Mbps Tests with 10ms or 40ms of delay
