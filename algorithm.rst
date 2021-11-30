@@ -245,9 +245,10 @@ does not get at the heart of controlling congestion. The central
 challenge is computing an estimate of how much traffic the network
 this sender can safely transmit. To this end, TCP maintains a new
 state variable for each connection, which we refer to as
-``CongestionWindow`` (but you will often see called ``cwnd`` in the
-literature). It is used by the source to limit how much data it is
-allowed to have in transit at a given time.
+``CongestionWindow`` (but you will often see it called ``cwnd`` in the
+literature, based on the variable name used in the code). It is used
+by the source to limit how much data it is allowed to have in transit
+at a given time.
 
 The congestion window is congestion control’s counterpart to flow
 control’s advertised window.  The TCP sender is modified such that the

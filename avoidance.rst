@@ -258,15 +258,16 @@ or higher and RTTs are typically measured in the ten's of
 microseconds. This is an important use case that we return to in
 Chapter 7; our goal here is to build some intuition.
 
-To understand the basic idea of NV, suppose that we plot ``rate``
-versus ``cwnd`` for every packet for which an ACK is received. For the
-purpose of this exercise, ``rate`` is simply the ratio of ``cwnd`` (in
-bytes) to the RTT of packets that have been ACKed (in seconds).  Note
-that we use ``cwnd`` in this discussion for simplicity, while in
-practice NV uses in-flight (unacknowledged) bytes. When plotted over
-time, as shown in :numref:`Figure %s <fig-nv>`, we end up with
-vertical bars (rather than points) for values of ``cwnd`` due to
-transient congestion or noise in the measurements.
+To understand the basic idea of NV, suppose that we plot ``Rate``
+versus ``CongestionWindow`` for every packet for which an ACK is
+received. For the purpose of this exercise, ``Rate`` is simply the
+ratio of ``CongestionWindow`` (in bytes) to the RTT of packets that
+have been ACKed (in seconds).  Note that we use ``CongestionWindow``
+in this discussion for simplicity, while in practice NV uses in-flight
+(unacknowledged) bytes. When plotted over time, as shown in
+:numref:`Figure %s <fig-nv>`, we end up with vertical bars (rather
+than points) for values of ``CongestionWindow`` due to transient
+congestion or noise in the measurements.
 
 .. _fig-nv:
 .. figure:: figures/Slide4.png
@@ -281,15 +282,15 @@ bars is bounded by a straight line going through the origin. The idea
 is that as long as the network is not congested, doubling the amount
 of data we send per RTT should double the rate.
 
-New measurements of ``rate`` and ``cwnd`` can either fall close to the
+New measurements of ``Rate`` and ``CongestionWindow`` can either fall close to the
 boundary line (blue diamond in the figure) or below (red diamond in the
 figure).  A measurement above the line causes NV to automatically
 update the line by increasing its slope so the measurement will fall
 on the new line. If the new measurement is close to the line, then NV
-increases ``cwnd``. If the measurement is below the line, it means
+increases ``CongestionWindow``. If the measurement is below the line, it means
 that we have seen equal performance in the past with a lower
-``cwnd``. In the example shown in :numref:`Figure %s <fig-nv>`, we see
-similar performance with ``cwnd=12``, so we decrease ``cwnd``. The
+``CongestionWindow``. In the example shown in :numref:`Figure %s <fig-nv>`, we see
+similar performance with ``CongestionWindow=12``, so we decrease ``CongestionWindow``. The
 decrease is done multiplicative, rather than instantaneously, in case
 the new measurement is noisy. To filter out bad measurements, NV
 collects many measurements and then use the best one before making a
@@ -337,7 +338,7 @@ fairness when competing for bandwidth against both BBR and non-BBR
 flows.
 
 One striking feature of BBR compared to the other approaches we have
-seen is that it does not rely solely on ``cwnd`` to determine how much
+seen is that it does not rely solely on ``CongestionWindow`` to determine how much
 data is put in flight. Notably, BBR also tries to smooth out the rate
 at which a sender puts data into the network in an effort to avoid
 bursts that would lead to excessive queuing. Under ideal conditions,
@@ -350,7 +351,7 @@ estimate of the bottleneck bandwidth and uses a local scheduling
 algorithm to send data at that rate. ACKs still play an important role
 in updating knowledge about the state of the network, but they are not
 directly used to pace transmissions. This means that delayed ACKs do
-not lead to sudden bursts of transmission. Of course, ``cwnd`` is
+not lead to sudden bursts of transmission. Of course, ``CongestionWindow`` is
 still used to ensure that enough data is sent to keep the pipe full,
 and to ensure that the amount of data in flight is not so much greater
 than the bandwidth-delay product as to cause queues to overflow.
@@ -366,11 +367,11 @@ traffic, hence draining queues. To detect a change in available
 bandwidth, it is necessary to send more traffic. Hence, BBR probes
 both above and below its current estimate of the bottleneck
 bandwidth. If necessary, the estimates are updated, and the sending
-rate and ``cwnd`` are updated accordingly.
+rate and ``CongestionWindow`` are updated accordingly.
 
 .. _fig-bbrstate:
 .. figure:: figures/Slide6.png
-   :width: 200px
+   :width: 150px
    :align: center
 
    State machine diagram for BBR.

@@ -103,7 +103,7 @@ Specifically, a new variable called ``DCTCP.Alpha`` is initialized to
 
 .. math:: \mathsf{DCTCP.Alpha} = \mathsf{DCTCP.Alpha × (1 - g) + g × M}
 
-M is the faction of bytes marked, and g is the estimation gain, a
+``M`` is the faction of bytes marked, and ``g`` is the estimation gain, a
 constant (set by the implementation) that determines how rapidly
 ``DCTCP.Alpha`` changes in response to marking of packets. When there
 is sustained congestion, ``DCTCP.Alpha`` approaches 1, and when there
@@ -197,7 +197,7 @@ ACK is received can be summarized as follows:
 
 .. math:: \mathsf{cwnd}\  = \mathsf{cwnd + (GAIN × off\_target × bytes\_newly\_acked × MSS / cwnd)}
 
-where GAIN is a configuration parameter between 0 and 1, off\_target is
+where ``GAIN`` is a configuration parameter between 0 and 1, off\_target is
 the gap between the measured queuing delay and the target, expressed
 as a fraction of the target, and bytes\_newly\_acked is the number of
 bytes acknowledged in the current ACK. Thus, the congestion window
