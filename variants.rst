@@ -502,3 +502,101 @@ protocol.
    ACM SIGCOMM, September 1998.
 
    
+7.5 Mobile Cellular Networks
+----------------------------
+
+We conclude with a look at a use case that continues to attract
+significant attention from the research community: the interplay
+between congestion control and the mobile cellular network.
+Historically, the TCP/IP Internet and the mobile cellular network
+evolved independently, with the latter serving as the "last mile" for
+end-to-end TCP connections since the introduction of broadband service
+with 3G. With the rollout of 5G now ramping up, we can expect the
+mobile network will play an increasing important role in providing
+Internet connectivity, putting increased focus on how it impacts
+congestion control.
+
+While a mobile wireless connection could be viewed as no different
+than any other hop along an end-to-end path through the Internet, for
+historical reasons hinted at in the previous paragraph, it has been
+viewed as a special case, with the end-to-end path logically divided
+into the two segments depicted in :numref:`Figure %s <fig-mobile>`:
+the wired segment through the Internet and the wireless last-hop over
+the Radion Access Network (RAN). This "special case" perspective is
+warranted because the wireless link is typically the bottleneck due to
+the scarcity of radio spectrum.
+   
+.. _fig-mobile:
+.. figure:: figures/Slide12.png
+   :width: 500px
+   :align: center
+
+   End-to-end path that includes a last-hop wireless link, where the
+   basestation buffers packets awaiting transmission over the Radio
+   Access Network (RAN).
+
+Although the internals of the RAN are largely closed and proprietary,
+researchers have experimentally observed that there is significant
+buffering at the edge, presumably to absorb the expected contention
+for the radio link, and yet keep sufficient work "close by" for
+whenever capacity does open up. As noted by Haiqin Jiang and
+colleagues in their 2012 SIGCOMM paper, this large buffer is
+problematic for TCP congestion control because it causes the sender to
+overshoot the actual bandwidth available on the radio link, and in the
+process, introduces significant delay and jitter. Jim Getty's has
+named this phenomenon *bufferbloat*, and mobile basestations are just
+one example of where it happens.
+
+.. _reading_bloat:
+.. admonition::  Further Reading
+
+   H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee.
+   `Understanding Bufferbloat in Cellular Networks
+   <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__
+   SIGCOMM, August 2012. 
+
+   J. Getty. `Bufferbloat: Dark Buffers in the Internet
+   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE
+   Explorer, April 2011.
+
+The Jiang paper suggests possible solutions, and generally observes
+that delay-based approaches like Vegas outperform loss-based
+approaches like Reno or CUBIC, but the problem has remained largely
+unresolved for nearly a decade. With the promise of open source
+software-based implementations of the RAN now on the horizon (see our
+companion 5G book for more details), it might soon be possible to take
+a cross-layer approach, whereby the RAN provides an interface that
+give higher layers of the protocol stack (e.g., the AQM mechanisms
+described in Chapter 6) visibility into what goes on inside the
+basestation. Recent research by Xie, Yi, and Jamieson suggests such an
+approach might prove effective, although their implementation uses
+end-device feedback instead of having the RAN directly involved.
+However it's implemented, the idea is to have the receiver explicitly
+tell the sender how much bandwidth is available on the last hop, with
+the sender then having to judge whether the last-hop—or some other
+point along the Internet segment—is the actual bottleneck.
+
+.. _reading_ran:
+.. admonition::  Further Reading
+
+   Y. Xie, F. Yi, and K. Jamieson. `PBE-CC: Congestion Control via
+   Endpoint-Centric, Physical-Layer Bandwidth Measurements
+   <https://arxiv.org/abs/2002.03475>`__. SIGCOMM 2020.
+
+   L. Peterson and O. Sunay. `5G Mobile Networks: A System's Approach
+   <https://5G.systemsapproach.org>`__.  January 2020.
+
+Research inquiries aside, it's interesting to ask if the wireless link
+is all that special, and the deep buffers in the RAN are all that
+necessary. If you take a compartmentalized view of the world, and
+you're a mobile network operator, then your goal has always been to
+maximize utilization of the scarce radio spectrum. Keeping the offered
+workload as high as possible is a sure way to do that. This may have
+made sense in the early days of the mobile network when broadband
+connectivity was the new service offering and voice/text were the
+dominate use cases, but today 5G is all about TCP performance. The
+focus should be on end-to-end goodput and maximizing the
+throughput/latency ratio (i.e., the power curve discussed in Section
+3.2). Using shallow buffers might be a means to that end, especially
+when coupled with *slicing*, a mechanism that isolates different
+traffic classes, in part by giving each slice its own queue.
