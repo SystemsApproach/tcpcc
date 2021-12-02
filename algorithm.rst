@@ -856,12 +856,12 @@ fast but slows as you get close to :math:`\mathsf{W}_{max}`; then there is a
 phase of cautious growth when close to :math:`\mathsf{W}_{max}`, and finally a
 phase of probing for a new achievable :math:`\mathsf{W}_{max}`. 
 
-Specifically, CUBIC computes the congestion window (CWND) as a function of time 
+Specifically, CUBIC computes the congestion window (``CongestionWindow``) as a function of time 
 (t) since the last congestion event 
 
 .. math::
 
-   \mathsf{CWND(t)} = \mathsf{C} \times \mathsf{(t-K)}^{3} + \mathsf{W}_{max}
+   \mathsf{CongestionWindow(t)} = \mathsf{C} \times \mathsf{(t-K)}^{3} + \mathsf{W}_{max}
 
 where 
 
