@@ -11,13 +11,12 @@ performance specifically, but has now developed into something of a
 general TCP alternative.
 
 This chapter is not exhaustive, but we instead survey a few specific
-use cases. These include the data center, where it is important to
-achieve good throughput without negatively impacting latency-sensitive
-applications; sending background traffic over an extended period of
-time by using only excess capacity; optimizing HTTP-based web traffic
-without being backward-compatible with TCP; supporting real-time
-streaming in a way that is TCP-friendly; and mobile cellular network
-with significant contention for the wireless link.
+use cases. These include tuning TCP performance for data centers;
+sending background traffic over an extended period of time using only
+excess capacity; optimizing HTTP-based web traffic without being
+backward-compatible with TCP; supporting real-time streaming in a way
+that is TCP-friendly; and accommodating mobile cellular networks with
+unique radio-induced behavior.
 
 7.1 Data Centers (DCTCP)
 ---------------------------
@@ -522,8 +521,10 @@ viewed as a special case, with the end-to-end path logically divided
 into the two segments depicted in :numref:`Figure %s <fig-mobile>`:
 the wired segment through the Internet and the wireless last-hop over
 the Radio Access Network (RAN). This "special case" perspective is
-warranted because the wireless link is typically the bottleneck due to
-the scarcity of radio spectrum.
+warranted because (1) the wireless link is typically the bottleneck
+due to the scarcity of radio spectrum, and (2) link bandwidth can be
+highly variable due to a combination of device mobility and radio
+interference.
    
 .. _fig-mobile:
 .. figure:: figures/Slide12.png
@@ -544,7 +545,7 @@ problematic for TCP congestion control because it causes the sender to
 overshoot the actual bandwidth available on the radio link, and in the
 process, introduces significant delay and jitter. Jim Gettys has
 named this phenomenon *bufferbloat*, and mobile basestations are just
-one example of where it happens.
+one example of where it has a noticeable impact.
 
 .. _reading_bloat:
 .. admonition::  Further Reading
@@ -585,29 +586,31 @@ point along the Internet segment—is the actual bottleneck.
    L. Peterson and O. Sunay. `5G Mobile Networks: A Systems Approach
    <https://5G.systemsapproach.org>`__.  January 2020.
 
-Another aspect of cellular networks that makes them a novel challenge
-for TCP congestion control is that the bandwidth of a link, as seen by
-a TCP flow traversing it, is not constant. As noted by the BBR
-authors, a scheduler for a wireless link can use the number of queued
-packets for a given client as an input to its scheduling algorithm,
-and hence the "reward" for building up a queue can be an increase in
-bandwidth provided by the scheduler. BBR has attempted to address this
-in its design by ensuring that it is aggressive enough to queue at
-least some packets in the buffers of wireless
-links.
+The other aspect of cellular networks that makes them a novel
+challenge for TCP congestion control is that the bandwidth of a link,
+as seen by a TCP flow traversing it, is not constant. As noted by the
+BBR authors, a scheduler for a wireless link can use the number of
+queued packets for a given client as an input to its scheduling
+algorithm, and hence the "reward" for building up a queue can be an
+increase in bandwidth provided by the scheduler. BBR has attempted to
+address this in its design by ensuring that it is aggressive enough to
+queue at least some packets in the buffers of wireless links.
 
-
-Research inquiries aside, it's interesting to ask if the wireless link
-is all that special, and the deep buffers in the RAN are all that
-necessary. If you take a compartmentalized view of the world, and
-you're a mobile network operator, then your goal has always been to
-maximize utilization of the scarce radio spectrum. Keeping the offered
-workload as high as possible is a sure way to do that. This may have
-made sense in the early days of the mobile network when broadband
-connectivity was the new service offering and voice/text were the
-dominate use cases, but today 5G is all about TCP performance. The
-focus should be on end-to-end goodput and maximizing the
-throughput/latency ratio (i.e., the power curve discussed in Section
-3.2). Using relatively shallow buffers might be a means to that end,
-especially when coupled with *slicing*, a mechanism that isolates
-different traffic classes, in part by giving each slice its own queue.
+Past research inquiries aside, it's interesting to ask if the wireless
+link will remain all that unique going forward. If you take a
+compartmentalized view of the world, and you're a mobile network
+operator, then your goal has always been to maximize utilization of
+the scarce radio spectrum under widely varying conditions. Keeping the
+offered workload as high as possible, with deep queues, is a sure way
+to do that. This may have made sense in the early days of the mobile
+network when broadband connectivity was the new service offering and
+voice/text were the dominate use cases, but today 5G is all about
+delivering good TCP performance. The focus should be on end-to-end
+goodput and maximizing the throughput/latency ratio (i.e., the power
+curve discussed in Section 3.2). Using relatively shallow buffers
+might be a means to that end, especially when coupled with *slicing*,
+a mechanism that isolates different traffic classes, giving each slice
+its own queue. The proliferation of *small cells* might also change
+the equation, all of which leads us to conclude that there will be
+plenty of opportunities to continue tweaking congestion control
+algorithms well into the future.
