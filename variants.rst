@@ -10,15 +10,14 @@ exception may be QUIC, which started with the goal of improving HTTP
 performance specifically, but has now developed into something of a
 general TCP alternative.
 
-This chapter is not exhaustive, but we instead survey a few approaches
-that mark different design points. The specific use cases include the
-data center, where it is important to achieve good throughput without
-negatively impacting latency-sensitive applications; sending
-background traffic over an extended period of time by using only
-excess capacity, so as to not impact other TCP flows; optimizing
-HTTP-based web traffic without being backward-compatible with TCP; and
-supporting real-time streaming in a way that is TCP-friendly, but
-without incurring the retransmission overhead of TCP.
+This chapter is not exhaustive, but we instead survey a few specific
+use cases. These include the data center, where it is important to
+achieve good throughput without negatively impacting latency-sensitive
+applications; sending background traffic over an extended period of
+time by using only excess capacity; optimizing HTTP-based web traffic
+without being backward-compatible with TCP; supporting real-time
+streaming in a way that is TCP-friendly; and mobile cellular network
+with significant contention for the wireless link.
 
 7.1 Data Centers (DCTCP)
 ---------------------------
