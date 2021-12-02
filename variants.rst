@@ -511,7 +511,7 @@ Historically, the TCP/IP Internet and the mobile cellular network
 evolved independently, with the latter serving as the "last mile" for
 end-to-end TCP connections since the introduction of broadband service
 with 3G. With the rollout of 5G now ramping up, we can expect the
-mobile network will play an increasing important role in providing
+mobile network will play an increasingly important role in providing
 Internet connectivity, putting increased focus on how it impacts
 congestion control.
 
@@ -521,7 +521,7 @@ historical reasons hinted at in the previous paragraph, it has been
 viewed as a special case, with the end-to-end path logically divided
 into the two segments depicted in :numref:`Figure %s <fig-mobile>`:
 the wired segment through the Internet and the wireless last-hop over
-the Radion Access Network (RAN). This "special case" perspective is
+the Radio Access Network (RAN). This "special case" perspective is
 warranted because the wireless link is typically the bottleneck due to
 the scarcity of radio spectrum.
    
@@ -538,11 +538,11 @@ Although the internals of the RAN are largely closed and proprietary,
 researchers have experimentally observed that there is significant
 buffering at the edge, presumably to absorb the expected contention
 for the radio link, and yet keep sufficient work "close by" for
-whenever capacity does open up. As noted by Haiqin Jiang and
-colleagues in their 2012 SIGCOMM paper, this large buffer is
+whenever capacity does open up. As noted by Haiqing Jiang and
+colleagues in their 2012 CellNet workshop paper, this large buffer is
 problematic for TCP congestion control because it causes the sender to
 overshoot the actual bandwidth available on the radio link, and in the
-process, introduces significant delay and jitter. Jim Getty's has
+process, introduces significant delay and jitter. Jim Gettys has
 named this phenomenon *bufferbloat*, and mobile basestations are just
 one example of where it happens.
 
@@ -552,9 +552,9 @@ one example of where it happens.
    H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee.
    `Understanding Bufferbloat in Cellular Networks
    <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__
-   SIGCOMM, August 2012. 
+   ACM SIGCOMM Workshop on Cellular Networks, August 2012. 
 
-   J. Getty. `Bufferbloat: Dark Buffers in the Internet
+   J. Gettys. `Bufferbloat: Dark Buffers in the Internet
    <https://ieeexplore.ieee.org/document/5755608>`__. IEEE
    Explorer, April 2011.
 
@@ -582,8 +582,20 @@ point along the Internet segment—is the actual bottleneck.
    Endpoint-Centric, Physical-Layer Bandwidth Measurements
    <https://arxiv.org/abs/2002.03475>`__. SIGCOMM 2020.
 
-   L. Peterson and O. Sunay. `5G Mobile Networks: A System's Approach
+   L. Peterson and O. Sunay. `5G Mobile Networks: A Systems Approach
    <https://5G.systemsapproach.org>`__.  January 2020.
+
+Another aspect of cellular networks that makes them a novel challenge
+for TCP congestion control is that the bandwidth of a link, as seen by
+a TCP flow traversing it, is not constant. As noted by the BBR
+authors, a scheduler for a wireless link can use the number of queued
+packets for a given client as an input to its scheduling algorithm,
+and hence the "reward" for building up a queue can be an increase in
+bandwidth provided by the scheduler. BBR has attempted to address this
+in its design by ensuring that it is aggressive enough to queue at
+least some packets in the buffers of wireless
+links.
+
 
 Research inquiries aside, it's interesting to ask if the wireless link
 is all that special, and the deep buffers in the RAN are all that
@@ -596,6 +608,6 @@ connectivity was the new service offering and voice/text were the
 dominate use cases, but today 5G is all about TCP performance. The
 focus should be on end-to-end goodput and maximizing the
 throughput/latency ratio (i.e., the power curve discussed in Section
-3.2). Using shallow buffers might be a means to that end, especially
-when coupled with *slicing*, a mechanism that isolates different
-traffic classes, in part by giving each slice its own queue.
+3.2). Using relatively shallow buffers might be a means to that end,
+especially when coupled with *slicing*, a mechanism that isolates
+different traffic classes, in part by giving each slice its own queue.
