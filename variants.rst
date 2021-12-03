@@ -517,14 +517,14 @@ congestion control.
 While a mobile wireless connection could be viewed as no different
 than any other hop along an end-to-end path through the Internet, for
 historical reasons hinted at in the previous paragraph, it has been
-viewed as a special case, with the end-to-end path logically divided
+treated as a special case, with the end-to-end path logically divided
 into the two segments depicted in :numref:`Figure %s <fig-mobile>`:
 the wired segment through the Internet and the wireless last-hop over
 the Radio Access Network (RAN). This "special case" perspective is
 warranted because (1) the wireless link is typically the bottleneck
-due to the scarcity of radio spectrum, and (2) link bandwidth can be
-highly variable due to a combination of device mobility and radio
-interference.
+due to the scarcity of radio spectrum, and (2) the bandwidth available
+in the RAN can be highly variable due to a combination of device
+mobility and radio interference.
    
 .. _fig-mobile:
 .. figure:: figures/Slide12.png
@@ -564,13 +564,13 @@ that delay-based approaches like Vegas outperform loss-based
 approaches like Reno or CUBIC, but the problem has remained largely
 unresolved for nearly a decade. With the promise of open source
 software-based implementations of the RAN now on the horizon (see our
-companion 5G book for more details), it might soon be possible to take
-a cross-layer approach, whereby the RAN provides an interface that
-give higher layers of the protocol stack (e.g., the AQM mechanisms
-described in Chapter 6) visibility into what goes on inside the
-basestation. Recent research by Xie, Yi, and Jamieson suggests such an
-approach might prove effective, although their implementation uses
-end-device feedback instead of having the RAN directly involved.
+companion 5G and SDN books for more details), it might soon be
+possible to take a cross-layer approach, whereby the RAN provides an
+interface that give higher layers of the protocol stack (e.g., the AQM
+mechanisms described in Chapter 6) visibility into what goes on inside
+the basestation. Recent research by Xie, Yi, and Jamieson suggests
+such an approach might prove effective, although their implementation
+uses end-device feedback instead of having the RAN directly involved.
 However it's implemented, the idea is to have the receiver explicitly
 tell the sender how much bandwidth is available on the last hop, with
 the sender then having to judge whether the last-hop—or some other
@@ -585,6 +585,10 @@ point along the Internet segment—is the actual bottleneck.
 
    L. Peterson and O. Sunay. `5G Mobile Networks: A Systems Approach
    <https://5G.systemsapproach.org>`__.  January 2020.
+   
+   L. Peterson, C. Cascone, B. O'Connor, T. Vachuska, and
+   and B. Davie. `Software-Defined Networks: A Systems Approach
+   <https://sdn.systemsapproach.org>`__.  November 2021.
 
 The other aspect of cellular networks that makes them a novel
 challenge for TCP congestion control is that the bandwidth of a link,
@@ -599,18 +603,29 @@ queue at least some packets in the buffers of wireless links.
 Past research inquiries aside, it's interesting to ask if the wireless
 link will remain all that unique going forward. If you take a
 compartmentalized view of the world, and you're a mobile network
-operator, then your goal has always been to maximize utilization of
-the scarce radio spectrum under widely varying conditions. Keeping the
-offered workload as high as possible, with deep queues, is a sure way
-to do that. This may have made sense in the early days of the mobile
-network when broadband connectivity was the new service offering and
-voice/text were the dominate use cases, but today 5G is all about
-delivering good TCP performance. The focus should be on end-to-end
-goodput and maximizing the throughput/latency ratio (i.e., the power
-curve discussed in Section 3.2). Using relatively shallow buffers
-might be a means to that end, especially when coupled with *slicing*,
-a mechanism that isolates different traffic classes, giving each slice
-its own queue. The proliferation of *small cells* might also change
-the equation, all of which leads us to conclude that there will be
-plenty of opportunities to continue tweaking congestion control
-algorithms well into the future.
+operator, then your goal has historically been to maximize utilization
+of the scarce radio spectrum under widely varying conditions. Keeping
+the offered workload as high as possible, with deep queues, is a
+proven way to do that. This certainly made sense when broadband
+connectivity was the new service and voice/text were the dominate use
+cases, but today 5G is all about delivering good TCP performance. The
+focus should be on end-to-end goodput and maximizing the
+throughput/latency ratio (i.e., the power curve discussed in Section
+3.2). But will there be an opportunity for improvement?
+
+We believe the answer to this question is yes. In addition to
+providing more visibility into the RAN scheduler and queues mentioned
+earlier, three other factors have the potential to change the
+equation. First, 5G deployments will likely support *network slicing*,
+a mechanism that isolates different traffic classes. This means each
+slice has its own queue, where these queues can be sized and managed
+in a different way. Second, the proliferation of *small cells* will
+likely reduce the number of flows competing for bandwidth at a given
+basestation. Third, it will become increasingly common for
+5G-connected devices to be served from a nearby edge cloud. This means
+end-to-end TCP connections will have much shorter round-trip times,
+which will make the congestion control algorithm more responsive to
+changes in the available capacity in the RAN. There are no guarantees,
+of course, but all of this is to say that we can expect ample
+opportunities to tweak congestion control algorithms well into the
+future.
