@@ -79,8 +79,8 @@ around. This link, and the router that feeds packets into it, can become congest
 routing mechanism can do about it. This congested router is said to be
 the *bottleneck* router, and it feeds the bottleneck link.
 
-Flows and Soft State
-~~~~~~~~~~~~~~~~~~~~
+2.1.1 Flows and Soft State
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because the Internet assumes a connectionless model, any
 connection-oriented service is implemented by an end-to-end transport
@@ -151,8 +151,8 @@ state, then the router is better able to handle the packet.
         operates according to the congestion control algorithms
         described in the book.*
 
-IP Packet Format
-~~~~~~~~~~~~~~~~
+2.1.2 IP Packet Format
+~~~~~~~~~~~~~~~~~~~~~~
 
 For completeness, :numref:`Figure %s <fig-iphead>` gives the IPv4
 packet format, but it is the 8-bit ``TOS`` (Type of Service) field
@@ -169,8 +169,8 @@ applied different meanings to the ``TOS`` field over time.
 
    IPv4 packet header.
 
-FIFO Queuing
-~~~~~~~~~~~~
+2.1.3 FIFO Queuing
+~~~~~~~~~~~~~~~~~~
 
 Each router implements some queuing discipline that governs how
 packets are buffered while waiting to be transmitted. The queuing
@@ -242,8 +242,8 @@ supported by IP. This section describes TCP in sufficient detail to
 understand the congestion control mechanisms described in later
 chapters.
 
-End-to-End Issues
-~~~~~~~~~~~~~~~~~
+2.2.1 End-to-End Issues
+~~~~~~~~~~~~~~~~~~~~~~~
 
 At the heart of TCP is the sliding window algorithm, which in addition
 to its familiar acknowledgment/timeout/retransmit mechanism, has to
@@ -310,8 +310,8 @@ trying to traverse this same slow link. Even a fast link will get
 congested if enough flows converge on it. This is the essential factor
 leading to congestion, which we will address in later chapters.
 
-Segment Format
-~~~~~~~~~~~~~~~~~~~~~~
+2.2.2 Segment Format
+~~~~~~~~~~~~~~~~~~~~
 
 TCP is a byte-oriented protocol, which means that the sender writes
 bytes into a TCP connection and the receiver reads bytes out of the
@@ -394,8 +394,8 @@ sides agree that they will use the options during TCP’s connection
 establishment phase.
 
 
-Reliable and Ordered Delivery
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.2.3 Reliable and Ordered Delivery
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TCP’s variant of the sliding window algorithm serves two main
 purposes: (1) it guarantees the reliable, in-order delivery of data,
@@ -468,8 +468,8 @@ arrived in order, ``NextByteExpected`` points to the byte after
 ``NextByteExpected`` points to the start of the first gap in the data,
 as in :numref:`Figure %s <fig-tcp-fc>`.
 
-Flow Control
-~~~~~~~~~~~~
+2.2.4 Flow Control
+~~~~~~~~~~~~~~~~~~
 
 The discussion up to this point assumes the receiver is able to keep
 pace with the sender, but because this is not necessarily the case and
@@ -590,8 +590,8 @@ advertised window, which will eventually be nonzero.  These 1-byte
 messages are called *Zero Window Probes* and in practice they are sent
 every 5 to 60 seconds.
 
-Triggering Transmission
-~~~~~~~~~~~~~~~~~~~~~~~
+2.2.5 Triggering Transmission
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We next consider the surprisingly subtle issue of how TCP decides to
 transmit a segment. If we ignore flow control and assume the window is
@@ -680,8 +680,8 @@ control mechanisms into account. For now, we focus on limitations of
 the ``SequenceNum`` and ``AdvertisedWindow`` fields, and the
 implication they have on TCP’s correctness and performance.
 
-Protecting Against Wraparound
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.3.1 Protecting Against Wraparound
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relevance of the 32-bit sequence number space is that the sequence
 number used on a given connection might wrap around—a byte with
@@ -729,8 +729,8 @@ against the ``SequenceNum`` field wrapping. This extension plays a
 dual role in congestion control, so we postpone the details until
 Chapter 4.
 
-Keeping the Pipe Full
-~~~~~~~~~~~~~~~~~~~~~
+2.3.2 Keeping the Pipe Full
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relevance of the 16-bit ``AdvertisedWindow`` field is that it must
 be big enough to allow the sender to keep the pipe full. Clearly, the

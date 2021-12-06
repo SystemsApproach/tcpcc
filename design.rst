@@ -46,8 +46,8 @@ the circumstances under which they were made, but for completeness—and
 because the Internet's continual evolution means circumstances
 change—it is prudent to consider them all.
 
-Centralized versus Distributed
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.1.1 Centralized versus Distributed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In principle, the first design decision is whether a network's
 approach to resource allocation is centralized or distributed. In
@@ -116,8 +116,8 @@ of such a centralized approach.
    ACM SIGCOMM, August 2014.
 
 
-Router-Centric versus Host-Centric 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.1.2 Router-Centric versus Host-Centric 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given a distributed approach to resource allocation, the next question
 is whether to implement the mechanism inside the network (i.e., at
@@ -175,8 +175,8 @@ application aims to keep the pipe full while also maintaining a good
 user experience.
 
 
-Window-Based versus Rate-Based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.1.3 Window-Based versus Rate-Based
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Having settled on a host-centric approach, the next implementation
 choice is whether the mechanism is *window-based* or *rate-based*.
@@ -218,8 +218,8 @@ detail in Chapter 5.
 
 
 
-Control-based versus Avoidance-based
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.1.4 Control-based versus Avoidance-based
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final implementation choice we draw attention to is somewhat
 subtle.  The challenge is for the end-host, based on feedback and
@@ -262,8 +262,8 @@ question of how a network *effectively* and *fairly* allocates its
 resources. This suggests at least two broad measures by which a
 resource allocation scheme can be evaluated. We consider each in turn.
 
-Effectiveness
-~~~~~~~~~~~~~
+3.2.1 Effectiveness
+~~~~~~~~~~~~~~~~~~~
 
 A good starting point for evaluating the effectiveness of a
 congestion-control mechanism is to consider the two principal metrics
@@ -330,8 +330,8 @@ which a network suffers from either. They are both subjective
 judgments about an algorithm's behavior, where at the end of the day,
 latency and throughput are the two key performance indicators.
 
-Fairness
-~~~~~~~~~~~~~
+3.2.2 Fairness
+~~~~~~~~~~~~~~~~~~~
 
 The effective utilization of network resources is not the only criterion
 for judging a resource allocation scheme. We must also consider the
@@ -539,8 +539,8 @@ described in any detail), the intent to outline how algorithms are
 evaluated, and not to actually draw any conclusions about specific
 mechanisms.
 
-Experimental Setup
-~~~~~~~~~~~~~~~~~~
+3.4.1 Experimental Setup
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Our approach runs real TCP sending/receiving hosts, where the
 implementation of the various congestion-control mechanisms are those
@@ -637,8 +637,8 @@ penalized, and if so, by how much. These tests make it possible to:
   abruptly, signalling an instability.
 
 
-Example Results
-~~~~~~~~~~~~~~~
+3.4.2 Example Results
+~~~~~~~~~~~~~~~~~~~~~
 
 The following shows some example results, selected to illustrate the
 evaluation process. We start with a simple 2-flow experiment, where

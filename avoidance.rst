@@ -192,8 +192,8 @@ summarize some of those insights here, but return to the general topic
 of customizing the congestion control algorithm for specific use cases
 in Chapter 7.
 
-FAST TCP
-~~~~~~~~~~~~~~~~
+5.2.1 FAST TCP
+~~~~~~~~~~~~~~
 
 The first Vegas-inspired mechanism was FAST TCP, which modified Vegas
 to be more efficient on high-speed networks with large delay-bandwidth
@@ -222,8 +222,8 @@ solution.
 	Journal of the ACM, Volume 49, Issue 2, March 2002.
 
 
-TCP Westwood
-~~~~~~~~~~~~~~
+5.2.2 TCP Westwood
+~~~~~~~~~~~~~~~~~~
 
 While Vegas was motivated by the idea that congestion can be detected
 and averted *before* a loss occurs, TCP Westwood (TCPW) is motivated
@@ -256,8 +256,8 @@ and the Mobile Cellular network have different properties. We return
 to this issue in Chapter 7.
 
 
-New Vegas
-~~~~~~~~~~~~~~~~
+5.2.3 New Vegas
+~~~~~~~~~~~~~~~
 
 Our final example is New Vegas (NV), an adaptation of Vegas's
 delay-based approach to data centers, where link bandwidths are 10Gbps

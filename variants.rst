@@ -611,7 +611,7 @@ connectivity was the new service and voice/text were the dominate use
 cases, but today 5G is all about delivering good TCP performance. The
 focus should be on end-to-end goodput and maximizing the
 throughput/latency ratio (i.e., the power curve discussed in Section
-3.2). But will there be an opportunity for improvement?
+3.2). But is there an opportunity for improvement?
 
 We believe the answer to this question is yes. In addition to
 providing more visibility into the RAN scheduler and queues mentioned

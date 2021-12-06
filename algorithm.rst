@@ -50,8 +50,8 @@ implementation is more involved than you might expect, and has
 been through multiple refinements over the years. This section
 revisits that experience.
 
-Original Algorithm
-~~~~~~~~~~~~~~~~~~
+4.1.1 Original Algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 We begin with the simple algorithm that was originally described in
 the TCP specification.  The idea is to keep a running average of the
@@ -78,8 +78,8 @@ setting of :math:`\alpha` between 0.8 and 0.9. TCP then uses
 
    \mathsf{TimeOut = 2} \times \mathsf{EstimatedRTT}
 
-Karn/Partridge Algorithm
-~~~~~~~~~~~~~~~~~~~~~~~~
+4.1.2 Karn/Partridge Algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After several years, a rather obvious flaw was discovered in this
 simple approach: An ACK does not really acknowledge a transmission,
@@ -122,8 +122,8 @@ aggressively timing out and then retransmitting.  We will see this
 idea of exponential backoff again, embodied in a much
 more sophisticated mechanism, in a later section.
 
-Jacobson/Karels Algorithm
-~~~~~~~~~~~~~~~~~~~~~~~~~
+4.1.3 Jacobson/Karels Algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Karn/Partridge algorithm was an improvement to RTT estimation, but it did not
 eliminate congestion. The 1988 congestion-control mechanism proposed
@@ -159,8 +159,8 @@ set to 4.  Thus, when the variance is small, ``TimeOut`` is close to
 ``EstimatedRTT``; a large variance causes the ``Deviation`` term to
 dominate the calculation.
 
-Implementation
-~~~~~~~~~~~~~~
+4.1.4 Implementation
+~~~~~~~~~~~~~~~~~~~~
 
 There are two items of note regarding the implementation of timeouts
 in TCP. The first is that it is possible to implement the calculation
@@ -200,8 +200,8 @@ refer the reader to the authoritative RFC:
    `RFC 6298: Computing TCP's Retransmission Timer
    <https://tools.ietf.org/html/rfc6298>`__. June 2011.
 
-TCP Timestamp Extension
-~~~~~~~~~~~~~~~~~~~~~~~
+4.1.5 TCP Timestamp Extension
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The changes to TCP described up to this point have been adjustments to
 how the sender computes timeouts, with no changes to the over-the-wire
@@ -687,7 +687,7 @@ This happens only through a sequence of incremental improvements that are
 the result of experience. The following gives two additional examples
 of that lesson.
 
-TCP SACK
+4.5.1 TCP SACK
 ~~~~~~~~~~~~~~
 
 The original TCP specification uses cumulative
@@ -745,8 +745,8 @@ for a given RTT. Hence SACK, which became a proposed IETF standard in
 1996, was a timely addition to TCP. 
 
 
-NewReno
-~~~~~~~~~~~~~~
+4.5.2 NewReno
+~~~~~~~~~~~~~
 
 Starting with some research by Janey Hoe at MIT in
 the mid-1990s, the enhancement known as NewReno incrementally improves
