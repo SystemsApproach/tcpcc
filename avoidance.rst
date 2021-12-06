@@ -107,7 +107,7 @@ calculation is done once per round-trip time.
 
 Third, TCP Vegas compares ``ActualRate`` to ``ExpectedRate`` and
 adjusts the window accordingly. We let ``Diff = ExpectedRate -
-ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
+ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
 since the only way ``ActualRate > ExpectedRate`` is if the measured
 sample RTT is less than ``BaseRTT``. If that happens we change
 ``BaseRTT`` to the latest sampled RTT. We also define two thresholds,
@@ -121,7 +121,7 @@ unchanged when |alpha| < ``Diff`` < |beta|.
 Intuitively, we can see that the farther away the actual throughput
 gets from the expected throughput, the more congestion there is in the
 network, which implies that the sending rate should be reduced. The
-*β* threshold triggers this decrease. On the other hand, when the
+β threshold triggers this decrease. On the other hand, when the
 actual throughput rate gets too close to the expected throughput, the
 connection is in danger of not utilizing the available bandwidth. The
 |alpha| threshold triggers this increase. The overall goal is to keep
@@ -147,7 +147,7 @@ works. The colored line tracks the ``ExpectedRate``, while the black
 line tracks the ``ActualRate``. The wide shaded strip gives the region
 between the |alpha| and |beta| thresholds; the top of the shaded strip is
 |alpha| KBps away from ``ExpectedRate``, and the bottom of the shaded
-strip is|beta| KBps away from ``ExpectedRate``.  The goal is to keep the
+strip is |beta| KBps away from ``ExpectedRate``.  The goal is to keep the
 ``ActualRate`` between these two thresholds, within the shaded
 region. Whenever ``ActualRate`` falls below the shaded region (i.e.,
 gets too far from ``ExpectedRate``), TCP Vegas decreases the
@@ -166,8 +166,10 @@ connection with a ``BaseRTT`` of 100 ms and a packet size of 1 KB, if
 |alpha| = 30 KBps and |beta| = 60 KBps, then we can think of |alpha| as specifying
 that the connection needs to be occupying at least 3 extra buffers in
 the network and |beta| as specifying that the connection should occupy no
-more than 6 extra buffers in the network. In practice, a setting of |alpha|
-to 1 buffer and |beta| to 3 buffers works well.
+more than 6 extra buffers in the network. This setting of |alpha|
+and |beta| worked well in practice when Vegas was first deployed, but
+as we'll see in the next section, these parameters continue to be tuned
+for changing circumstances.
 
 Finally, you will notice that TCP Vegas decreases the congestion window
 linearly, seemingly in conflict with the rule that multiplicative
@@ -200,8 +202,7 @@ aggressively during the phase when the algorithm is trying to find the
 available "in transit" bandwidth (before packets are buffered in the
 network), and then more conservatively as the algorithm starts to
 compete with other flows for buffers at the bottleneck router. FAST
-also recommended adjusting the value of |alpha| from roughly four
-packets to 30 packets.
+also recommended adjusting the value of |alpha| to roughly 30 packets.
 
 Beyond managing congestion in networks with large delay-bandwidth
 products, where keeping the pipe full is a substantial challenge,
@@ -248,6 +249,12 @@ error, TCPW has not backed off so much, and will start to ramp up
 again to fully utilize the network. The result was a protocol which
 performed similarly to Reno for fixed links but outperformed it by
 substantial margins when lossy links were involved.
+
+Tuning the congestion control algorithm to deal with wireless links
+continues to be a challenging problem, and to complicate matters, WiFi
+and the Mobile Cellular network have different properties. We return
+to this issue in Chapter 7.
+
 
 New Vegas
 ~~~~~~~~~~~~~~~~

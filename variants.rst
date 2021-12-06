@@ -571,7 +571,7 @@ mechanisms described in Chapter 6) visibility into what goes on inside
 the basestation. Recent research by Xie, Yi, and Jamieson suggests
 such an approach might prove effective, although their implementation
 uses end-device feedback instead of having the RAN directly involved.
-However it's implemented, the idea is to have the receiver explicitly
+How ever it's implemented, the idea is to have the receiver explicitly
 tell the sender how much bandwidth is available on the last hop, with
 the sender then having to judge whether the last-hop—or some other
 point along the Internet segment—is the actual bottleneck.
@@ -593,7 +593,7 @@ point along the Internet segment—is the actual bottleneck.
 The other aspect of cellular networks that makes them a novel
 challenge for TCP congestion control is that the bandwidth of a link,
 as seen by a TCP flow traversing it, is not constant. As noted by the
-BBR authors, a scheduler for a wireless link can use the number of
+BBR authors, the scheduler for a wireless link can use the number of
 queued packets for a given client as an input to its scheduling
 algorithm, and hence the "reward" for building up a queue can be an
 increase in bandwidth provided by the scheduler. BBR has attempted to
@@ -618,8 +618,8 @@ providing more visibility into the RAN scheduler and queues mentioned
 earlier, three other factors have the potential to change the
 equation. First, 5G deployments will likely support *network slicing*,
 a mechanism that isolates different traffic classes. This means each
-slice has its own queue, where these queues can be sized and managed
-in a different way. Second, the proliferation of *small cells* will
+slice has its own queue, where these queues can be sized and scheduled
+in different ways. Second, the proliferation of *small cells* will
 likely reduce the number of flows competing for bandwidth at a given
 basestation. Third, it will become increasingly common for
 5G-connected devices to be served from a nearby edge cloud. This means
