@@ -550,7 +550,7 @@ bandwidth product of networks increases. For example, a delay ×
 bandwidth product of 1.8 MB means that each connection has the
 potential to lose up to 1.8 MB of data at the beginning of each
 connection. Of course, this assumes that both the source and the
-destination implement the "big windows” extension.
+destination implements the "big windows” extension.
 
 Alternatives to slow start, whereby the source tries to estimate the
 available bandwidth by more sophisticated means, have also been
@@ -826,7 +826,7 @@ then moving beyond it.
 BIC eventually evolved into a new variant called CUBIC, which today is the default
 congestion control algorithm distributed with Linux. CUBIC improved
 upon BIC in a number of ways, one of which was to use a smooth curve
-described by a cubic function rather than the piece-wise linear
+described by a cubic function rather than the piecewise linear
 function of BIC. More on this below.
 
 Another important aspect of CUBIC’s approach is to adjust its congestion 

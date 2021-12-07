@@ -447,7 +447,7 @@ measure its performance in isolation, including:
 
 The inevitable second step is to compare two or more mechanisms. This
 is because, given the decentralized nature of the Internet, there is
-no way to ensure uniform adoption of a just one mechanism.
+no way to ensure uniform adoption of just one mechanism.
 Comparing quantitative metrics like throughput is easy. The problem is
 how to evaluate multiple mechanism that might coexist, competing with
 each other for network resources.
@@ -481,7 +481,7 @@ reluctance to deploy new approaches. But such
 analysis suffers from three problems, as identified by Ranysha Ware and
 colleagues:
 
-* **Ideal-Driven Goalposting:** A fairness-based threshold asserts
+* **Ideal-Driven Goal Posting:** A fairness-based threshold asserts
   new mechanism B should equally share the bottleneck link with
   currently deployed mechanism A. This goal is too idealistic in
   practice, especially when A is sometimes unfair to its own flows.

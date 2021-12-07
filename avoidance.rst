@@ -187,7 +187,7 @@ adapted over time, often in response to different assumptions about
 the network.  Vegas was never as widely deployed as Reno, so the
 modifications were often driven more by lab studies than extensive
 real-world experience, but they have collectively refined and
-contributed to our understanding avoidance-based algorithms. We
+contributed to our understanding of avoidance-based algorithms. We
 summarize some of those insights here, but return to the general topic
 of customizing the congestion control algorithm for specific use cases
 in Chapter 7.
@@ -242,7 +242,7 @@ When a packet loss occurs, TCPW does not immediately cut the
 congestion window in half, as it does not yet know if the loss was due
 to congestion or a link-related packet loss. So instead it estimates
 the rate at which traffic was flowing right before the packet loss
-occurred. This is a less aggressive form of backoff that TCP Reno. If
+occurred. This is a less aggressive form of backoff than TCP Reno. If
 the loss was congestion-related, TCPW should send at the rate that was
 acceptable before the loss. And if the loss was caused by a wireless
 error, TCPW has not backed off so much, and will start to ramp up

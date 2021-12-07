@@ -516,15 +516,15 @@ congestion control.
 
 While a mobile wireless connection could be viewed as no different
 than any other hop along an end-to-end path through the Internet, for
-historical reasons hinted at in the previous paragraph, it has been
-treated as a special case, with the end-to-end path logically divided
-into the two segments depicted in :numref:`Figure %s <fig-mobile>`:
-the wired segment through the Internet and the wireless last-hop over
-the Radio Access Network (RAN). This "special case" perspective is
-warranted because (1) the wireless link is typically the bottleneck
-due to the scarcity of radio spectrum, and (2) the bandwidth available
-in the RAN can be highly variable due to a combination of device
-mobility and radio interference.
+historical reasons it has been treated as a special case, with the
+end-to-end path logically divided into the two segments depicted in
+:numref:`Figure %s <fig-mobile>`: the wired segment through the
+Internet and the wireless last-hop over the Radio Access Network
+(RAN). This "special case" perspective is warranted because (1) the
+wireless link is typically the bottleneck due to the scarcity of radio
+spectrum, and (2) the bandwidth available in the RAN can be highly
+variable due to a combination of device mobility and radio
+interference.
    
 .. _fig-mobile:
 .. figure:: figures/Slide12.png
@@ -591,9 +591,10 @@ point along the Internet segment—is the actual bottleneck.
    <https://sdn.systemsapproach.org>`__.  November 2021.
 
 The other aspect of cellular networks that makes them a novel
-challenge for TCP congestion control is that the bandwidth of a link,
-as seen by a TCP flow traversing it, is not constant. As noted by the
-BBR authors, the scheduler for a wireless link can use the number of
+challenge for TCP congestion control is that the bandwidth of a link
+is not constant, but instead varies as a function of the
+signal-to-noise ratio experienced by each receiver. As noted by the BBR
+authors, the scheduler for a wireless link can use the number of
 queued packets for a given client as an input to its scheduling
 algorithm, and hence the "reward" for building up a queue can be an
 increase in bandwidth provided by the scheduler. BBR has attempted to
@@ -607,7 +608,7 @@ operator, then your goal has historically been to maximize utilization
 of the scarce radio spectrum under widely varying conditions. Keeping
 the offered workload as high as possible, with deep queues, is a
 proven way to do that. This certainly made sense when broadband
-connectivity was the new service and voice/text were the dominate use
+connectivity was the new service and voice/text were the dominant use
 cases, but today 5G is all about delivering good TCP performance. The
 focus should be on end-to-end goodput and maximizing the
 throughput/latency ratio (i.e., the power curve discussed in Section
@@ -617,15 +618,17 @@ We believe the answer to this question is yes. In addition to
 providing more visibility into the RAN scheduler and queues mentioned
 earlier, three other factors have the potential to change the
 equation. First, 5G deployments will likely support *network slicing*,
-a mechanism that isolates different traffic classes. This means each
-slice has its own queue, where these queues can be sized and scheduled
-in different ways. Second, the proliferation of *small cells* will
-likely reduce the number of flows competing for bandwidth at a given
-basestation. Third, it will become increasingly common for
-5G-connected devices to be served from a nearby edge cloud. This means
-end-to-end TCP connections will have much shorter round-trip times,
-which will make the congestion control algorithm more responsive to
-changes in the available capacity in the RAN. There are no guarantees,
-of course, but all of this is to say that we can expect ample
-opportunities to tweak congestion control algorithms well into the
-future.
+a mechanism that isolates different classes of traffic. This means
+each slice has its own queue, where these queues can be sized and
+scheduled in different ways. Second, the proliferation of *small
+cells* will likely reduce the number of flows competing for bandwidth
+at a given basestation. Whether this reduces the pressure to maximize
+spectrum utilization is yet to be seen. Third, it will become
+increasingly common for 5G-connected devices to be served from a
+nearby edge cloud rather than a server on the other side of the
+Internet. This means end-to-end TCP connections will have much shorter
+round-trip times, which will make the congestion control algorithm
+more responsive to changes in the available capacity in the RAN. There
+are no guarantees, of course, but all of this is to say that we can
+expect ample opportunities to tweak congestion control algorithms well
+into the future.

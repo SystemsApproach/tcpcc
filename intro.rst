@@ -123,7 +123,7 @@ will make this more precise in later chapters.
 Statistical multiplexing means that all the hosts in this network send
 packets whenever it suits them, and if it happens that several packets
 turn up at the same time at a switch, one of them will be transmitted
-first while the others are placed in to a queue. So both the link and
+first while the others are placed into a queue. So both the link and
 the queue are shared resources, and both are finite. The link can
 only carry so many bits per second, and the queue can only hold so
 many packets (or bytes) before it has to start discarding
