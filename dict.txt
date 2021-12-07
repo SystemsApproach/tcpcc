@@ -99,6 +99,7 @@ kilobits
 latencies
 misdelivered
 nd
+piecewise
 pre
 queueing
 resends
