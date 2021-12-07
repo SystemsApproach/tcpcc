@@ -3,18 +3,19 @@ Chapter 6:  Active Queue Management
 
 We now look at the role routers can play in congestion control, an
 approach often referred to as *Active Queue Management* (AQM).  By
-their very nature, AQM introduces an element of avoidance to the
+its very nature, AQM introduces an element of avoidance to the
 end-to-end solution, even when paired with a control-based approach
 like TCP Reno.
 
 Changing router behavior has never been the Internet’s preferred way
-of introducing new features, but nonetheless, has been a constant
-source of consternation over the last 30 years. The problem is that
-while it’s generally agreed that routers are in an ideal position to
-detect the onset of congestion—i.e., their queues start to fill
-up—there has not been a consensus on exactly what the best algorithm
-is. The following describes two of the classic mechanisms, and
-concludes with a brief discussion of where things stand today.
+of introducing new features, but nonetheless, the approach has been a
+constant source of consternation over the last 30 years. The problem
+is that while it’s generally agreed that routers are in an ideal
+position to detect the onset of congestion—it's their queues that
+start to fill up—there has not been a consensus on exactly what the
+best algorithm is. The following describes two of the classic
+mechanisms, and concludes with a brief discussion of where things
+stand today.
 
 6.1 DECbit
 ----------
@@ -34,10 +35,10 @@ presented at the same SIGCOMM as the Jacobson/Karels paper in 1988.
       Network Layer <https://dl.acm.org/doi/pdf/10.1145/52324.52355>`__.
       ACM SIGCOMM, August 1988.
 
-The idea was to more evenly split the responsibility for congestion
+The idea is to more evenly split the responsibility for congestion
 control between the routers and the end hosts. Each router monitors
 the load it is experiencing and explicitly notifies the end nodes when
-congestion is about to occur. This notification was implemented by
+congestion is about to occur. This notification is implemented by
 setting a binary congestion bit in the packets that flow through the
 router, which came to be known as the *DECbit*. The destination host
 then copies this congestion bit into the ACK it sends back to the
@@ -116,7 +117,7 @@ The second difference between RED and DECbit is in the details of how
 RED decides when to drop a packet and what packet it decides to drop. To
 understand the basic idea, consider a simple FIFO queue. Rather than
 wait for the queue to become completely full and then be forced to drop
-each arriving packet (the tail drop policy of the previous section), we
+each arriving packet (the tail drop policy described in Section 2.1.3), we
 could decide to drop each arriving packet with some *drop probability*
 whenever the queue length exceeds some *drop level*. This idea is called
 *early random drop*. The RED algorithm defines the details of how to
@@ -274,8 +275,7 @@ particular characterization of the network workload. The real
 contribution of RED is a mechanism by which the router can more
 accurately manage its queue length. Defining precisely what
 constitutes an optimal queue length depends on the traffic mix and is
-still a subject of research, with real information now being gathered
-from operational deployment of RED in the Internet.
+a subject of ongoing study.
 
 Consider the setting of the two thresholds, ``MinThreshold`` and
 ``MaxThreshold``. If the traffic is fairly bursty, then ``MinThreshold``
@@ -372,7 +372,7 @@ recommended, it is not required. Moreover, there is no single
 recommended AQM algorithm, but instead, there is a list of requirements
 a good AQM algorithm should meet. Like TCP congestion control
 algorithms, every AQM algorithm has its advantages and disadvantages,
-and so we need a lot of them.
+and so we need a lot of them to argue about.
 
 
 
