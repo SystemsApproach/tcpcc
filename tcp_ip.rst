@@ -30,9 +30,11 @@ it to its correct destination; there is no setup mechanism to tell the
 network what to do when packets arrive.  *Best-effort* means that if
 something goes wrong and the packet gets lost, corrupted, or
 misdelivered while en route, the network does nothing to recover from
-the failure. This approach was intentionally designed to keep routers
-as simple as possible, and is generally viewed as consistent with the
-*end-to-end argument* articulated by Saltzer, Reed, and Clark.
+the failure; recovering from such errors is the responsibility of
+higher level protocols running on end hosts. This approach was
+intentionally designed to keep routers as simple as possible, and is
+generally viewed as consistent with the *end-to-end argument*
+articulated by Saltzer, Reed, and Clark.
 
 .. _reading_e2e:
 .. admonition:: Further Reading 
@@ -41,22 +43,18 @@ as simple as possible, and is generally viewed as consistent with the
 	<https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__.
 	ACM Transactions on Computer Systems, Nov. 1984.
 
-Best-effort delivery does not just mean that packets can get lost.
-Sometimes they can get delivered out of order, and sometimes the same
-packet can get delivered more than once. The higher-level protocols or
-applications that run above IP need to be aware of all these possible
-failure modes.
-
 One consequence of this design is that a given source may have ample
-capacity to send traffic into the network at some rate,
-but somewhere in the middle of a network its packets encounter a link
+capacity to send traffic into the network at some rate, but somewhere
+in the middle of a network its packets encounter a bottleneck link
 that is being used by many different traffic sources. :numref:`Figure
-%s <fig-congestion>` illustrates an acute example of this situation—two high-speed links
-are leading into a router which then feeds outgoing traffic onto a low-speed link. The router is able to queue (buffer)
-packets for a while, but if the problem persists, the queue will first
-grow to some length, and eventually (because it is finite) it will
-overflow, leading to packet loss.  This situation, where offered load
-exceeds link capacity, is the very definition of congestion.
+%s <fig-congestion>` illustrates an acute example of this
+situation—two high-speed links are leading into a router which then
+feeds outgoing traffic onto a low-speed link. The router is able to
+queue (buffer) packets for a while, but if the problem persists, the
+queue will first grow to some length, and eventually (because it is
+finite) it will overflow, leading to packet loss.  This situation,
+where offered load exceeds link capacity, is the very definition of
+congestion.
 
 .. _fig-congestion:
 .. figure:: figures/Slide7.png
@@ -65,35 +63,34 @@ exceeds link capacity, is the very definition of congestion.
 
    Congestion at a bottleneck router.
 
-Note that avoiding congestion is generally not a problem that can be fully
-addressed by routing. 
-While it is true that a congested link could be assigned a large
-"cost" by a routing protocol, in an effort to make traffic avoid that
-link, this can't solve the overall problem of too much traffic being
-offered to a bottleneck link. To see this, we need look no further
-than the simple network depicted in :numref:`Figure %s
+Note that avoiding congestion is not a problem that can be fully
+addressed by routing.  While it is true that a congested link could be
+assigned a large "cost" by a routing protocol, in an effort to make
+traffic avoid that link, this can't solve the overall problem of too
+much traffic being offered to a bottleneck link. To see this, we need
+look no further than the simple network depicted in :numref:`Figure %s
 <fig-congestion>`, where all traffic has to flow through the same
 router to reach the destination. Although this is an extreme example,
-it is common to have at least one link that it is not possible to route
-around. This link, and the router that feeds packets into it, can become congested, and there is nothing the
-routing mechanism can do about it. This congested router is said to be
-the *bottleneck* router, and it feeds the bottleneck link.
+it is common to have at least one link that it is not possible to
+route around. This link, and the router that feeds packets into it,
+can become congested, and there is nothing the routing mechanism can
+do about it.
 
 2.1.1 Flows and Soft State
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because the Internet assumes a connectionless model, any
 connection-oriented service is implemented by an end-to-end transport
-protocol running on the end hosts (such as TCP). There is no connection setup phase
-implemented within the network (in contrast to some other packet
-networks that use virtual circuits), and as a consequence, there is no
+protocol running on the end hosts (such as TCP). There is no
+connection setup phase implemented within the network (in contrast to
+virtual circuit based networks), and as a consequence, there is no
 mechanism for individual routers to pre-allocate buffer space or link
 bandwidth to active connections.
 
 The lack of an explicit connection setup phase does not imply that
 routers must be completely unaware of end-to-end connections. IP
 packets are switched independently, but it is often the case that a
-given pair hosts exchange many packets consecutively, e.g. as a large
+given pair of hosts exchange many packets consecutively, e.g. as a large
 video file is downloaded by a client from a server. Furthermore, a given
 stream of packets between a pair of hosts often flows through a
 consistent set of routers. This idea of a *flow*—a sequence of packets
@@ -115,20 +112,20 @@ passing through a series of routers.
 
    Multiple flows passing through a set of routers.
    
-Because multiple related packets flow through each router, it sometimes
-makes sense to maintain some state information for each flow, which
-can be used to make resource allocation decisions about
-the packets of that flow. This state is sometimes called
-*soft state*. The main difference between soft state and hard state is
-that soft state need not always be explicitly created and removed by
-signalling. Soft state represents a middle ground between a purely
-connectionless network that maintains *no* state at the routers and a
-purely connection-oriented network that maintains hard state at the
-routers. In general, the correct operation of the network does not
-depend on soft state being present (each packet is still routed
-correctly without regard to this state), but when a packet happens to
-belong to a flow for which the router is currently maintaining soft
-state, then the router is better able to handle the packet.
+Because multiple related packets flow through each router, it
+sometimes makes sense to maintain some state information for each
+flow, which can be used to make resource allocation decisions about
+the packets of that flow. This is called *soft state*, where the main
+difference between soft and hard state is that the former is not
+explicitly created and removed by signalling. Soft state represents a
+middle ground between a purely connectionless network that maintains
+*no* state at the routers and a purely connection-oriented network
+that maintains hard state at the routers. In general, the correct
+operation of the network does not depend on soft state being present
+(each packet is still routed correctly without regard to this state),
+but when a packet happens to belong to a flow for which the router is
+currently maintaining soft state, then the router is better able to
+handle the packet.
 
 .. sidebar:: Quality-of-Service
 
@@ -150,6 +147,7 @@ state, then the router is better able to handle the packet.
         deployed, they still allow for best-effort traffic, which
         operates according to the congestion control algorithms
         described in the book.*
+
 
 2.1.2 IP Packet Format
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -179,10 +177,10 @@ packets get transmitted) and buffer space (which packets get
 discarded). It also directly affects the latency experienced by a
 packet by determining how long a packet waits to be transmitted.
 
-The most common queuing algorithm is *First-In/First-Out (FIFO)*.  The
-idea is simple: The first packet that arrives at a router is the first
-packet to be transmitted. This is illustrated in :numref:`Figure %s(a)
-<fig-fifo>`, which shows a FIFO with “slots” to hold up to eight
+The most common queuing algorithm is *First-In/First-Out (FIFO)*,
+where the first packet that arrives at a router is the first packet to
+be transmitted. This is illustrated in :numref:`Figure %s(a)
+<fig-fifo>`, which shows a FIFO queue with “slots” to hold up to eight
 packets. Packets are added at the tail as they arrive, and transmitted
 from the head. Thus, FIFO ordering is preserved.
 
@@ -277,14 +275,13 @@ out of order packets can get or, said another way, how late a packet
 can arrive at the destination. In the worst case, a packet can be
 delayed in the Internet almost arbitrarily. Each time a packet is
 forwarded by a router, the IP time to live (``TTL``) field is
-decremented, and eventually it reaches zero, at which time the
-packet is discarded (and hence there is no 
-danger of it arriving late). Note that TTL is something of a misnomer
-and was renamed to the more accurate Hop Count in IPv6. Knowing that
-IP throws packets away after 
+decremented, and eventually it reaches zero, at which time the packet
+is discarded (and hence there is no danger of it arriving late). Note
+that TTL is something of a misnomer and was renamed to the more
+accurate Hop Count in IPv6. Knowing that IP throws packets away after
 their ``TTL`` expires, TCP assumes that each packet has a maximum
-lifetime. The exact lifetime, known as the *maximum segment lifetime*
-(MSL), is an engineering choice. The current recommended setting is
+lifetime. The exact lifetime, known as the *Maximum Segment Lifetime
+(MSL)*, is an engineering choice. The current recommended setting is
 120 seconds. Keep in mind that IP does not directly enforce this
 120-second value; it is simply a conservative estimate that TCP makes
 of how long a packet might live in the Internet. The implication is
@@ -408,8 +405,6 @@ bytes of unacknowledged data at any given time. The receiver selects a
 suitable value for ``AdvertisedWindow`` based on the amount of memory
 allocated to the connection for the purpose of buffering data. The
 idea is to keep the sender from over-running the receiver’s buffer.
-
-
 
 To see how TCP's sliding window works, consider the
 situation illustrated in :numref:`Figure %s <fig-tcp-fc>`. TCP on the
