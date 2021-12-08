@@ -556,7 +556,7 @@ one example of where it has a noticeable impact.
 
    J. Gettys. `Bufferbloat: Dark Buffers in the Internet
    <https://ieeexplore.ieee.org/document/5755608>`__. IEEE
-   Explorer, April 2011.
+   Internet Computing, April 2011.
 
 The Jiang paper suggests possible solutions, and generally observes
 that delay-based approaches like Vegas outperform loss-based
