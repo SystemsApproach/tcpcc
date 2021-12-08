@@ -503,16 +503,15 @@ protocol.
 7.5 Mobile Cellular Networks
 ----------------------------
 
-We conclude with a look at a use case that continues to attract
-significant attention from the research community: the interplay
-between congestion control and the mobile cellular network.
-Historically, the TCP/IP Internet and the mobile cellular network
-evolved independently, with the latter serving as the "last mile" for
-end-to-end TCP connections since the introduction of broadband service
-with 3G. With the rollout of 5G now ramping up, we can expect the
-mobile network will play an increasingly important role in providing
-Internet connectivity, putting increased focus on how it impacts
-congestion control.
+We conclude with a use case that continues to attract attention from
+the research community: the interplay between congestion control and
+the mobile cellular network.  Historically, the TCP/IP Internet and
+the mobile cellular network evolved independently, with the latter
+serving as the "last mile" for end-to-end TCP connections since the
+introduction of broadband service with 3G. With the rollout of 5G now
+ramping up, we can expect the mobile network will play an increasingly
+important role in providing Internet connectivity, putting increased
+focus on how it impacts congestion control.
 
 While a mobile wireless connection could be viewed as no different
 than any other hop along an end-to-end path through the Internet, for
@@ -570,11 +569,11 @@ interface that give higher layers of the protocol stack (e.g., the AQM
 mechanisms described in Chapter 6) visibility into what goes on inside
 the basestation. Recent research by Xie, Yi, and Jamieson suggests
 such an approach might prove effective, although their implementation
-uses end-device feedback instead of having the RAN directly involved.
+uses end-device feedback instead of getting the RAN directly involved.
 How ever it's implemented, the idea is to have the receiver explicitly
 tell the sender how much bandwidth is available on the last hop, with
-the sender then having to judge whether the last-hop—or some other
-point along the Internet segment—is the actual bottleneck.
+the sender then having to judge whether the last-hop or some other
+point along the Internet segment is the actual bottleneck.
 
 .. _reading_ran:
 .. admonition::  Further Reading
@@ -593,13 +592,14 @@ point along the Internet segment—is the actual bottleneck.
 The other aspect of cellular networks that makes them a novel
 challenge for TCP congestion control is that the bandwidth of a link
 is not constant, but instead varies as a function of the
-signal-to-noise ratio experienced by each receiver. As noted by the BBR
-authors, the scheduler for a wireless link can use the number of
-queued packets for a given client as an input to its scheduling
-algorithm, and hence the "reward" for building up a queue can be an
-increase in bandwidth provided by the scheduler. BBR has attempted to
-address this in its design by ensuring that it is aggressive enough to
-queue at least some packets in the buffers of wireless links.
+signal-to-noise ratio experienced by each receiver. As noted by the
+BBR authors, the (currently opaque) scheduler for this wireless link
+can use the number of queued packets for a given client as an input to
+its scheduling algorithm, and hence the "reward" for building up a
+queue can be an increase in bandwidth provided by the scheduler. BBR
+has attempted to address this in its design by ensuring that it is
+aggressive enough to queue at least some packets in the buffers of
+wireless links.
 
 Past research inquiries aside, it's interesting to ask if the wireless
 link will remain all that unique going forward. If you take a
@@ -608,9 +608,9 @@ operator, then your goal has historically been to maximize utilization
 of the scarce radio spectrum under widely varying conditions. Keeping
 the offered workload as high as possible, with deep queues, is a
 proven way to do that. This certainly made sense when broadband
-connectivity was the new service and voice/text were the dominant use
-cases, but today 5G is all about delivering good TCP performance. The
-focus should be on end-to-end goodput and maximizing the
+connectivity was the new service and voice and text were the dominant
+use cases, but today 5G is all about delivering good TCP performance.
+The focus should be on end-to-end goodput and maximizing the
 throughput/latency ratio (i.e., the power curve discussed in Section
 3.2). But is there an opportunity for improvement?
 
@@ -619,16 +619,16 @@ providing more visibility into the RAN scheduler and queues mentioned
 earlier, three other factors have the potential to change the
 equation. First, 5G deployments will likely support *network slicing*,
 a mechanism that isolates different classes of traffic. This means
-each slice has its own queue, where these queues can be sized and
-scheduled in different ways. Second, the proliferation of *small
-cells* will likely reduce the number of flows competing for bandwidth
-at a given basestation. Whether this reduces the pressure to maximize
+each slice has its own queue that can be sized and scheduled in a
+traffic-specific way. Second, the proliferation of *small cells* will
+likely reduce the number of flows competing for bandwidth at a given
+basestation. How this impacts the scheduler's approach to maximizing
 spectrum utilization is yet to be seen. Third, it will become
 increasingly common for 5G-connected devices to be served from a
-nearby edge cloud rather than a server on the other side of the
-Internet. This means end-to-end TCP connections will have much shorter
+nearby edge cloud rather than from the other side of the Internet.
+This means end-to-end TCP connections will have much shorter
 round-trip times, which will make the congestion control algorithm
 more responsive to changes in the available capacity in the RAN. There
-are no guarantees, of course, but all of this is to say that we can
-expect ample opportunities to tweak congestion control algorithms well
-into the future.
+are no guarantees, of course, but all these factors should provide
+ample opportunities to tweak congestion control algorithms well into
+the future.
