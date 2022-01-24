@@ -130,7 +130,7 @@ is a "test of time" award winner from SIGCOMM.
    ACM SIGCOMM, August 2010.
 
 There has been considerable research since DCTCP to optimize TCP for
-data centers, and their general approach is to introduce ever-more
+data centers, with the general approach of introducing ever-more
 sophisticated “signals” from the network that the sender can use to
 manage congestion. We conclude our discussion of this use case by
 elaborating on one of the most recent efforts, On-Ramp, because of how
@@ -138,8 +138,8 @@ it focuses on the fundamental tension that all congestion control
 algorithms face: The trade-off between reaching equilibrium for
 long-lived flows and dealing with transient bursts. On-Ramp adopts a
 modular design that directly addresses this tension, and does so
-without depending on more feedback from network switches about their
-queues.
+without depending on additional feedback from network switches about
+their queues.
 
 The main insight is that when a congestion control algorithm in
 equilibrium encounters severe congestion and drastically cuts its
@@ -158,13 +158,13 @@ that it can rapidly find a new equilibrium.
    :width: 350px
    :align: center
 
-   On-Ramp paces packet transmission to avoid in-network queues
-   due to bursty traffic, complementing the traditional congestion
-   control's approach to maintaining long-term stability and fairness.
+   On-Ramp paces packet transmission to avoid in-network queues due to
+   bursty traffic, complementing the traditional congestion control
+   algorithm's effort to maintain long-term stability and fairness.
 
 The idea is to break the congestion control mechanism into two parts,
-with each focused on just one of the equilibrium-vs-transient
-issues. Specifically, On-Ramp is implemented as a “shim” that sits
+with each focused on just one aspect of the equilibrium/transient
+trade-off. Specifically, On-Ramp is implemented as a “shim” that sits
 below a conventional TCP congestion control algorithm, as shown in
 :numref:`Figure %s <fig-onramp>`. The On-Ramp shim deals with bursts
 (which temporarily fill network queues) by trying to reduce queuing
@@ -173,13 +173,13 @@ delays as quickly as possible whenever the measured *One-Way Delay
 the sender (rather than letting them occupy an in-network buffer)
 whenever OWD is greater than some threshold. The On-Ramp shim is then
 composed with an existing congestion control algorithm, that later of
-which continues to worry about long-term congestion. On-Ramp has been
-shown to work with several existing congestion control algorithms
-including DCTCP.
+which continues to worry about reaching equilibrium for long-term
+flows. On-Ramp has been shown to work with several existing congestion
+control algorithms, including DCTCP.
 
-One key to making On-Ramp work is the ability to accurately measure
-OWD, which depends on synchronized clocks between the sender and
-receiver. Since data center delays can be less than a few tens of
+One key to making On-Ramp work is its ability to accurately measure
+OWD, which in turn depends on synchronized clocks between the sender
+and receiver. Since data center delays can be less than a few tens of
 microseconds, the sender and receiver clocks must be synchronized to
 within a few microseconds. Such high-accuracy clock synchronization
 has traditionally required hardware-intensive protocols, but On-Ramp
