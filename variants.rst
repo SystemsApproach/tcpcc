@@ -18,8 +18,8 @@ backward-compatible with TCP; supporting real-time streaming in a way
 that is TCP-friendly; and accommodating mobile cellular networks with
 unique radio-induced behavior.
 
-7.1 Data Centers (DCTCP)
----------------------------
+7.1 Data Centers (DCTCP, On-Ramp)
+---------------------------------
 
 There have been several efforts to optimize TCP for cloud data
 centers, where *Data Center TCP* was one of the first. There are
@@ -129,7 +129,77 @@ is a "test of time" award winner from SIGCOMM.
    <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.  
    ACM SIGCOMM, August 2010.
 
+There has been considerable research since DCTCP to optimize TCP for
+data centers, and their general approach is to introduce ever-more
+sophisticated “signals” from the network that the sender can use to
+manage congestion. We conclude our discussion of this use case by
+elaborating on one of the most recent efforts, On-Ramp, because of how
+it focuses on the fundamental tension that all congestion control
+algorithms face: The trade-off between reaching equilibrium for
+long-lived flows and dealing with transient bursts. On-Ramp adopts a
+modular design that directly addresses this tension, and does so
+without depending on more feedback from network switches about their
+queues.
 
+The main insight is that when a congestion control algorithm in
+equilibrium encounters severe congestion and drastically cuts its
+window (or rate), it must decide between remembering or forgetting its
+previous equilibrium state. This is a difficult choice because it
+depends on the duration of congestion, which is hard to predict. If
+the congestion is transient, the algorithm must remember its previous
+state so as to rapidly restore the old equilibrium without
+under-utilizing the network once the burst ends. On the other hand, if
+the congestion is sustained, for example due to the arrival of one or
+more long-lived flows, the algorithm must forget its previous state so
+that it can rapidly find a new equilibrium.
+
+.. _fig-onramp:
+.. figure:: figures/Slide13.png
+   :width: 350px
+   :align: center
+
+   On-Ramp paces packet transmission to avoid in-network queues
+   due to bursty traffic, complementing the traditional congestion
+   control's approach to maintaining long-term stability and fairness.
+
+The idea is to break the congestion control mechanism into two parts,
+with each focused on just one of the equilibrium-vs-transient
+issues. Specifically, On-Ramp is implemented as a “shim” that sits
+below a conventional TCP congestion control algorithm, as shown in
+:numref:`Figure %s <fig-onramp>`. The On-Ramp shim deals with bursts
+(which temporarily fill network queues) by trying to reduce queuing
+delays as quickly as possible whenever the measured *One-Way Delay
+(OWD)* grows too large. It does this by temporarily holding packets at
+the sender (rather than letting them occupy an in-network buffer)
+whenever OWD is greater than some threshold. The On-Ramp shim is then
+composed with an existing congestion control algorithm, that later of
+which continues to worry about long-term congestion. On-Ramp has been
+shown to work with several existing congestion control algorithms
+including DCTCP.
+
+One key to making On-Ramp work is the ability to accurately measure
+OWD, which depends on synchronized clocks between the sender and
+receiver. Since data center delays can be less than a few tens of
+microseconds, the sender and receiver clocks must be synchronized to
+within a few microseconds. Such high-accuracy clock synchronization
+has traditionally required hardware-intensive protocols, but On-Ramp
+leverages a new system that takes advantage of the network effect in a
+mesh of cooperating nodes to achieve nanosecond-level clock
+synchronization without special hardware. This makes On-Ramp practical
+to deploy.
+
+.. _reading_onramp:
+.. admonition::  Further Reading
+   
+   Liu, S., et al. `Breaking the Transience-Equilibrium Nexus: A New
+   Approach to Datacenter Packet Transport
+   <https://www.usenix.org/system/files/nsdi21-liu.pdf>`__.
+   Usenix NSDI '21. April 2021.
+
+   Geng, Y., et al. `Exploiting a Natural Network Effect for Scalable,
+   Finegrained Clock Synchronization
+   <https://www.usenix.org/system/files/conference/nsdi18/nsdi18-geng.pdf>`__. 
+   Usenix NSDI '18, April 2018.
 
 7.2 Background Transport (LEDBAT)
 ----------------------------------
@@ -224,15 +294,6 @@ parameters. Further details can be found in the RFC.
    <https://www.rfc-editor.org/info/rfc6817>`__.  
    RFC 6817, December 2012.
 
-
-
-.. for another day
-   7.3 Public Cloud (OnRamp)
-   -------------------------
-
-.. On-Ramp focuses on yet another part of the design space: transient
-   congestion in public clouds. Again, a different set of constraints
-   leads to a different point in the design space.   
 
 7.3 HTTP Performance (QUIC)
 ---------------------------
