@@ -130,28 +130,27 @@ is a "test of time" award winner from SIGCOMM.
    ACM SIGCOMM, August 2010.
 
 There has been considerable research since DCTCP to optimize TCP for
-data centers, with the general approach of introducing ever-more
-sophisticated “signals” from the network that the sender can use to
+data centers, with the general approach being to introduce ever-more
+sophisticated signals from the network that the sender can use to
 manage congestion. We conclude our discussion of this use case by
-elaborating on one of the most recent efforts, On-Ramp, because of how
-it focuses on the fundamental tension that all congestion control
+elaborating on one of the most recent efforts, On-Ramp, because it
+focuses instead on the fundamental tension that all congestion control
 algorithms face: The trade-off between reaching equilibrium for
-long-lived flows and dealing with transient bursts. On-Ramp adopts a
-modular design that directly addresses this tension, and does so
-without depending on additional feedback from network switches about
-their queues.
+long-lived flows versus dealing with transient bursts. On-Ramp adopts
+a modular design that directly addresses this tension, and does so
+without depending on additional feedback from the network.
 
 The main insight is that when a congestion control algorithm in
 equilibrium encounters severe congestion and drastically cuts its
-window (or rate), it must decide between remembering or forgetting its
+window (or rate), it must decide whether or not to remember its
 previous equilibrium state. This is a difficult choice because it
 depends on the duration of congestion, which is hard to predict. If
 the congestion is transient, the algorithm must remember its previous
-state so as to rapidly restore the old equilibrium without
+state so it can rapidly restore the old equilibrium without
 under-utilizing the network once the burst ends. On the other hand, if
 the congestion is sustained, for example due to the arrival of one or
-more long-lived flows, the algorithm must forget its previous state so
-that it can rapidly find a new equilibrium.
+more new flows, the algorithm must forget its previous state so that
+it can rapidly find a new equilibrium.
 
 .. _fig-onramp:
 .. figure:: figures/Slide13.png
@@ -172,8 +171,8 @@ delays as quickly as possible whenever the measured *One-Way Delay
 (OWD)* grows too large. It does this by temporarily holding packets at
 the sender (rather than letting them occupy an in-network buffer)
 whenever OWD is greater than some threshold. The On-Ramp shim is then
-composed with an existing congestion control algorithm, that later of
-which continues to worry about reaching equilibrium for long-term
+composed with an existing congestion control algorithm, which
+continues to work towards reaching equilibrium for long-term
 flows. On-Ramp has been shown to work with several existing congestion
 control algorithms, including DCTCP.
 
@@ -183,10 +182,10 @@ and receiver. Since data center delays can be less than a few tens of
 microseconds, the sender and receiver clocks must be synchronized to
 within a few microseconds. Such high-accuracy clock synchronization
 has traditionally required hardware-intensive protocols, but On-Ramp
-leverages a new system that takes advantage of the network effect in a
-mesh of cooperating nodes to achieve nanosecond-level clock
-synchronization without special hardware. This makes On-Ramp practical
-to deploy.
+leverages a new approach that takes advantage of the network effect in
+a mesh of cooperating nodes to achieve nanosecond-level clock
+synchronization. It does so without special hardware, making On-Ramp
+easy to deploy.
 
 .. _reading_onramp:
 .. admonition::  Further Reading
