@@ -91,14 +91,14 @@ packet networks than for highways, but it is equally problematic [#]_.
        recognize that analogies are imperfect.
    
 This book focuses on congestion control for packet-switched
-networks. A fundamental aspect in packet switching is *multiplexing*,
-which means that a system resource—such as a link or a queue in a
-router— is shared among multiple users or applications. Furthermore,
-packet networks are *statistically multiplexed*, which means that, as
-packets show up somewhat randomly, we rely on the statistical
-properties of those arrivals to ensure that we don't run out of
-resources. The existence of congestion collapse shows that sometimes
-the statistics don't quite work out as we'd like.
+networks. A fundamental aspect of packet switching is *multiplexing*,
+which is the means by which a system resource—such as a link or a
+queue in a router—is shared among multiple users or applications.  In
+the case of the Internet, packet networks are *statistically
+multiplexed*, which means that, as packets show up somewhat randomly,
+we rely on the statistical properties of those arrivals to ensure that
+we don't run out of resources. The existence of congestion collapse
+shows that sometimes the statistics don't quite work out as we'd like.
 
 To see how this might work, consider the simple network illustrated in
 :numref:`Figure %s <fig-mux>`, where the three hosts on the left side
