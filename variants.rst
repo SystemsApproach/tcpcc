@@ -11,24 +11,24 @@ performance specifically, but has now developed into something of a
 general TCP alternative.
 
 This chapter is not exhaustive, but we instead survey a few specific
-use cases. These include tuning TCP performance for data centers;
+use cases. These include tuning TCP performance for datacenters;
 sending background traffic over an extended period of time using only
 excess capacity; optimizing HTTP-based web traffic without being
 backward-compatible with TCP; supporting real-time streaming in a way
 that is TCP-friendly; and accommodating mobile cellular networks with
 unique radio-induced behavior.
 
-7.1 Data Centers (DCTCP, On-Ramp)
+7.1 Datacenters (DCTCP, On-Ramp)
 ---------------------------------
 
-There have been several efforts to optimize TCP for cloud data
-centers, where *Data Center TCP* was one of the first. There are
-several aspects of the data center environment that warrant an
-approach that differs from more traditional TCP. These include:
+There have been several efforts to optimize TCP for cloud datacenters,
+where *Data Center TCP* was one of the first. There are several
+aspects of the datacenter environment that warrant an approach that
+differs from more traditional TCP. These include:
 
 * Round trip time for intra-DC traffic are small;
   
-* Buffers in data center switches are also typically small;
+* Buffers in datacenter switches are also typically small;
   
 * All the switches are under common administrative control, and thus
   can be required to meet certain standards;
@@ -42,7 +42,7 @@ rather, a system design that changes both the switch behavior and the
 end host response to congestion information received from switches.
 
 The central insight in DCTCP is that using loss as the main signal of
-congestion in the data center environment is insufficient. By the time a queue
+congestion in the datacenter environment is insufficient. By the time a queue
 has built up enough to overflow, low latency traffic is already failing
 to meet its deadlines, negatively impacting performance. Thus DCTCP
 uses a version of ECN to provide an early signal of congestion. But
@@ -118,7 +118,7 @@ than in standard TCP, to avoid the over-reaction that would lead to
 queues running empty.
 
 The paper that lays out all the arguments for DCTCP including a study
-of the data center traffic characteristics that motivated its design
+of the datacenter traffic characteristics that motivated its design
 is a "test of time" award winner from SIGCOMM.
 
 .. _reading_dctcp:
@@ -130,7 +130,7 @@ is a "test of time" award winner from SIGCOMM.
    ACM SIGCOMM, August 2010.
 
 There has been considerable research since DCTCP to optimize TCP for
-data centers, with the general approach being to introduce ever-more
+datacenters, with the general approach being to introduce ever-more
 sophisticated signals from the network that the sender can use to
 manage congestion. We conclude our discussion of this use case by
 elaborating on one of the most recent efforts, On-Ramp, because it
@@ -179,7 +179,7 @@ DCTCP.
 The key is that On-Ramp is designed so the two control decisions run
 independently, on their own timescale. But to work, the shim needs to
 accurately measure OWD, which in turn depends on synchronized clocks
-between the sender and receiver. Since data center delays can be less
+between the sender and receiver. Since datacenter delays can be less
 than a few tens of microseconds, the sender and receiver clocks must
 be synchronized to within a few microseconds. Such high-accuracy clock
 synchronization has traditionally required hardware-intensive
@@ -204,7 +204,7 @@ hardware, making On-Ramp easy to deploy.
 7.2 Background Transport (LEDBAT)
 ----------------------------------
 
-In sharp contrast to low-latency data center environments, there are
+In sharp contrast to low-latency datacenter environments, there are
 many applications that need to transfer a large amount of data over an
 extended period of time. File-sharing protocols such as BitTorrent and
 software-updates are two examples. LEDBAT (Low Extra Delay Background

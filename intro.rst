@@ -317,10 +317,10 @@ avoidance are *fairness* and *stability*. When the network is
 congested, it's going to be necessary for some users or flows to send
 less. It is clearly worth asking: which flows should send less? Should
 all flows share the pain equally? And what happens if some flows pay
-more attention to congestion signals than others? These questions are at the heart of
-the fairness issue. Jain's *fairness index* is one of the widely
-accepted ways to measure how fair a network is; we will dig into this
-topic in Chapter 3.
+more attention to congestion signals than others? These questions are
+at the heart of the fairness issue. Jain's *fairness index* is one of
+the widely accepted ways to measure how fair a network is. We dig into
+this topic in Chapter 3.
 
 Stability is a critical property for any sort of control system, which
 is what congestion control is. Congestion is detected, some action is
@@ -329,13 +329,13 @@ ease, at which point it would seem reasonable to start sending more
 traffic again, leading back to more congestion. You can imagine that
 this sort of oscillation between congested and uncongested states
 could go on forever, and would be quite detrimental if the network is
-swinging from underutilized to collapsing.  We really want it to settle on some
-optimum where the network is busy but not so much so that
+swinging from underutilized to collapsing.  We really want it to fine
+an equilibrium where the network is busy but not so much so that
 congestion collapse occurs. Finding these stable control loops has
 been one of the key challenges for congestion control system designers
 over the decades. The quest for stability features heavily in the
-early work of Jacobson and Karels and stability remains a requirement that 
-subsequent approaches have to meet.
+early work of Jacobson and Karels and stability remains a requirement
+that subsequent approaches have to meet.
 
 Once the initial congestion control algorithms of TCP were implemented
 and deployed, researchers began to build mathematical models of TCP's
@@ -348,7 +348,7 @@ stable conditions of RTT and loss also formed the basis for
 *TCP-friendly rate control (TFRC)*. TFRC extends TCP-like congestion
 control to applications that don't use TCP, based on the idea that
 they can still share available capacity in a fair way with those that
-do. We return to this topic in a later chapter.
+do. We return to this topic in Chapter 7.
 
 .. _reading_mathis_eqn:
 .. admonition:: Further Reading
@@ -396,9 +396,9 @@ It sometimes feels like networking protocols have all been nailed down
 and standardized for decades, but few areas have remained as dynamic
 as congestion control. While the early work by Jacobson, Karels and
 others laid the foundation, there has been a long series of
-innovations that continue today. We'll cover many of these in detail
-in subsequent chapters, but you can rest assured that new ideas in congestion
-control will continue to emerge for years to come.
+innovations that continue today. We cover many of these in detail in
+subsequent chapters, but you can rest assured that new ideas in
+congestion control will continue to emerge for years to come.
 
 Sometimes innovations are necessitated by changes in the
 landscape. For example, as bandwidths increased from megabits to

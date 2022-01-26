@@ -260,7 +260,7 @@ to this issue in Chapter 7.
 ~~~~~~~~~~~~~~~
 
 Our final example is New Vegas (NV), an adaptation of Vegas's
-delay-based approach to data centers, where link bandwidths are 10Gbps
+delay-based approach to datacenters, where link bandwidths are 10Gbps
 or higher and RTTs are typically measured in the ten's of
 microseconds. This is an important use case that we return to in
 Chapter 7; our goal here is to build some intuition.
