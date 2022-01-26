@@ -21,20 +21,20 @@ mechanism for allocating resources. It is implicit in the sense that
 as the control mechanism detects resources
 becoming scarce, it reacts in an effort to alleviate congestion.
 
-A network service model in which resources are *explicitly* allocated to
-packet flows is the obvious alternative; for example, an application
-could make an explicit request for resources before sending traffic.  The best-effort
-assumption of IP meant such an approach was not immediately viable at the time
-congestion became a serious issue. Subsequently, work has been done
-to retrofit more explicit resource allocation mechanisms to the
-Internet's best-effort delivery model. These include the ability to
-make *Quality-of-Service (QoS)* guarantees. It is instructive to
-consider the Internet's approach to congestion in the context of such
-efforts. The first section does so as it explores the set of design
-decisions that underlie the control mechanisms outlined in this book.
-We then define the criteria by which different
-congestion-control mechanisms can be quantitatively evaluated and
-compared.
+A network service model in which resources are *explicitly* allocated
+to packet flows is the obvious alternative; for example, an
+application could make an explicit request for resources before
+sending traffic.  The best-effort assumption of IP meant such an
+approach was not immediately viable at the time congestion became a
+serious issue. Subsequent work was done to retrofit more explicit
+resource allocation mechanisms to the Internet's best-effort delivery
+model, including the ability to make *Quality-of-Service (QoS)*
+guarantees. It is instructive to consider the Internet's approach to
+congestion in the context of such efforts. The first section does so
+as it explores the set of design decisions that underlie the control
+mechanisms outlined in this book.  We then define the criteria by
+which different congestion-control mechanisms can be quantitatively
+evaluated and compared.
 
 3.1 Implementation Choices
 -------------------------------
@@ -328,7 +328,7 @@ Note that while both "persistent queues" and "congestion collapse" are
 to be avoided, there is no precise definition for the threshold at
 which a network suffers from either. They are both subjective
 judgments about an algorithm's behavior, where at the end of the day,
-latency and throughput are the two key performance indicators.
+latency and throughput are the two performance indicators that matter.
 
 3.2.2 Fairness
 ~~~~~~~~~~~~~~~~~~~
