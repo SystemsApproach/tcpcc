@@ -93,7 +93,7 @@ open mind about the spectrum of options that are available.
 .. _reading_b4:
 .. admonition:: Further Reading 
 
-   S. Jain, et. al. `B4: Experience with a 
+   S. Jain, *et al*. `B4: Experience with a 
    Globally-Deployed Software Defined WAN 
    <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
    ACM SIGCOMM, August 2013.
@@ -111,7 +111,7 @@ of such a centralized approach.
 .. _reading_fastpass:
 .. admonition:: Further Reading 
 
-   J. Perry, et. al. `Fastpass: A Centralized "Zero-Queue" Datacenter Network 
+   J. Perry, *et al*. `Fastpass: A Centralized "Zero-Queue" Datacenter Network 
    <http://fastpass.mit.edu/Fastpass-SIGCOMM14-Perry.pdf>`__.
    ACM SIGCOMM, August 2014.
 
@@ -467,7 +467,7 @@ accepted, less aggressive algorithms.
 .. _reading_ware:
 .. admonition:: Further Reading
 
-   R. Ware, et. al. `Beyond Jain's Fairness Index: Setting the Bar for
+   R. Ware, *et al*. `Beyond Jain's Fairness Index: Setting the Bar for
    the Deployment of Congestion Control Algorithms
    <https://www.cs.cmu.edu/~rware/assets/pdf/ware-hotnets19.pdf>`__.
    ACM SIGCOMM HotNets. November 2019.

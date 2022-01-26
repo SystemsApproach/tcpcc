@@ -124,7 +124,7 @@ is a "test of time" award winner from SIGCOMM.
 .. _reading_dctcp:
 .. admonition::  Further Reading
 
-   Alizadeh, M., et al. `Data
+   M. Alizadeh, *et al*. `Data
    Center TCP (DCTCP)
    <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.  
    ACM SIGCOMM, August 2010.
@@ -191,12 +191,12 @@ hardware, making On-Ramp easy to deploy.
 .. _reading_onramp:
 .. admonition::  Further Reading
    
-   Liu, S., et al. `Breaking the Transience-Equilibrium Nexus: A New
+   S. Liu, *et al*. `Breaking the Transience-Equilibrium Nexus: A New
    Approach to Datacenter Packet Transport
    <https://www.usenix.org/system/files/nsdi21-liu.pdf>`__.
    Usenix NSDI '21. April 2021.
 
-   Geng, Y., et al. `Exploiting a Natural Network Effect for Scalable,
+   Y. Geng, *et al*. `Exploiting a Natural Network Effect for Scalable,
    Finegrained Clock Synchronization
    <https://www.usenix.org/system/files/conference/nsdi18/nsdi18-geng.pdf>`__. 
    Usenix NSDI '18, April 2018.
@@ -290,7 +290,7 @@ parameters. Further details can be found in the RFC.
 .. _reading_ledbat:
 .. admonition::  Further Reading
 
-   Shalunov, S., et al. `Low Extra Delay Background Transport (LEDBAT)
+   S. Shalunov, *et al*. `Low Extra Delay Background Transport (LEDBAT)
    <https://www.rfc-editor.org/info/rfc6817>`__.  
    RFC 6817, December 2012.
 
@@ -417,7 +417,7 @@ congestion control is covered in the separate RFC 9002.
 .. _reading_quic:
 .. admonition::  Further Reading
 
-   Iyengar, J.  and Swett, I., Eds.
+   J. Iyengar and I. Swett, Eds.
    `QUIC Loss Detection and Congestion Control
    <https://www.rfc-editor.org/info/rfc9002>`__.  
    RFC 9002, May 2021.
@@ -546,7 +546,7 @@ protocol.
 .. _reading_tfrc:
 .. admonition::  Further Reading
 
-   Floyd, S., Handley, M., Padhye, J. and Widmer, J.
+   S. Floyd, M. Handley, J. Padhye, and J. Widmer.
    `TCP Friendly Rate Control (TFRC): Protocol Specification
    <https://www.rfc-editor.org/info/rfc5348>`__.  
    RFC 5348, September 2008.
@@ -555,7 +555,7 @@ protocol.
 .. _reading_tcpeq:
 .. admonition::  Further Reading
 
-   Padhye, J., Firoiu, V., Towsley, D. and Kurose, J.
+   J. Padhye, V. Firoiu, D. Towsley, and J. Kurose.
    `Modeling TCP Throughput: A Simple Model and its Empirical Validation
    <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.  
    ACM SIGCOMM, September 1998.

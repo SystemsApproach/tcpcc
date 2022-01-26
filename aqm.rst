@@ -328,7 +328,7 @@ applied with success in datacenters.
 .. _reading_rfc:
 .. admonition:: Further Reading 
 
-      R. Braden, et. al. 
+      R. Braden, *et al*. 
       `Recommendations on Queue Management and Congestion Avoidance in the Internet
       <https://tools.ietf.org/html/rfc2309>`__.
       RFC 2309, April 1998.

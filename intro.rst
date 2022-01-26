@@ -53,7 +53,7 @@ have been developed over the last three decades.
 .. _reading_vj:
 .. admonition:: Further Reading
 
-   V. Jacobson `Congestion Avoidance and Control
+   V. Jacobson. `Congestion Avoidance and Control
    <https://dl.acm.org/doi/10.1145/52324.52356>`__.
    ACM SIGCOMM '88 Symposium, August 1988.
 
@@ -270,7 +270,7 @@ of the early pioneers of the ARPANET, Leonard Kleinrock.
 .. _reading_queue:
 .. admonition:: Further Reading
 
-   L. Kleinrock, `Queueing Systems, Volume 2
+   L. Kleinrock. `Queueing Systems, Volume 2
    <https://archive.org/details/queueingsystems02klei>`__.
 
 As packet networks became more widespread in the 1980s, there was a
@@ -287,7 +287,7 @@ models, of which the following are two.
 .. _reading_pfail:
 .. admonition:: Further Reading
 
-   V. Paxson and S. Floyd, `Wide-Area Traffic: The Failure of Poisson Modeling
+   V. Paxson and S. Floyd. `Wide-Area Traffic: The Failure of Poisson Modeling
    <https://www.icir.org/vern/papers/poisson.TON.pdf>`__.
    IEEE/ACM Transactions on Networking, June 1995.
 
@@ -371,7 +371,7 @@ techniques (AQM).
 .. _reading_kelly_low:
 .. admonition:: Further Reading
 
-   F. Kelly, `Charging and Rate Control for Elastic Traffic
+   F. Kelly. `Charging and Rate Control for Elastic Traffic
    <http://www.statslab.cam.ac.uk/~frank/elastic.pdf>`__.
    European Transactions on Telecommunications, 8:33–37, 1997.
 
@@ -479,9 +479,10 @@ release: e.g., TCP Tahoe, and later TCP Reno.
 .. _reading_bsd:
 .. admonition:: Further Reading
 
-   S.J. Leffler, M.K. McKusick, M.J. Karels, and J.S Quarterman.
-   *The Design and Implementation of the 4.3 BSD Unix Operating
-   System.* Addison-Wesley. January 1989.
+   S.J. Leffler, M.K. McKusick, M.J. Karels, and J.S Quarterman.  `The
+   Design and Implementation of the 4.3 BSD Unix Operating
+   <https://www.goodreads.com/en/book/show/5770.The_Design_and_Implementation_of_the_4_3BSD_UNIX_Operating_System>`__.
+   Addison-Wesley. January 1989.
 
 .. sidebar:: Berkeley Unix
 
