@@ -145,12 +145,12 @@ equilibrium encounters severe congestion and drastically cuts its
 window (or rate), it must decide whether or not to remember its
 previous equilibrium state. This is a difficult choice because it
 depends on the duration of congestion, which is hard to predict. If
-the congestion is transient, the algorithm must remember its previous
-state so it can rapidly restore the old equilibrium without
-under-utilizing the network once the burst ends. On the other hand, if
-the congestion is sustained, for example due to the arrival of one or
-more new flows, the algorithm must forget its previous state so that
-it can rapidly find a new equilibrium.
+the congestion is transient, the algorithm should remember its
+previous state so it can rapidly restore the old equilibrium without
+under-utilizing the network once the burst ends. If the congestion is
+sustained, for example due to the arrival of one or more new flows,
+the algorithm should forget its previous state so that it can rapidly
+find a new equilibrium.
 
 .. _fig-onramp:
 .. figure:: figures/Slide13.png
@@ -166,26 +166,27 @@ with each focused on just one aspect of the equilibrium/transient
 trade-off. Specifically, On-Ramp is implemented as a “shim” that sits
 below a conventional TCP congestion control algorithm, as shown in
 :numref:`Figure %s <fig-onramp>`. The On-Ramp shim deals with bursts
-(which temporarily fill network queues) by trying to reduce queuing
-delays as quickly as possible whenever the measured *One-Way Delay
-(OWD)* grows too large. It does this by temporarily holding packets at
-the sender (rather than letting them occupy an in-network buffer)
-whenever OWD is greater than some threshold. The On-Ramp shim is then
-composed with an existing congestion control algorithm, which
-continues to work towards reaching equilibrium for long-term
-flows. On-Ramp has been shown to work with several existing congestion
-control algorithms, including DCTCP.
+(which temporarily fill network queues) by trying to quickly reduce
+queuing delays whenever the measured *One-Way Delay (OWD)* grows too
+large. It does this by temporarily holding packets at the sender
+(rather than letting them occupy an in-network buffer) whenever OWD is
+greater than some threshold. The On-Ramp shim is then composed with an
+existing congestion control algorithm, which continues to work towards
+reaching equilibrium for long-term flows.  On-Ramp has been shown to
+work with several existing congestion control algorithms, including
+DCTCP.
 
-One key to making On-Ramp work is its ability to accurately measure
-OWD, which in turn depends on synchronized clocks between the sender
-and receiver. Since data center delays can be less than a few tens of
-microseconds, the sender and receiver clocks must be synchronized to
-within a few microseconds. Such high-accuracy clock synchronization
-has traditionally required hardware-intensive protocols, but On-Ramp
-leverages a new approach that takes advantage of the network effect in
-a mesh of cooperating nodes to achieve nanosecond-level clock
-synchronization. It does so without special hardware, making On-Ramp
-easy to deploy.
+The key is that On-Ramp is designed so the two control decisions run
+independently, on their own timescale. But to work, the shim needs to
+accurately measure OWD, which in turn depends on synchronized clocks
+between the sender and receiver. Since data center delays can be less
+than a few tens of microseconds, the sender and receiver clocks must
+be synchronized to within a few microseconds. Such high-accuracy clock
+synchronization has traditionally required hardware-intensive
+protocols, but On-Ramp leverages a new approach that takes advantage
+of the network effect in a mesh of cooperating nodes to achieve
+nanosecond-level clock synchronization. It does so without special
+hardware, making On-Ramp easy to deploy.
 
 .. _reading_onramp:
 .. admonition::  Further Reading
