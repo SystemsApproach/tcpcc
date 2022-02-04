@@ -26,4 +26,5 @@ Peterson, Brakmo, and Davie
    aqm.rst 
    variants.rst
    README.rst
+   authors.rst
    latest.rst

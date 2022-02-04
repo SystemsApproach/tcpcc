@@ -1,4 +1,5 @@
 ACK
+Aether
 Athuraliya
 BBR 
 Braden
@@ -7,6 +8,7 @@ Cardwell
 Centric
 Cheng
 Chiu
+Connor
 Cwnd
 ECN
 Fastpass
@@ -19,18 +21,22 @@ Hawe
 IPv
 Janey
 KBps
+Kahn
 Karels
 Karn
 Kleinrock
+Kobayashi
 Leffler
 Mahdavi
 Makefile
 Mbps
+Multiprotocol
 Nagle
 O'Malley
 Malley
 Ott
 Paxson
+Ph
 QoS
 Quarterman
 RTP
@@ -46,6 +52,7 @@ TCP
 TFRC
 TFRC
 Usenix
+VMware
 Westwood
 Yeganeh
 Davie 
@@ -65,7 +72,6 @@ Padhye
 Firoiu 
 Towsley 
 Kurose
-
 Haiqing
 Jiang
 Liu
@@ -74,6 +80,7 @@ Yi
 Jamieson
 Sunay
 Gettys
+
 al
 asymptotes
 asymptoting

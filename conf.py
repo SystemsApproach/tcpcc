@@ -40,7 +40,7 @@ release = version
 # -- Project information -----------------------------------------------------
 
 project = u'TCP Congestion Control: A Systems Approach'
-copyright = u'2021'
+copyright = u'2021,2022'
 author = u'Peterson, Brakmo, Davie'
 
 

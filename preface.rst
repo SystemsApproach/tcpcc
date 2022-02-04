@@ -25,14 +25,14 @@ severe congestion rather than react after it has set in. We thus
 consider avoidance-based approaches as one of the main categories of
 congestion control.
 
-This is a pre-release of a still in-progress manuscript. There are a
-number of significant efforts in congestion control that are not
-currently covered in the book as our goal is to help readers
-understand the problem space and the intuition behind various
-solutions, without being overwhelmed by hundreds of details. That
-said, we have probably missed some important themes. And the
-approaches that we have covered, particularly in later chapters, are
-in many cases still evolving. We will update the book as needed.
+This is an evolving manuscript. There are a number of significant
+efforts in congestion control that are not currently covered in the
+book as our goal is to help readers understand the problem space and
+the intuition behind various solutions, without being overwhelmed by
+hundreds of details. That said, we have probably missed some important
+themes. And the approaches that we have covered, particularly in later
+chapters, are in many cases still evolving. We will update the book as
+needed.
 
 Please send
 us your comments and feedback using the `Issues Link
@@ -40,6 +40,6 @@ us your comments and feedback using the `Issues Link
 <https://github.com/SystemsApproach/tcpcc/wiki>`__ for the latest todo
 list.
 
-| Larry Peterson, Larry Brakmo, and Bruce Davie
-| October 2021
+| Larry Peterson, Lawrence Brakmo, and Bruce Davie
+| February 2022
 

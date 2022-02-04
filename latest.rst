@@ -1,6 +1,6 @@
 .. role:: pop
 
-:pop:`Read the Latest!`
+:pop:`Read The Latest!`
 ========================
 
 `Substack Newsletter: <https://systemsapproach.substack.com/>`__ Stay
