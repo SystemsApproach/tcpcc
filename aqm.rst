@@ -311,19 +311,23 @@ filtered out.
 
 Since RED works by sending signals to TCP flows to tell them to slow
 down, you might wonder what would happen if those signals are ignored.
-This is often called the *unresponsive flow* problem. Unresponsive flows
-use more than their fair share of network resources and could cause
-congestive collapse if there were enough of them, just as in the days
-before TCP congestion control. Some of the techniques described in the
-next section can help with this problem by isolating certain classes of
-traffic from others. There is also the possibility that a variant of RED
-could drop more heavily from flows that are unresponsive to the initial
-hints that it sends.
+This is often called the *unresponsive flow* problem. Unresponsive
+flows use more than their fair share of network resources and could
+cause congestive collapse if there were enough of them, just as in the
+days before TCP congestion control. Some queueing techniques, such as
+weighted fair queueing, could help with this problem by isolating
+certain classes of traffic from others. There was also discussion of
+creating a variant of RED that could drop more heavily from flows that
+are unresponsive to the initial hints that it sends. However this
+turns out to be challenging because it can be hard to distinguish
+between non-responsive behavior and \"correct\" behavior, especially
+when flows have a wide variety of different RTTs and bottleneck bandwidths.
 
-As a footnote, 15 prominent network researcher urged for the
+As a footnote, 15 prominent network researchers urged for the
 widespread adoption of RED-inspired AQM in 1998. The recommendation
-was largely ignored, although subsequently, the approach has been
-applied with success in datacenters.
+was largely ignored, for reasons that we touch on below. AQM
+approaches based on RED have, however, been applied with some success
+in datacenters.
 
 .. _reading_rfc:
 .. admonition:: Further Reading 
@@ -333,19 +337,128 @@ applied with success in datacenters.
       <https://tools.ietf.org/html/rfc2309>`__.
       RFC 2309, April 1998.
 
-6.3 Explicit Congestion Notification
+
+6.3 CoDel
+----------
+
+As noted in the preceding section, adoption of RED never really took
+off. Certainly it never reached the level necessary to have a
+significant impact on congestion in the Internet. One main reason for
+this was that RED was difficult to configure in such a
+way that it would reliably improve performance. Note the large number
+of parameters that affect its operation (``MinThreshold``,
+``MaxThreshold``, and ``Weight``). There was enough research that
+showed that RED could produce a wide range of outcomes (not all of
+them helpful) depending on the type of traffic and parameter setting
+to create uncertainty around the merits of deploying it.
+
+Over a period of years, Van Jacobson (well known for his work on TCP
+Congestion and a co-author of the original RED paper) collaborated
+with Kathy Nichols and eventually other researchers to come up with an
+improved AQM approach to RED. This work became known as CoDel
+(pronounced *coddle*) for Controlled Delay AQM. CoDel collects several
+key insights that emerged over decades of experience with TCP and
+AQM.
+
+First, queues are an important aspect of networking and it's expected
+that queues build up from time to time. For example, a newly opened
+connection may dump a window's worth of packets into the network, and
+these are likely to form a queue at the bottleneck link. This is not
+in itself a problem. There should be enough buffer capacity to
+absorb those bursts. Problems arise when there is not enough buffer
+capacity to absorb bursts, leading to excessive loss. This came to be
+understood in the 1990s as a requirement that buffers be able to hold
+at least one delay x bandwidth product of packets—a requirement that
+was probably too large and subsequently questioned by further
+research. But the fact is that buffers are necessary, and it is
+expected that they will be used to absorb bursts. The CoDel authors
+refer to this as \"good queue\".
+
+Queues become a problem when they are persistently full. A
+persistently full queue is doing nothing except adding delay to the
+network, and it is also less able to absorb bursts if it never drains
+fully. The combination of large buffers and persistent queues within
+those buffers came to be known as "Bufferbloat". We return to this
+topic in Chapter 7, but it is clear that persistently full queues are
+what an well-designed AQM mechanism would seek to avoid. Queues that
+stay full for long periods without draining are referred to,
+unsurprisingly, as \"bad queue\".
+
+In a sense, then, the challenge for an AQM algorithm is to distinguish
+between \"good\" and \"bad\" queues, and to trigger packet loss only when
+the queue is determined to be \"bad\". Indeed, this is what RED is
+trying to do with its ``weight`` parameter (which filters out
+transient queue length).
+
+One of the innovations of CoDel is to focus on *sojourn time*: the
+time that any given packet waits in the queue. For a queue that is
+behaving well, it will frequently drain to zero and thus some packets
+will experience a sojourn time close to zero. Conversely, a congested
+queue will delay every packet, and the minimum sojourn time will never
+be close to zero. CoDel therefore measures the sojourn time—something
+that is quite easy to do for every packet—and tracks whether it is
+consistently sitting above some small target.
+
+Rather than asking an operators to determine the parameters to make
+CoDel work well, the algorithm chooses reasonable defaults. A target
+sojourn time of 5ms is used, along with a sliding measurement window
+of 100ms. The intuition, as with RED, is that 100ms is a typical RTT
+for traffic traversing the Internet, and that if congestion is lasting
+longer than 100ms, we may be moving into the \"bad queue\" region. So
+CoDel monitors the sojourn time relative to the target of 5ms. If it
+is above target for more than 100ms, it is time to start taking action
+to reduce the queue via drops (or marking if explicit congestion
+notification, described below, is available). 5ms is chosen as being
+close to zero (for better delay) but not so small that the queue would
+run empty. It should be noted that a great deal of experimentation and
+simulation has gone into these numerical choices, but also the
+algorithm is not overly sensitive to them.
+
+To summarize, CoDel largely ignore queues that last less than an RTT,
+but starts taking action as soon as a queue persists for more than
+an RTT. By making reasonable assumptions about Internet RTTs, it
+requires no configuration parameters.
+
+An additional subtlety is that CoDel drops a slowly increasing percentage of
+traffic as long as the observed sojourn time remains above the target. As
+discussed further in Section 7.4, TCP throughput has been shown to
+depend inversely on the square root of loss rate. Thus, as long as the
+sojourn time stays above target, CoDel steadily 
+increases its drop rate in proportion to the square root
+of the number of drops since the target was exceeded. The effect of
+this, in theory, is to cause a linear decrease in throughput of the
+affected TCP connections. Eventually this should lead to enough
+reduction in arriving traffic to allow the queue to drain, bringing
+the sojourn time back below the target.
+
+There are more details to CoDel presented in the paper
+listed below, including extensive simulations to indicate its
+effectiveness across a wide range of scenarios. It has been
+implemented in the Linux kernel which has aided in its deployment and
+it has been standardized as \"experimental\" by the IETF
+in RFC 8289.
+
+.. _reading_codel:
+.. admonition:: Further Reading 
+
+      K. Nichols and V. Jacobson.
+      `Controlling Queue Delay
+      <https://queue.acm.org/detail.cfm?id=2209336>`__.
+      ACM Queue, 10(5), May 2012.
+
+
+
+
+
+6.4 Explicit Congestion Notification
 ------------------------------------
 
-RED is the most extensively studied AQM mechanism, but it has not been
-widely deployed, due in part to the fact that it does not result in
-ideal behavior in all circumstances. It is, however, the benchmark for
-understanding AQM behavior. The other thing that came out of RED is the
-recognition that TCP could do a better job if routers were to send a
-more explicit congestion signal.
-
-That is, instead of *dropping* a packet and assuming TCP will eventually
-notice (e.g., due to the arrival of a duplicate ACK), RED (or any AQM
-algorithm for that matter) can do a better job if it instead *marks* the
+While TCP's congestion control mechanism was initially based on packet
+loss as the primary congestion signal, it has long been recognized
+that TCP could do a better job if routers were to send a more explicit
+congestion signal. That is, instead of *dropping* a packet and assuming TCP will eventually
+notice (e.g., due to the arrival of a duplicate ACK), any AQM
+algorithm can potentially do a better job if it instead *marks* the
 packet and continues to send it along its way to the destination. This
 idea was codified in changes to the IP and TCP headers known as
 *Explicit Congestion Notification* (ECN).
