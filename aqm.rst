@@ -341,31 +341,31 @@ in datacenters.
 6.3 CoDel
 ----------
 
-As noted in the preceding section, adoption of RED never really took
-off. Certainly it never reached the level necessary to have a
-significant impact on congestion in the Internet. One main reason for
-this was that RED was difficult to configure in such a
-way that it would reliably improve performance. Note the large number
+As noted in the preceding section, RED has never been widely
+adopted. Certainly it never reached the level necessary to have a
+significant impact on congestion in the Internet. One reason
+is that RED is difficult to configure in a
+way that consistently improves performance. Note the large number
 of parameters that affect its operation (``MinThreshold``,
-``MaxThreshold``, and ``Weight``). There was enough research that
-showed that RED could produce a wide range of outcomes (not all of
-them helpful) depending on the type of traffic and parameter setting
-to create uncertainty around the merits of deploying it.
+``MaxThreshold``, and ``Weight``). There is enough research
+showing that RED produces a wide range of outcomes (not all of
+them helpful) depending on the type of traffic and parameter settings.
+This created uncertainty around the merits of deploying it.
 
 Over a period of years, Van Jacobson (well known for his work on TCP
 Congestion and a co-author of the original RED paper) collaborated
 with Kathy Nichols and eventually other researchers to come up with an
-improved AQM approach to RED. This work became known as CoDel
-(pronounced *coddle*) for Controlled Delay AQM. CoDel collects several
+AQM approach that improves upon RED. This work became known as CoDel
+(pronounced *coddle*) for Controlled Delay AQM. CoDel builds on several
 key insights that emerged over decades of experience with TCP and
 AQM.
 
-First, queues are an important aspect of networking and it's expected
-that queues build up from time to time. For example, a newly opened
+First, queues are an important aspect of networking and it is expected
+that queues will build up from time to time. For example, a newly opened
 connection may dump a window's worth of packets into the network, and
 these are likely to form a queue at the bottleneck link. This is not
 in itself a problem. There should be enough buffer capacity to
-absorb those bursts. Problems arise when there is not enough buffer
+absorb such bursts. Problems arise when there is not enough buffer
 capacity to absorb bursts, leading to excessive loss. This came to be
 understood in the 1990s as a requirement that buffers be able to hold
 at least one delay x bandwidth product of packets—a requirement that
@@ -378,7 +378,7 @@ Queues become a problem when they are persistently full. A
 persistently full queue is doing nothing except adding delay to the
 network, and it is also less able to absorb bursts if it never drains
 fully. The combination of large buffers and persistent queues within
-those buffers came to be known as "Bufferbloat". We return to this
+those buffers came to be known as *Bufferbloat*. We return to this
 topic in Chapter 7, but it is clear that persistently full queues are
 what an well-designed AQM mechanism would seek to avoid. Queues that
 stay full for long periods without draining are referred to,
@@ -391,15 +391,15 @@ trying to do with its ``weight`` parameter (which filters out
 transient queue length).
 
 One of the innovations of CoDel is to focus on *sojourn time*: the
-time that any given packet waits in the queue. For a queue that is
-behaving well, it will frequently drain to zero and thus some packets
+time that any given packet waits in the queue. A queue that is
+behaving well will frequently drain to zero, and thus, some packets
 will experience a sojourn time close to zero. Conversely, a congested
 queue will delay every packet, and the minimum sojourn time will never
 be close to zero. CoDel therefore measures the sojourn time—something
-that is quite easy to do for every packet—and tracks whether it is
+that is easy to do for every packet—and tracks whether it is
 consistently sitting above some small target.
 
-Rather than asking an operators to determine the parameters to make
+Rather than asking operators to determine the parameters to make
 CoDel work well, the algorithm chooses reasonable defaults. A target
 sojourn time of 5ms is used, along with a sliding measurement window
 of 100ms. The intuition, as with RED, is that 100ms is a typical RTT
@@ -411,19 +411,19 @@ to reduce the queue via drops (or marking if explicit congestion
 notification, described below, is available). 5ms is chosen as being
 close to zero (for better delay) but not so small that the queue would
 run empty. It should be noted that a great deal of experimentation and
-simulation has gone into these numerical choices, but also the
-algorithm is not overly sensitive to them.
+simulation has gone into these numerical choices, but more importantly, the
+algorithm does not seem to be overly sensitive to them.
 
 To summarize, CoDel largely ignore queues that last less than an RTT,
 but starts taking action as soon as a queue persists for more than
-an RTT. By making reasonable assumptions about Internet RTTs, it
+an RTT. By making reasonable assumptions about Internet RTTs, the algorithm
 requires no configuration parameters.
 
 An additional subtlety is that CoDel drops a slowly increasing percentage of
 traffic as long as the observed sojourn time remains above the target. As
 discussed further in Section 7.4, TCP throughput has been shown to
 depend inversely on the square root of loss rate. Thus, as long as the
-sojourn time stays above target, CoDel steadily 
+sojourn time stays above the target, CoDel steadily 
 increases its drop rate in proportion to the square root
 of the number of drops since the target was exceeded. The effect of
 this, in theory, is to cause a linear decrease in throughput of the
@@ -431,11 +431,11 @@ affected TCP connections. Eventually this should lead to enough
 reduction in arriving traffic to allow the queue to drain, bringing
 the sojourn time back below the target.
 
-There are more details to CoDel presented in the paper
-listed below, including extensive simulations to indicate its
-effectiveness across a wide range of scenarios. It has been
-implemented in the Linux kernel which has aided in its deployment and
-it has been standardized as \"experimental\" by the IETF
+There are more details to CoDel presented in the Nichols and Jacobson
+paper, including extensive simulations to indicate its
+effectiveness across a wide range of scenarios. It is
+implemented in the Linux kernel, which has aided in its deployment.
+The algorithm has also been standardized as \"experimental\" by the IETF
 in RFC 8289.
 
 .. _reading_codel:
@@ -445,9 +445,6 @@ in RFC 8289.
       `Controlling Queue Delay
       <https://queue.acm.org/detail.cfm?id=2209336>`__.
       ACM Queue, 10(5), May 2012.
-
-
-
 
 
 6.4 Explicit Congestion Notification
