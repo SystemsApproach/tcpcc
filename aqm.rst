@@ -372,7 +372,8 @@ at least one delay x bandwidth product of packets—a requirement that
 was probably too large and subsequently questioned by further
 research. But the fact is that buffers are necessary, and it is
 expected that they will be used to absorb bursts. The CoDel authors
-refer to this as \"good queue\".
+refer to this as \"good queue\", as illustrated in :numref:`Figure
+%s <fig-good-bad>` (a).
 
 Queues become a problem when they are persistently full. A
 persistently full queue is doing nothing except adding delay to the
@@ -382,7 +383,15 @@ those buffers came to be known as *Bufferbloat*. We return to this
 topic in Chapter 7, but it is clear that persistently full queues are
 what an well-designed AQM mechanism would seek to avoid. Queues that
 stay full for long periods without draining are referred to,
-unsurprisingly, as \"bad queue\".
+unsurprisingly, as \"bad queue\", as shown in :numref:`Figure
+%s <fig-good-bad>` (b).
+
+.. _fig-good-bad:
+.. figure:: figures/Slide14.png
+   :width: 700px
+   :align: center
+
+   Good and Bad Queue Scenarios
 
 In a sense, then, the challenge for an AQM algorithm is to distinguish
 between \"good\" and \"bad\" queues, and to trigger packet loss only when
@@ -391,13 +400,18 @@ trying to do with its ``weight`` parameter (which filters out
 transient queue length).
 
 One of the innovations of CoDel is to focus on *sojourn time*: the
-time that any given packet waits in the queue. A queue that is
-behaving well will frequently drain to zero, and thus, some packets
-will experience a sojourn time close to zero. Conversely, a congested
-queue will delay every packet, and the minimum sojourn time will never
-be close to zero. CoDel therefore measures the sojourn time—something
-that is easy to do for every packet—and tracks whether it is
-consistently sitting above some small target.
+time that any given packet waits in the queue. Sojourn time is
+independent of the bandwidth of a link and provides useful indication
+of congestion even on links whose bandwidth varies over time, such as
+wireless links. A queue that is behaving well will frequently drain to
+zero, and thus, some packets will experience a sojourn time close to
+zero, as in :numref:`Figure %s <fig-good-bad>` (a). Conversely, a
+congested queue will delay every packet, and the minimum sojourn time
+will never be close to zero, as seen in :numref:`Figure %s
+<fig-good-bad>` (b). CoDel therefore measures the sojourn
+time—something that is easy to do for every packet—and tracks whether
+it is consistently sitting above some small target. \"Consistently\"
+is defined as \"lasting longer than a typical RTT\".
 
 Rather than asking operators to determine the parameters to make
 CoDel work well, the algorithm chooses reasonable defaults. A target
