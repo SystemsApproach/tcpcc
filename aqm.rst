@@ -338,8 +338,8 @@ in datacenters.
       RFC 2309, April 1998.
 
 
-6.3 CoDel
-----------
+6.3 Controlled Delay
+--------------------
 
 As noted in the preceding section, RED has never been widely
 adopted. Certainly it never reached the level necessary to have a
@@ -388,7 +388,7 @@ unsurprisingly, as \"bad queue\", as shown in :numref:`Figure
 
 .. _fig-good-bad:
 .. figure:: figures/Slide14.png
-   :width: 700px
+   :width: 400px
    :align: center
 
    Good and Bad Queue Scenarios
@@ -498,6 +498,79 @@ a good AQM algorithm should meet. Like TCP congestion control
 algorithms, every AQM algorithm has its advantages and disadvantages,
 and so we need a lot of them to argue about.
 
+
+6.5 Ingress/Egress Queues
+-------------------------
+
+We have been drawing a clear line between approaches to congestion
+control that happen *inside the network* (i.e., the AQM algorithms
+described in this chapter) and *at the edge of the network* (i.e., the
+TCP-based algorithms described in earlier chapters). But the line
+isn’t necessarily that crisp. To see this, you just have to think of
+the end-to-end path as having a *ingress queue* at the kernel/device
+interface on the sending host and an *egress queue* at the
+device/kernel interface on the receiving host.\ [#]_
+
+.. [#]
+	Confusingly, the *ingress queue* from the perspective of the
+	network path is the outbound (egress) queue on the sending host
+	and, the *egress queue* from the perspective of the network
+	path is the inbound (ingress) queue on the receiving host. As
+	shown in :numref:`Figure %s <fig-ingress_egress>`, we use the
+	terms ingress and egress from the network's perspective.
+
+This perspective is illustrated in :numref:`Figure %s
+<fig-ingress_egress>`, where both locations sit below TCP, and provide
+an opportunity to inject a second piece of congestion control logic
+into the end-to-end path. CoDel is an example of this idea: It has
+been implemented at the device queue level of the Linux kernel, but it
+is not otherwise widely deployed in the (non-Linux) queues that
+switches and routers implement in the middle of the network.	
+	
+.. _fig-ingress_egress:
+.. figure:: figures/Slide15.png
+   :width: 500px
+   :align: center
+
+   Ingress and egress queues along the end-to-end path, implemented in
+   the sending and receciving hosts, respectively.
+
+Does this work? The primary issue with CoDel as a queueing discipline
+is that packets are dropped at the egress instead of at the ingress
+(as is the case with other Linux-based queuing mechanisms). When
+dropping at the ingress (on the sending host), TCP is notified in the
+return value of the write function, which causes it to "forget" that
+it sent the packet. This means this packet will be sent next, although
+TCP does decrease its congestion window in response to the failed
+write. In contrast, CoDel drops packets at the egress queue (on the
+receiving host), which the TCP sender will not know to retransmit it
+until it detect the loss using one of its standard mechanisms (e.g.,
+three duplicate ACKs, a timeout).
+
+Stepping back from this specific example to consider the bigger
+picture, there are two interesting takeaways. One is that Linux
+provides a convenient and safe way to inject new code—including
+congestion control logic, into the kernel—namely, using the *extended
+Berkeley Packet Filter (eBPF)*. The standard kernel API for congestion
+control has been ported to eBPF and most existing congestion control
+algorithms have been ported to this framework. This simplifies the
+task of experimenting with new algorithms or tweaking existing
+algorithms by side-stepping the hurdle of waiting for the relevant
+Linux kernel to be deployed.
+
+.. _reading_bpf:
+.. admonition:: Further Reading 
+
+      The Linux Kernel.
+      `BPF Documentation
+      <https://www.kernel.org/doc/html/latest/bpf/index.html>`__.
+
+A second takeaway is that by explicitly exposing the ingress/egress
+queues to the decision-making process, we open the door to logically
+dividing the congestion control mechanism into its “decide when to
+transmit a packet” component and its “decide to queue-or-drop a
+packet” component.  We’ll see an example of a mechanism that takes
+advantage of this split in Section 7.1 when we describe On-Ramp.
 
 
 
