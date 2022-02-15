@@ -383,23 +383,29 @@ expected that they will be used to absorb bursts. The CoDel authors
 refer to this as \"good queue\", as illustrated in :numref:`Figure
 %s <fig-good-bad>` (a).
 
-Queues become a problem when they are persistently full. A
-persistently full queue is doing nothing except adding delay to the
-network, and it is also less able to absorb bursts if it never drains
-fully. The combination of large buffers and persistent queues within
-those buffers came to be known as *Bufferbloat*. We return to this
-topic in Chapter 7, but it is clear that persistently full queues are
-what an well-designed AQM mechanism would seek to avoid. Queues that
-stay full for long periods without draining are referred to,
-unsurprisingly, as \"bad queue\", as shown in :numref:`Figure
-%s <fig-good-bad>` (b).
-
 .. _fig-good-bad:
 .. figure:: figures/Slide14.png
    :width: 400px
    :align: center
 
    Good and Bad Queue Scenarios
+
+Queues become a problem when they are persistently full. A
+persistently full queue is doing nothing except adding delay to the
+network, and it is also less able to absorb bursts if it never drains
+fully. The combination of large buffers and persistent queues within
+those buffers is a phenomenon that Jim Gettys has named
+*Bufferbloat*. It is clear that persistently full queues are what a
+well-designed AQM mechanism would seek to avoid. Queues that stay full
+for long periods without draining are referred to, unsurprisingly, as
+\"bad queue\", as shown in :numref:`Figure %s <fig-good-bad>` (b).
+
+.. _reading_bloat:
+.. admonition::  Further Reading 
+
+   J. Gettys. `Bufferbloat: Dark Buffers in the Internet 
+   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE 
+   Internet Computing, April 2011.
 
 In a sense, then, the challenge for an AQM algorithm is to distinguish
 between \"good\" and \"bad\" queues, and to trigger packet loss only when
@@ -468,16 +474,7 @@ as \"experimental\" by the IETF in RFC 8289. It is also implemented in
 the Linux kernel, which has aided in its deployment. In particular,
 CoDel provides value in home routers (which are often Linux-based), a
 point along the end-to-end path (see :numref:`Figure %s <fig-codel>`)
-that commonly experiences queuing delays.  Jim Gettys has named this
-phenomenon *bufferbloat*, and home routers are just one example of
-where it has a noticeable impact. We'll see another in Section 7.5.
-
-.. _reading_bloat:
-.. admonition::  Further Reading 
-
-   J. Gettys. `Bufferbloat: Dark Buffers in the Internet 
-   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE 
-   Internet Computing, April 2011. 
+that commonly experiences bufferbloat.
 
 
 6.4 Explicit Congestion Notification
