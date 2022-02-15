@@ -603,21 +603,16 @@ whenever capacity does open up. As noted by Haiqing Jiang and
 colleagues in their 2012 CellNet workshop paper, this large buffer is
 problematic for TCP congestion control because it causes the sender to
 overshoot the actual bandwidth available on the radio link, and in the
-process, introduces significant delay and jitter. Jim Gettys has
-named this phenomenon *bufferbloat*, and mobile basestations are just
-one example of where it has a noticeable impact.
+process, introduces significant delay and jitter. This is another
+example of the bufferbloat problem identified in Section 6.3.
 
-.. _reading_bloat:
-.. admonition::  Further Reading
+.. _reading_basestation:
+.. admonition::  Further Reading 
 
-   H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee.
-   `Understanding Bufferbloat in Cellular Networks
+   H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee. 
+   `Understanding Bufferbloat in Cellular Networks 
    <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__
    ACM SIGCOMM Workshop on Cellular Networks, August 2012. 
-
-   J. Gettys. `Bufferbloat: Dark Buffers in the Internet
-   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE
-   Internet Computing, April 2011.
 
 The Jiang paper suggests possible solutions, and generally observes
 that delay-based approaches like Vegas outperform loss-based

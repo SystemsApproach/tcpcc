@@ -360,6 +360,14 @@ AQM approach that improves upon RED. This work became known as CoDel
 key insights that emerged over decades of experience with TCP and
 AQM.
 
+.. _reading_codel:
+.. admonition:: Further Reading 
+
+      K. Nichols and V. Jacobson.
+      `Controlling Queue Delay
+      <https://queue.acm.org/detail.cfm?id=2209336>`__.
+      ACM Queue, 10(5), May 2012.
+
 First, queues are an important aspect of networking and it is expected
 that queues will build up from time to time. For example, a newly opened
 connection may dump a window's worth of packets into the network, and
@@ -445,20 +453,31 @@ affected TCP connections. Eventually this should lead to enough
 reduction in arriving traffic to allow the queue to drain, bringing
 the sojourn time back below the target.
 
+.. _fig-codel:
+.. figure:: figures/Slide16.png
+   :width: 500px
+   :align: center
+
+   Home routers can suffer from bufferbloat, a situation CeDel is
+   well-suited to address.
+
 There are more details to CoDel presented in the Nichols and Jacobson
-paper, including extensive simulations to indicate its
-effectiveness across a wide range of scenarios. It is
-implemented in the Linux kernel, which has aided in its deployment.
-The algorithm has also been standardized as \"experimental\" by the IETF
-in RFC 8289.
+paper, including extensive simulations to indicate its effectiveness
+across a wide range of scenarios. The algorithm has been standardized
+as \"experimental\" by the IETF in RFC 8289. It is also implemented in
+the Linux kernel, which has aided in its deployment. In particular,
+CoDel provides value in home routers (which are often Linux-based), a
+point along the end-to-end path (see :numref:`Figure %s <fig-codel>`)
+that commonly experiences queuing delays.  Jim Gettys has named this
+phenomenon *bufferbloat*, and home routers are just one example of
+where it has a noticeable impact. We'll see another in Section 7.5.
 
-.. _reading_codel:
-.. admonition:: Further Reading 
+.. _reading_bloat:
+.. admonition::  Further Reading 
 
-      K. Nichols and V. Jacobson.
-      `Controlling Queue Delay
-      <https://queue.acm.org/detail.cfm?id=2209336>`__.
-      ACM Queue, 10(5), May 2012.
+   J. Gettys. `Bufferbloat: Dark Buffers in the Internet 
+   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE 
+   Internet Computing, April 2011. 
 
 
 6.4 Explicit Congestion Notification
@@ -509,7 +528,9 @@ TCP-based algorithms described in earlier chapters). But the line
 isn’t necessarily that crisp. To see this, you just have to think of
 the end-to-end path as having a *ingress queue* at the kernel/device
 interface on the sending host and an *egress queue* at the
-device/kernel interface on the receiving host.\ [#]_
+device/kernel interface on the receiving host.\ [#]_ These edge queues
+are likely to become increasingly important as virtual switches (and
+NIC support for virtualization) become increasingly common.
 
 .. [#]
 	Confusingly, the *ingress queue* from the perspective of the
@@ -522,10 +543,8 @@ device/kernel interface on the receiving host.\ [#]_
 This perspective is illustrated in :numref:`Figure %s
 <fig-ingress_egress>`, where both locations sit below TCP, and provide
 an opportunity to inject a second piece of congestion control logic
-into the end-to-end path. CoDel is an example of this idea: It has
-been implemented at the device queue level of the Linux kernel, but it
-is not otherwise widely deployed in the (non-Linux) queues that
-switches and routers implement in the middle of the network.	
+into the end-to-end path. CoDel and EQN are examples of this idea: They
+have been implemented at the device queue level of the Linux kernel.
 	
 .. _fig-ingress_egress:
 .. figure:: figures/Slide15.png
@@ -535,28 +554,27 @@ switches and routers implement in the middle of the network.
    Ingress and egress queues along the end-to-end path, implemented in
    the sending and receciving hosts, respectively.
 
-Does this work? The primary issue with CoDel as a queueing discipline
-is that packets are dropped at the egress instead of at the ingress
-(as is the case with other Linux-based queuing mechanisms). When
-dropping at the ingress (on the sending host), TCP is notified in the
-return value of the write function, which causes it to "forget" that
-it sent the packet. This means this packet will be sent next, although
-TCP does decrease its congestion window in response to the failed
-write. In contrast, CoDel drops packets at the egress queue (on the
-receiving host), which the TCP sender will not know to retransmit it
-until it detect the loss using one of its standard mechanisms (e.g.,
-three duplicate ACKs, a timeout).
+Does this work? One issue is whether packets are dropped at the ingress
+or the egress.  When dropping at the ingress (on the sending host),
+TCP is notified in the return value of the *Write* function, which
+causes it to "forget" that it sent the packet. This means this packet
+will be sent next, although TCP does decrease its congestion window in
+response to the failed write. In contrast, dropping packets at the
+egress queue (on the receiving host), means the TCP sender will not
+know to retransmit the packet until it detect the loss using one of
+its standard mechanisms (e.g., three duplicate ACKs, a timeout). Of
+course, having the egress implement EQN helps.
 
-Stepping back from this specific example to consider the bigger
-picture, there are two interesting takeaways. One is that Linux
-provides a convenient and safe way to inject new code—including
-congestion control logic, into the kernel—namely, using the *extended
-Berkeley Packet Filter (eBPF)*. The standard kernel API for congestion
-control has been ported to eBPF and most existing congestion control
-algorithms have been ported to this framework. This simplifies the
-task of experimenting with new algorithms or tweaking existing
-algorithms by side-stepping the hurdle of waiting for the relevant
-Linux kernel to be deployed.
+Stepping back from these details to consider the bigger picture, there
+are two interesting takeaways. One is that Linux provides a convenient
+and safe way to inject new code—including congestion control
+logic—into the kernel, namely, using the *extended Berkeley Packet
+Filter (eBPF)*. The standard kernel API for congestion control has
+been ported to eBPF and most existing congestion control algorithms
+have been ported to this framework. This simplifies the task of
+experimenting with new algorithms or tweaking existing algorithms by
+side-stepping the hurdle of waiting for the relevant Linux kernel to
+be deployed.
 
 .. _reading_bpf:
 .. admonition:: Further Reading 
