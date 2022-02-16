@@ -558,15 +558,17 @@ causes it to "forget" that it sent the packet. This means this packet
 will be sent next, although TCP does decrease its congestion window in
 response to the failed write. In contrast, dropping packets at the
 egress queue (on the receiving host), means the TCP sender will not
-know to retransmit the packet until it detect the loss using one of
+know to retransmit the packet until it detects the loss using one of
 its standard mechanisms (e.g., three duplicate ACKs, a timeout). Of
 course, having the egress implement ECN helps.
 
-Stepping back from these details to consider the bigger picture, there
-are two interesting takeaways. One is that Linux provides a convenient
+When we consider this discussion in the context of the bigger
+congestion control picture, we can make
+two interesting observations. One is that Linux provides a convenient
 and safe way to inject new code—including congestion control
 logic—into the kernel, namely, using the *extended Berkeley Packet
-Filter (eBPF)*. The standard kernel API for congestion control has
+Filter (eBPF)*. eBPF is becoming an important technology in many other
+contexts as well. The standard kernel API for congestion control has
 been ported to eBPF and most existing congestion control algorithms
 have been ported to this framework. This simplifies the task of
 experimenting with new algorithms or tweaking existing algorithms by
@@ -580,12 +582,13 @@ be deployed.
       `BPF Documentation
       <https://www.kernel.org/doc/html/latest/bpf/index.html>`__.
 
-A second takeaway is that by explicitly exposing the ingress/egress
-queues to the decision-making process, we open the door to logically
-dividing the congestion control mechanism into its “decide when to
-transmit a packet” component and its “decide to queue-or-drop a
-packet” component.  We’ll see an example of a mechanism that takes
-advantage of this split in Section 7.1 when we describe On-Ramp.
+A second observation is that by explicitly exposing the ingress/egress
+queues to the decision-making process, we open the door to building a
+congestion control mechanism that contains both a “decide when to
+transmit a packet” component and a “decide to queue-or-drop a packet”
+component.  We’ll see an example of a mechanism that takes a coherent
+approach to using these two components in Section 7.1 when we describe
+On-Ramp.
 
 
 
