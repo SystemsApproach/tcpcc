@@ -464,7 +464,7 @@ the sojourn time back below the target.
    :width: 500px
    :align: center
 
-   Home routers can suffer from bufferbloat, a situation CeDel is
+   Home routers can suffer from bufferbloat, a situation CoDel is
    well-suited to address.
 
 There are more details to CoDel presented in the Nichols and Jacobson
@@ -540,7 +540,7 @@ NIC support for virtualization) become increasingly common.
 This perspective is illustrated in :numref:`Figure %s
 <fig-ingress_egress>`, where both locations sit below TCP, and provide
 an opportunity to inject a second piece of congestion control logic
-into the end-to-end path. CoDel and EQN are examples of this idea: They
+into the end-to-end path. CoDel and ECN are examples of this idea: They
 have been implemented at the device queue level of the Linux kernel.
 	
 .. _fig-ingress_egress:
@@ -549,7 +549,7 @@ have been implemented at the device queue level of the Linux kernel.
    :align: center
 
    Ingress and egress queues along the end-to-end path, implemented in
-   the sending and receciving hosts, respectively.
+   the sending and receiving hosts, respectively.
 
 Does this work? One issue is whether packets are dropped at the ingress
 or the egress.  When dropping at the ingress (on the sending host),
@@ -560,7 +560,7 @@ response to the failed write. In contrast, dropping packets at the
 egress queue (on the receiving host), means the TCP sender will not
 know to retransmit the packet until it detect the loss using one of
 its standard mechanisms (e.g., three duplicate ACKs, a timeout). Of
-course, having the egress implement EQN helps.
+course, having the egress implement ECN helps.
 
 Stepping back from these details to consider the bigger picture, there
 are two interesting takeaways. One is that Linux provides a convenient
