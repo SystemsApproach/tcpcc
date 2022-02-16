@@ -527,7 +527,7 @@ the end-to-end path as having a *ingress queue* at the kernel/device
 interface on the sending host and an *egress queue* at the
 device/kernel interface on the receiving host.\ [#]_ These edge queues
 are likely to become increasingly important as virtual switches (and
-NIC support for virtualization) become increasingly common.
+NIC support for virtualization) become more and more common.
 
 .. [#]
 	Confusingly, the *ingress queue* from the perspective of the
@@ -586,7 +586,7 @@ A second observation is that by explicitly exposing the ingress/egress
 queues to the decision-making process, we open the door to building a
 congestion control mechanism that contains both a “decide when to
 transmit a packet” component and a “decide to queue-or-drop a packet”
-component.  We’ll see an example of a mechanism that takes a coherent
+component.  We’ll see an example of a mechanism that takes an innovative
 approach to using these two components in Section 7.1 when we describe
 On-Ramp.
 
