@@ -603,12 +603,12 @@ that throttles outgoing link bandwidth using ``tbf qdisc``.
 With respect to traffic workload, we evaluate the dynamics and
 fairness of algorithms with the following tests:
 
-* 2-flow Test: The 1st flow lasts 60 seconds, and the 2nd flow lasts
-  20 seconds and starts 22 seconds after the 1st one.
+* 2-flow Test: The first flow lasts 60 seconds, and the second flow lasts
+  20 seconds and starts 22 seconds after the first one.
   
-* 3-flow Test: The 1st flow lasts 60 seconds, the 2nd flow lasts 40
-  seconds and starts 12 seconds after the 1st one, the 3rd flow lasts
-  20 seconds and starts 26 seconds after the 1st one.
+* 3-flow Test: The first flow lasts 60 seconds, the second flow lasts 40
+  seconds and starts 12 seconds after the first one, the third flow lasts
+  20 seconds and starts 26 seconds after the first one.
 
 These tests make it possible to:
 
