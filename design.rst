@@ -520,9 +520,11 @@ new algorithm.
 --------------------------------
 
 Our approach to evaluating congestion-control mechanisms is to measure
-their performance on real systems. We now describe one specific way to
-do that, illustrating one methodology that is widely practiced
-today. Our approach uses *Netesto (Network Test Toolkit)*, a
+their performance on real systems, and as we pointed out in Chapter 1,
+the *de facto* specification of the respective mechanisms is the version
+implemented in Linux. We now describe one specific way to perform
+those measurements, illustrating one methodology that is widely
+practiced today. Our approach uses *Netesto (Network Test Toolkit)*, a
 collection of software tools available on GitHub. The alternative is
 simulation-based, with NS-3 being the most popular open source tool.
 
@@ -542,14 +544,12 @@ mechanisms.
 3.4.1 Experimental Setup
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Our approach runs real TCP sending/receiving hosts, where the
-implementation of the various congestion-control mechanisms are those
-found in the Linux kernel. A range of behaviors are studied using a
-combination of kernel packages like ``netem`` and ``tbf qdisc``,
-with performance data collected using ``tcpdump``. The network
-connecting the end-hosts is constructed from a combination of real
-switches and emulated elements, supporting for example, wide-area
-delays and low-bandwidth links.
+Our approach uses real TCP senders/receivers running on Linux hosts,
+with a range of behaviors studied using a combination of kernel
+packages like ``netem`` and ``tbf qdisc``. Performance data is then
+collected using ``tcpdump``. The network connecting the end-hosts is
+constructed from a combination of real switches and emulated elements,
+supporting for example, wide-area delays and low-bandwidth links.
 
 The experiments can be characterized along two orthogonal
 dimensions. One is the topology of the network. This includes link
