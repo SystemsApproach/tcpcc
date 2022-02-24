@@ -197,7 +197,7 @@ hardware, making On-Ramp easy to deploy.
    Usenix NSDI '21. April 2021.
 
    Y. Geng, *et al*. `Exploiting a Natural Network Effect for Scalable,
-   Finegrained Clock Synchronization
+   Fine-grained Clock Synchronization
    <https://www.usenix.org/system/files/conference/nsdi18/nsdi18-geng.pdf>`__. 
    Usenix NSDI '18, April 2018.
 
@@ -592,7 +592,7 @@ interference.
    :align: center
 
    End-to-end path that includes a last-hop wireless link, where the
-   basestation buffers packets awaiting transmission over the Radio
+   base station buffers packets awaiting transmission over the Radio
    Access Network (RAN).
 
 Although the internals of the RAN are largely closed and proprietary,
@@ -623,7 +623,7 @@ companion 5G and SDN books for more details), it might soon be
 possible to take a cross-layer approach, whereby the RAN provides an
 interface that give higher layers of the protocol stack (e.g., the AQM
 mechanisms described in Chapter 6) visibility into what goes on inside
-the basestation. Recent research by Xie, Yi, and Jamieson suggests
+the base station. Recent research by Xie, Yi, and Jamieson suggests
 such an approach might prove effective, although their implementation
 uses end-device feedback instead of getting the RAN directly involved.
 How ever it's implemented, the idea is to have the receiver explicitly
@@ -678,7 +678,7 @@ a mechanism that isolates different classes of traffic. This means
 each slice has its own queue that can be sized and scheduled in a
 traffic-specific way. Second, the proliferation of *small cells* will
 likely reduce the number of flows competing for bandwidth at a given
-basestation. How this impacts the scheduler's approach to maximizing
+base station. How this impacts the scheduler's approach to maximizing
 spectrum utilization is yet to be seen. Third, it will become
 increasingly common for 5G-connected devices to be served from a
 nearby edge cloud rather than from the other side of the Internet.

@@ -129,7 +129,7 @@ only carry so many bits per second, and the queue can only hold so
 many packets (or bytes) before it has to start discarding
 packets. Managing the access to these shared resources, and trying to
 do so in a way that prevents congestion collapse, is the essence
-of congestion control. A switch that occasional puts packets in a
+of congestion control. A switch that occasionally puts packets in a
 queue is operating normally. A switch that has large numbers of
 packets in its queues all or most
 of the time is congested. We'll get to the definition of congestion

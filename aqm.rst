@@ -526,8 +526,8 @@ isn’t necessarily that crisp. To see this, you just have to think of
 the end-to-end path as having a *ingress queue* at the kernel/device
 interface on the sending host and an *egress queue* at the
 device/kernel interface on the receiving host.\ [#]_ These edge queues
-are likely to become increasingly important as virtual switches (and
-NIC support for virtualization) become more and more common.
+are likely to become increasingly important as virtual switches and
+NIC support for virtualization become more and more common.
 
 .. [#]
 	Confusingly, the *ingress queue* from the perspective of the
