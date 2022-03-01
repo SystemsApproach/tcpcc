@@ -506,7 +506,7 @@ advocates for a threshold based on *harm*, as measured by a reduction
 in throughput or an increase in latency or jitter. Intuitively, if the amount of
 harm caused by flows using a new mechanism B on flows using existing
 mechanism A is within a bound derived from how much harm A-managed
-flows cause other A-managed flows, we can consider B deployable
+flows cause to other A-managed flows, we can consider B deployable
 alongside A without harm. Ware goes on to propose concrete measures of
 acceptable harm, which turns out to be more complicated than it
 might first appear. Even with a single congestion control algorithm,
@@ -564,7 +564,7 @@ specific configurations:
 * LAN with :math:`20\mu\rm{s}` RTT and 10-Gbps link bandwidth. This scenario
   represents servers in the same datacenter rack.
 
-* WAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
+* LAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
   on the receiver by configuring a 20,000 packet send queue. The
   bottleneck is a real switch with shallow buffers (1-2 MB). This is a
   good scenario to visualize the algorithm’s dynamics when looking at
