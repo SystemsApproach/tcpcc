@@ -626,7 +626,7 @@ mechanisms described in Chapter 6) visibility into what goes on inside
 the base station. Recent research by Xie, Yi, and Jamieson suggests
 such an approach might prove effective, although their implementation
 uses end-device feedback instead of getting the RAN directly involved.
-How ever it's implemented, the idea is to have the receiver explicitly
+However it's implemented, the idea is to have the receiver explicitly
 tell the sender how much bandwidth is available on the last hop, with
 the sender then having to judge whether the last-hop or some other
 point along the Internet segment is the actual bottleneck.
