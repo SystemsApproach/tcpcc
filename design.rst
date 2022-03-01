@@ -564,7 +564,7 @@ specific configurations:
 * LAN with :math:`20\mu\rm{s}` RTT and 10-Gbps link bandwidth. This scenario
   represents servers in the same datacenter rack.
 
-* WAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
+* LAN with 10ms RTT and 10-Gbps link bandwidth, with delay introduced
   on the receiver by configuring a 20,000 packet send queue. The
   bottleneck is a real switch with shallow buffers (1-2 MB). This is a
   good scenario to visualize the algorithm’s dynamics when looking at
