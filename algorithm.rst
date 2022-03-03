@@ -224,8 +224,8 @@ not need synchronized clocks, since the timestamp is written and read at
 the same end of the connection. This improves the measurement of RTT
 and hence reduces the risk of incorrect timeouts due to poor RTT estimates.
 
-This timestamp extensions serves a second purpose, in that it also
-provides a means to define a 64-bit sequence number field, addressing
+This timestamp extension serves a second purpose, in that it also
+provides a mean to define a 64-bit sequence number field, addressing
 the shortcomings of TCP's 32-bit timestamp outlined in Section 2.2.
 Specifically, TCP decides whether to accept or reject a segment based
 on a logical 64-bit identifier that has the ``SequenceNum`` field in
