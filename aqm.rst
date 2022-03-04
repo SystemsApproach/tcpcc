@@ -488,7 +488,15 @@ notice (e.g., due to the arrival of a duplicate ACK), any AQM
 algorithm can potentially do a better job if it instead *marks* the
 packet and continues to send it along its way to the destination. This
 idea was codified in changes to the IP and TCP headers known as
-*Explicit Congestion Notification* (ECN).
+*Explicit Congestion Notification* (ECN), as specified in RFC 3168.
+
+.. _reading_ecn:
+.. admonition::  Further Reading
+
+   K. Ramakrishnan, S. Floyd, and D. Black.
+   `The Addition of Explicit Congestion Notification (ECN) to IP
+   <https://datatracker.ietf.org/doc/html/rfc3168>`__.
+   RFC 3168, September 2001.
 
 Specifically, this feedback is implemented by treating two bits in the
 IP ``TOS`` field as ECN bits. One bit is set by the source to indicate

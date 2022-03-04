@@ -758,8 +758,8 @@ which packets to retransmit under certain packet loss conditions.
 
    Janey Hoe. `Improving the start-up behavior of a congestion control
    scheme for TCP
-   <https://dl.acm.org/doi/abs/10.1145/248157.248188>`__.
-   SIGCOMM CCR. August 1996.
+   <https://dl.acm.org/doi/10.1145/248156.248180>`__.
+   SIGCOMM '96. August 1996.
 
 The key insight behind NewReno is that even without SACK, duplicate
 ACKs can convey information to the sender about how many packets have
