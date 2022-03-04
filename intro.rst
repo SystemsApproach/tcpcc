@@ -329,7 +329,7 @@ ease, at which point it would seem reasonable to start sending more
 traffic again, leading back to more congestion. You can imagine that
 this sort of oscillation between congested and uncongested states
 could go on forever, and would be quite detrimental if the network is
-swinging from underutilized to collapsing.  We really want it to fine
+swinging from underutilized to collapsing.  We really want it to find
 an equilibrium where the network is busy but not so much so that
 congestion collapse occurs. Finding these stable control loops has
 been one of the key challenges for congestion control system designers
