@@ -753,6 +753,14 @@ the mid-1990s, the enhancement known as NewReno incrementally improves
 the performance of TCP by making more intelligent decisions about
 which packets to retransmit under certain packet loss conditions.
 
+.. _reading_newreno:
+.. admonition::  Further Reading
+
+   Janey Hoe. `Improving the start-up behavior of a congestion control
+   scheme for TCP
+   <https://dl.acm.org/doi/abs/10.1145/248157.248188>`__.
+   SIGCOMM CCR. August 1996.
+
 The key insight behind NewReno is that even without SACK, duplicate
 ACKs can convey information to the sender about how many packets have
 been dropped and which ones they were, so that the sender can make

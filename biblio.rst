@@ -103,6 +103,11 @@ General-Purpose Algorithms
   <https://dl.acm.org/doi/10.1145/52324.52356>`__.  ACM SIGCOMM '88
   Symposium, August 1988.
 
+* Janey Hoe. `Improving the start-up behavior of a congestion control
+  scheme for TCP
+  <https://dl.acm.org/doi/abs/10.1145/248157.248188>`__.  SIGCOMM
+  CCR. August 1996.
+
 * L. Brakmo, S. O'Malley and L. Peterson
   `TCP Vegas: New Technique for Congestion Detection and Avoidance
   <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
