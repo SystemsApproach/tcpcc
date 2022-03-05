@@ -103,6 +103,11 @@ General-Purpose Algorithms
   <https://dl.acm.org/doi/10.1145/52324.52356>`__.  ACM SIGCOMM '88
   Symposium, August 1988.
 
+* Janey Hoe. `Improving the start-up behavior of a congestion control
+  scheme for TCP
+  <https://dl.acm.org/doi/10.1145/248156.248180>`__.  SIGCOMM '96.
+  August 1996.
+
 * L. Brakmo, S. O'Malley and L. Peterson
   `TCP Vegas: New Technique for Congestion Detection and Avoidance
   <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
@@ -134,9 +139,14 @@ Active Queue Management
   Congestion Avoidance in the Internet
   <https://tools.ietf.org/html/rfc2309>`__. RFC 2309, April 1998.
 
-* K. Nichols and V. Jacobson. `Controlling Queue Delay
-  <https://queue.acm.org/detail.cfm?id=2209336>`__.
-  ACM Queue, 10(5), May 2012.
+* K. Ramakrishnan, S. Floyd, and D. Black.  `The Addition of Explicit
+  Congestion Notification (ECN) to IP
+  <https://datatracker.ietf.org/doc/html/rfc3168>`__.  RFC 3168,
+  September 2001.
+
+* K. Nichols and V. Jacobson. `Controlling Queue Delay 
+  <https://queue.acm.org/detail.cfm?id=2209336>`__. 
+  ACM Queue, 10(5), May 2012. 
 
 Domain-Specific Algorithms
 -------------------------------

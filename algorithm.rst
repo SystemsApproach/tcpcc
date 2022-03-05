@@ -224,8 +224,8 @@ not need synchronized clocks, since the timestamp is written and read at
 the same end of the connection. This improves the measurement of RTT
 and hence reduces the risk of incorrect timeouts due to poor RTT estimates.
 
-This timestamp extensions serves a second purpose, in that it also
-provides a means to define a 64-bit sequence number field, addressing
+This timestamp extension serves a second purpose, in that it also
+provides a way to create a 64-bit sequence number field, addressing
 the shortcomings of TCP's 32-bit timestamp outlined in Section 2.2.
 Specifically, TCP decides whether to accept or reject a segment based
 on a logical 64-bit identifier that has the ``SequenceNum`` field in
@@ -752,6 +752,14 @@ Starting with some research by Janey Hoe at MIT in
 the mid-1990s, the enhancement known as NewReno incrementally improves
 the performance of TCP by making more intelligent decisions about
 which packets to retransmit under certain packet loss conditions.
+
+.. _reading_newreno:
+.. admonition::  Further Reading
+
+   Janey Hoe. `Improving the start-up behavior of a congestion control
+   scheme for TCP
+   <https://dl.acm.org/doi/10.1145/248156.248180>`__.
+   SIGCOMM '96. August 1996.
 
 The key insight behind NewReno is that even without SACK, duplicate
 ACKs can convey information to the sender about how many packets have
