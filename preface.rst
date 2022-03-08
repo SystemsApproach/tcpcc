@@ -29,10 +29,10 @@ This is an evolving manuscript. There are a number of significant
 efforts in congestion control that are not currently covered in the
 book as our goal is to help readers understand the problem space and
 the intuition behind various solutions, without being overwhelmed by
-hundreds of details. That said, we have probably missed some important
-themes. And the approaches that we have covered, particularly in later
-chapters, are in many cases still evolving. We will update the book as
-needed.
+the implementation details. That said, we have probably missed some
+important themes. And the approaches that we have covered,
+particularly in later chapters, are in many cases still evolving. We
+will update the book as needed.
 
 Please send
 us your comments and feedback using the `Issues Link
@@ -41,5 +41,5 @@ us your comments and feedback using the `Issues Link
 list.
 
 | Larry Peterson, Lawrence Brakmo, and Bruce Davie
-| February 2022
+| March 2022
 
