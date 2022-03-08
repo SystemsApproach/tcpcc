@@ -550,7 +550,7 @@ bandwidth product of networks increases. For example, a delay ×
 bandwidth product of 1.8 MB means that each connection has the
 potential to lose up to 1.8 MB of data at the beginning of each
 connection. Of course, this assumes that both the source and the
-destination implements the "big windows” extension.
+destination implement the "big windows” extension.
 
 Alternatives to slow start, whereby the source tries to estimate the
 available bandwidth by more sophisticated means, have also been
@@ -581,7 +581,7 @@ controlled network environments (e.g., research networks).
 -------------------------------------
 
 The mechanisms described so far were part of the original proposal to
-add congestion control to TCP, and they have collectively become know
+add congestion control to TCP, and they have collectively become known
 as *TCP Tahoe* because they were included in the *Tahoe* release of
 4.3 BSD Unix in 1988. Once widely deployed, experience revealed some
 problems in Tahoe that were subsequently addressed by *TCP Reno* (part
