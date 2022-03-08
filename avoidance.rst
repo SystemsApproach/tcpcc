@@ -290,7 +290,7 @@ is that as long as the network is not congested, doubling the amount
 of data we send per RTT should double the rate.
 
 New measurements of ``Rate`` and ``CongestionWindow`` can either fall close to the
-boundary line (blue diamond in the figure) or below (red diamond in the
+boundary line (black diamond in the figure) or below (blue diamond in the
 figure).  A measurement above the line causes NV to automatically
 update the line by increasing its slope so the measurement will fall
 on the new line. If the new measurement is close to the line, then NV
