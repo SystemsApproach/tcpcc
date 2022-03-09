@@ -211,6 +211,20 @@ Realtime
   <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.
   ACM SIGCOMM, September 1998.
 
+Multipath
+~~~~~~~~~
+
+* D. Wischik, C. Raiciu, A. Greenhalgh and M. Handley.
+  `Design, Implementation and Evaluation of Congestion Control for Multipath TCP
+  <https://www.usenix.org/conference/nsdi11/design-implementation-and-evaluation-congestion-control-multipath-tcp>`__.
+  NSDI, April 2011.
+
+* C. Raiciu, M. Handley, and D. Wischik.
+  `Coupled Congestion Control for Multipath Transport Protocols
+  <https://www.rfc-editor.org/info/rfc6356>`__.  
+  RFC 6356, October 2011.
+
+
 Implementations and Tools
 --------------------------------
 

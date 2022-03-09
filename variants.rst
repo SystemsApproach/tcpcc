@@ -1,6 +1,8 @@
 Chapter 7:  Beyond TCP
 ======================
 
+.. include:: <isogrk3.txt>
+
 As exploration of the design space for congestion control has
 continued, a number of new algorithms and protocols have emerged.
 These differ from what we've seen in earlier chapters mostly in that
@@ -15,8 +17,9 @@ use cases. These include tuning TCP performance for datacenters;
 sending background traffic over an extended period of time using only
 excess capacity; optimizing HTTP-based web traffic without being
 backward-compatible with TCP; supporting real-time streaming in a way
-that is TCP-friendly; and accommodating mobile cellular networks with
-unique radio-induced behavior.
+that is TCP-friendly; supporting multipath transport protocols; and
+accommodating mobile cellular networks with unique radio-induced
+behavior.
 
 7.1 Datacenters (DCTCP, On-Ramp)
 ---------------------------------
@@ -561,7 +564,86 @@ protocol.
    ACM SIGCOMM, September 1998.
 
    
-7.5 Mobile Cellular Networks
+7.5 Multipath Transport
+----------------------------
+
+While the early hosts connected to the Internet had only a single
+network interface, it is common these days to have interfaces to at
+least two different networks on a device. The most common example is a
+mobile phone with both cellular and WiFi interfaces. Data centers
+often allocate multiple network interfaces to servers to improve fault
+tolerance. Many applications use only one of the available networks
+at a time, but the potential exists to improve performance by using
+multiple interfaces simultaneously. This idea of multipath
+communication has been around for decades and led to a body of work at
+the IETF to standardize extensions to TCP to support end-to-end
+connections that leverage multiple paths between pairs of hosts. When
+a pair of hosts send traffic over two or more paths simultaneously,
+this has implications for congestion control. For example, if both
+paths share a common bottleneck link, then a naive implementation of
+one TCP connection per path would acquire twice as much share of the
+bottleneck bandwidth as a standard TCP connection. The designers of
+MPTCP set out to address this potential unfairness while also
+realizing the benefits of multipath connections.
+
+The high level goals of the congestion control approach for multipath
+transport are as follows:
+
+1. Perform at least as well as a single path flow on its best available
+   path.
+2. Do not take more resources from any path than a single path flow
+   would take.
+3. Move us much traffic as possible off the most congested path(s),
+   consistent with the two preceding goals.
+
+While the details are somewhat complex, the overall approach taken is
+straightforward. The congestion control algorithm roughly mimics that
+of TCP on a per-subflow basis, while trying to ensure that the three
+goals above are met. The core of the algorithm uses the following formula to
+increase the congestion window size of each individual subflow as ACKs
+are received on the subflow.
+
+.. math::
+
+      \min (\frac{\alpha \times \mathsf{BytesAcked} \times \mathsf{MSS_{i}}}{\mathsf{CongestionWindowTotal}}, \frac{\mathsf{BytesAcked} \times \mathsf{MSS_{i}}}{\mathsf{CongestionWindow_{i}}} )
+
+
+The second argument to min is mimicking the increase that standard TCP
+would obtain, thus ensuring that the subflow is no more aggressive
+than TCP (goal 2). The first argument uses the variable |alpha| to
+ensure that, in aggregate, the multipath flow obtains the same
+throughput as it would have done using its best available path (goal
+1). The calculation of |alpha| is described in detail in the RFC
+listed below. Note that uncongested paths will be able to grow their
+individual congestion windows more than congested paths as they do not
+suffer losses, and hence over time more traffic moves onto the
+uncongested paths (goal 3).
+
+While this seems simple enough, there is a lot of interesting detail
+that went into figuring out the right approach, as described in the
+NSDI paper below.
+
+   
+.. _reading_multipath:
+.. admonition::  Further Reading
+
+   D. Wischik, C. Raiciu, A. Greenhalgh and M. Handley.
+   `Design, Implementation and Evaluation of Congestion Control for Multipath TCP
+   <https://www.usenix.org/conference/nsdi11/design-implementation-and-evaluation-congestion-control-multipath-tcp>`__.
+   NSDI, April 2011.
+
+.. _reading_multipathrfc:
+.. admonition::  Further Reading
+
+   C. Raiciu, M. Handley and D. Wischik.
+   `Coupled Congestion Control for Multipath Transport Protocols
+   <https://datatracker.ietf.org/doc/html/rfc6356>`__.
+   RFC 6356, October 2011.
+
+      
+
+
+7.6 Mobile Cellular Networks
 ----------------------------
 
 We conclude with a use case that continues to attract attention from
