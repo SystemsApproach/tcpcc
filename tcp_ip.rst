@@ -45,7 +45,7 @@ articulated by Saltzer, Reed, and Clark.
 
 One consequence of this design is that a given source may have ample
 capacity to send traffic into the network at some rate, but somewhere
-in the middle of the network, its packets encounter a bottleneck link
+in the middle of the network its packets encounter a bottleneck link
 that is being used by many different traffic sources. :numref:`Figure
 %s <fig-congestion>` illustrates an acute example of this
 situation—two high-speed links are leading into a router which then
@@ -648,7 +648,7 @@ writes one byte at a time will send data at a rate of one segment per
 RTT. Some segments will contain a single byte, while others will
 contain as many bytes as the user was able to type in one round-trip
 time.  Because some applications cannot afford such a delay for each
-write they do to a TCP connection, the socket interface allows an
+write it does to a TCP connection, the socket interface allows the
 application to set the ``TCP_NODELAY`` option, meaning that data is
 transmitted as soon as possible.
 
