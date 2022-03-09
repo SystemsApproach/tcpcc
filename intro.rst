@@ -523,7 +523,7 @@ best-practice is to run a collection of "representative flows" over
 isolated but "representative network topologies." There is no
 established gold standard for either the set of flows or the set of
 network topologies, so experimental results are never definitive.  But
-the body of evidence collected using this methodology as proven
+the body of evidence collected using this methodology has proven
 sufficient to advance the state-of-the-art over the years.
 
 For the purposes of this book, we use the experimental methodology

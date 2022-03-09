@@ -45,7 +45,7 @@ articulated by Saltzer, Reed, and Clark.
 
 One consequence of this design is that a given source may have ample
 capacity to send traffic into the network at some rate, but somewhere
-in the middle of a network its packets encounter a bottleneck link
+in the middle of the network its packets encounter a bottleneck link
 that is being used by many different traffic sources. :numref:`Figure
 %s <fig-congestion>` illustrates an acute example of this
 situation—two high-speed links are leading into a router which then
@@ -598,7 +598,7 @@ of a segment:
   ``MSS`` bytes from the sending process.
 
 * The sending process explicitly asks TCP to send a segment by
-  invoking a *push* operation. This causes TCP flush the buffer of
+  invoking a *push* operation. This causes TCP to flush the buffer of
   unsent bytes.
 
 * A timer fires, resulting in a segment that contains as many bytes as
