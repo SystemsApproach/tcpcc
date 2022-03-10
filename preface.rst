@@ -34,6 +34,13 @@ important themes. And the approaches that we have covered,
 particularly in later chapters, are in many cases still evolving. We
 will update the book as needed.
 
+We extend our thanks to those who have contributed to the open source
+effort to improve this book, including the following:
+
+- Bill Fisher
+- Giulio Micheloni
+- J vanBemmel
+
 Please send
 us your comments and feedback using the `Issues Link
 <https://github.com/SystemsApproach/tcpcc/issues>`__. See the `Wiki
