@@ -699,7 +699,7 @@ original specification, it's only possible to tell the sender where
 the first hole starts, even if several packets have 
 been lost. Intuitively, this lack of detail could limit the sender's
 ability to respond effectively to packet loss. The approach taken to
-address this is called selective acknowledgments or SACK.
+address this is called *selective acknowledgments* or *SACK*.
 SACK is another optional extension to TCP that was first proposed soon
 after the early work of Jacobson and Karels but took some years to
 gain acceptance, as it was hard to prove that it would be beneficial.
