@@ -41,7 +41,7 @@ evaluated and compared.
 
 We start by introducing four implementation choices that a congestion
 control mechanism faces, and the design rationale behind the decisions
-that were made for TCP/IP. Some of the decision were "obvious" given
+that were made for TCP/IP. Some of the decisions were "obvious" given
 the circumstances under which they were made, but for completeness—and
 because the Internet's continual evolution means circumstances
 change—it is prudent to consider them all.
@@ -187,7 +187,7 @@ centered around an algorithm for computing a *congestion window*,
 where the sender is throttled by whichever is lesser: the advertised
 flow-control window or the computed congestion-control window.
 
-But is also possible to compute the rate at which the network is able
+But it is also possible to compute the rate at which the network is able
 to deliver packets, and to pace transmissions accordingly. The
 observed rate is just the number of bytes delivered over some time
 period, such as the measured RTT.  We point out this duality between
@@ -449,10 +449,10 @@ The inevitable second step is to compare two or more mechanisms. This
 is because, given the decentralized nature of the Internet, there is
 no way to ensure uniform adoption of just one mechanism.
 Comparing quantitative metrics like throughput is easy. The problem is
-how to evaluate multiple mechanism that might coexist, competing with
+how to evaluate multiple mechanisms that might coexist, competing with
 each other for network resources.
 
-The question not whether a given mechanism treats all of its flows
+The question is not whether a given mechanism treats all of its flows
 fairly, but whether mechanism A is fair to flows managed by
 mechanism B. If mechanism A is able to measure improved throughput
 over B, but it does so by being more aggressive, and hence, stealing
@@ -495,7 +495,7 @@ colleagues:
 * **Assumption of Balance:** Inter-mechanism interactions often have
   some bias, but a fairness metric cannot tell whether the outcome
   is biased for or against the status quo. It makes a difference in
-  terms a deployability whether a new mechanism B takes a larger
+  terms of deployability whether a new mechanism B takes a larger
   share of bandwidth than legacy mechanism A or leaves a larger
   share for A to consume: the former might elicit complaints from
   legacy users of A, where the latter would not. Jain’s Fairness
@@ -723,7 +723,7 @@ algorithms (represented by different colors), across test runs with 1,
 
 The 1-MB results are unsurprising, with no significant outliers across
 the five algorithms, and the average goodput decreasing as the RPCs
-compete with more and more streams. Although not shown :numref:`Figure
+compete with more and more streams. Although not shown in :numref:`Figure
 %s <fig-graph_8b>`, the fourth algorithm (green), which performs best
 when all flows are stream-based, suffers a significant number of
 retransmissions when sharing the available bandwidth RPC calls.
