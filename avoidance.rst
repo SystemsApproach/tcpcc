@@ -196,7 +196,7 @@ in Chapter 7.
 ~~~~~~~~~~~~~~
 
 The first Vegas-inspired mechanism was FAST TCP, which modified Vegas
-to be more efficient on high-speed networks with large delay-bandwidth
+to be more efficient on high-speed networks with large bandwidth-delay
 products. The idea was to increase the congestion window more
 aggressively during the phase when the algorithm is trying to find the
 available "in transit" bandwidth (before packets are buffered in the
@@ -204,7 +204,7 @@ network), and then more conservatively as the algorithm starts to
 compete with other flows for buffers at the bottleneck router. FAST
 also recommended adjusting the value of |alpha| to roughly 30 packets.
 
-Beyond managing congestion in networks with large delay-bandwidth
+Beyond managing congestion in networks with large bandwidth-delay
 products, where keeping the pipe full is a substantial challenge,
 there are two other items of note about FAST. First, whereas both TCP
 Reno and TCP Vegas were the result of a little intuition and a lot of

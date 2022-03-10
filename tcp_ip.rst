@@ -702,17 +702,17 @@ bandwidths.
    +--------------------------+-----------------------+
    | Bandwidth                | Time until Wraparound |
    +==========================+=======================+
-   | T1 (1.5 Mbps)            | 6.4 hours             |
+   | T1 (1.5 Mbps)            | 6.2 hours             |
    +--------------------------+-----------------------+
-   | T3 (45 Mbps)             | 13 minutes            |
+   | T3 (44.7 Mbps)           | 12.8 minutes          |
    +--------------------------+-----------------------+
-   | OC-3 (155 Mbps)          | 4 minutes             |
+   | OC-3 (148.6 Mbps)        | 3.9 minutes           |
    +--------------------------+-----------------------+
-   | OC-48 (2.5 Gbps)         | 14 seconds            |
+   | OC-48 (2.4 Gbps)         | 14.3 seconds          |
    +--------------------------+-----------------------+
-   | OC-192 (10 Gbps)         | 3 seconds             |
+   | OC-192 (9.5 Gbps)        | 3.6 seconds           |
    +--------------------------+-----------------------+
-   | 10GigE (10 Gbps)         | 3 seconds             |
+   | 10GigE (10 Gbps)         | 3.4 seconds           |
    +--------------------------+-----------------------+
 
 The 32-bit sequence number space is adequate at modest bandwidths, but
@@ -734,13 +734,15 @@ receiver is free to not open the window as large as the
 which the receiver has enough buffer space to handle as much data as the
 largest possible ``AdvertisedWindow`` allows.
 
-In this case, it is not just the network bandwidth but the delay x
-bandwidth product that dictates how big the ``AdvertisedWindow`` field
+In this case, it is not just the network bandwidth but the 
+bandwidth-delay product that dictates how big the ``AdvertisedWindow`` field
 needs to be—the window needs to be opened far enough to allow a full
-delay × bandwidth product’s worth of data to be transmitted. Assuming an
+bandwidth-delay product’s worth of data to be transmitted. Assuming an
 RTT of 100 ms (a typical number for a cross-country connection in the
-United States), :numref:`Table %s <tab-adv-win>` gives the delay × bandwidth
-product for several network technologies.
+United States), :numref:`Table %s <tab-adv-win>` gives the bandwidth-delay
+product for several network technologies. Note that for the OC-n links
+we've used the available link bandwidth after removing SONET
+overhead. 
 
 .. _tab-adv-win:
 .. table::  Required Window Size for 100-ms RTT
@@ -748,19 +750,19 @@ product for several network technologies.
    :widths: auto   
 
    +--------------------------+---------------------------+
-   | Bandwidth                | Delay × Bandwidth Product |
+   | Bandwidth                | Bandwidth × Delay Product |
    +==========================+===========================+
-   | T1 (1.5 Mbps)            | 18 KB                     |
+   | T1 (1.5 Mbps)            | 18.8 KB                   |
    +--------------------------+---------------------------+
-   | T3 (45 Mbps)             | 549 KB                    |
+   | T3 (44.7 Mbps)           | 546.1 KB                  |
    +--------------------------+---------------------------+
-   | OC-3 (155 Mbps)          | 1.8 MB                    |
+   | OC-3 (148.6 Mbps)        | 1.8 MB                    |
    +--------------------------+---------------------------+
-   | OC-48 (2.5 Gbps)         | 29.6 MB                   |
+   | OC-48 (2.4 Gbps)         | 28.7 MB                   |
    +--------------------------+---------------------------+
-   | OC-192 (10 Gbps)         | 118.4 MB                  |
+   | OC-192 (9.5 Gbps)        | 113.4 MB                  |
    +--------------------------+---------------------------+
-   | 10GigE (10 Gbps)         | 118.4 MB                  |
+   | 10GigE (10 Gbps)         | 119.2 MB                  |
    +--------------------------+---------------------------+
 
 In other words, TCP’s ``AdvertisedWindow`` field is in even worse
@@ -769,15 +771,15 @@ even a T3 connection across the continental United States, since a
 16-bit field allows us to advertise a window of only 64 KB.
 
 The fix is an extension to TCP that allows the receiver to advertise a
-larger window, thereby allowing the sender to fill larger delay ×
-bandwidth pipes that are made possible by high-speed networks. This
-extension involves an option that defines a *scaling factor* for the
-advertised window. That is, rather than interpreting the number that
-appears in the ``AdvertisedWindow`` field as indicating how many bytes
-the sender is allowed to have unacknowledged, this option allows the
-two sides of TCP to agree that the ``AdvertisedWindow`` field counts
-larger chunks (e.g., how many 16-byte units of data the sender can
-have unacknowledged). In other words, the window scaling option
-specifies how many bits each side should left-shift the
-``AdvertisedWindow`` field before using its contents to compute an
-effective window.
+larger window, thereby allowing the sender to fill larger
+bandwidth-delay product pipes that are made possible by high-speed
+networks. This extension involves an option that defines a *scaling
+factor* for the advertised window. That is, rather than interpreting
+the number that appears in the ``AdvertisedWindow`` field as
+indicating how many bytes the sender is allowed to have
+unacknowledged, this option allows the two sides of TCP to agree that
+the ``AdvertisedWindow`` field counts larger chunks (e.g., how many
+16-byte units of data the sender can have unacknowledged). In other
+words, the window scaling option specifies how many bits each side
+should left-shift the ``AdvertisedWindow`` field before using its
+contents to compute an effective window.

@@ -545,9 +545,9 @@ enough capacity to support 16 packets from this source. The likely
 result is that 16 of the 32 packets sent under the new congestion
 window will be dropped by the network; actually, this is the
 worst-case outcome, since some of the packets will be buffered in some
-router. This problem will become increasingly severe as the delay ×
-bandwidth product of networks increases. For example, a delay ×
-bandwidth product of 1.8 MB means that each connection has the
+router. This problem will become increasingly severe as the 
+bandwidth-delay product of networks increases. For example, a 
+bandwidth-delay product of 1.8 MB means that each connection has the
 potential to lose up to 1.8 MB of data at the beginning of each
 connection. Of course, this assumes that both the source and the
 destination implement the "big windows” extension.
@@ -740,7 +740,7 @@ SACK was shown to improve the performance of TCP Reno particularly in
 the case where multiple packets were dropped in a single RTT, as would
 be expected (since cumulative ACK and SACK are the same thing when only
 one packet is dropped). This scenario became more likely over time as
-bandwidth x delay products increased, leaving more packets in the pipe
+bandwidth-delay products increased, leaving more packets in the pipe
 for a given RTT. Hence SACK, which became a proposed IETF standard in
 1996, was a timely addition to TCP. 
 
