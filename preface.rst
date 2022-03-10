@@ -40,6 +40,7 @@ effort to improve this book, including the following:
 - Bill Fisher
 - Giulio Micheloni
 - J vanBemmel
+- Omer Shapira
 
 Please send
 us your comments and feedback using the `Issues Link
