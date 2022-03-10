@@ -376,7 +376,7 @@ in itself a problem. There should be enough buffer capacity to
 absorb such bursts. Problems arise when there is not enough buffer
 capacity to absorb bursts, leading to excessive loss. This came to be
 understood in the 1990s as a requirement that buffers be able to hold
-at least one delay x bandwidth product of packets—a requirement that
+at least one bandwidth-delay product of packets—a requirement that
 was probably too large and subsequently questioned by further
 research. But the fact is that buffers are necessary, and it is
 expected that they will be used to absorb bursts. The CoDel authors
