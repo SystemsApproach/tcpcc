@@ -330,13 +330,14 @@ the realization that the transport layer for HTTP would benefit from a
 new approach. The protocol that emerged to fill this need was QUIC.
 
 QUIC originated at Google in 2012 and was subsequently developed as a
-proposed standard at the IETF. It has already seen a solid amount
-of deployment (in most Web browsers and quite a number of popular Web
-sites). Deployability was a key consideration for the designers of the
-protocol. There are a lot of moving parts to QUIC—its specification
-spans three RFCs of several hundred pages—but we focus here on its
-approach to congestion control, which embraces many of the ideas we
-have seen to date in this book.
+proposed standard at the IETF. It has already seen a solid amount of
+deployment—it is in most Web browsers, many popular Web
+sites, and is even starting to be used for non-HTTP
+applications. Deployability was a key consideration for the designers
+of the protocol. There are a lot of moving parts to QUIC—its
+specification spans three RFCs of several hundred pages—but we focus
+here on its approach to congestion control, which embraces many of the
+ideas we have seen to date in this book.
 
 Like TCP, QUIC builds congestion control into the transport, but it
 does so in a way that recognizes that there is no single perfect
