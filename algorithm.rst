@@ -749,7 +749,7 @@ for a given RTT. Hence SACK, which became a proposed IETF standard in
 ~~~~~~~~~~~~~
 
 Starting with some research by Janey Hoe at MIT in
-the mid-1990s, the enhancement known as NewReno incrementally improves
+the mid-1990s, the enhancement known as *NewReno* incrementally improves
 the performance of TCP by making more intelligent decisions about
 which packets to retransmit under certain packet loss conditions.
 
@@ -831,11 +831,11 @@ in :numref:`Figure %s <fig-cubic>`, asymptoting towards
 :math:`W_{max}` (the old congestion window prior to the last loss) and
 then moving beyond it.
 
-BIC eventually evolved into a new variant called CUBIC, which today is the default
-congestion control algorithm distributed with Linux. CUBIC improved
-upon BIC in a number of ways, one of which was to use a smooth curve
-described by a cubic function rather than the piecewise linear
-function of BIC. More on this below.
+BIC eventually evolved into a new variant called *CUBIC*, which today is the
+default congestion control algorithm distributed with Linux. CUBIC improved
+upon BIC in a number of ways, one of which was to use a smooth curve described
+by a cubic function rather than the piecewise linear function of BIC. More on
+this below.
 
 Another important aspect of CUBIC’s approach is to adjust its congestion 
 window at regular intervals, based on the amount of time that has 
