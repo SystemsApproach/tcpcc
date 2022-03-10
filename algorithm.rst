@@ -207,8 +207,8 @@ The changes to TCP described up to this point have been adjustments to
 how the sender computes timeouts, with no changes to the over-the-wire
 protocol. But there are also extensions to the TCP header that help
 improve its ability to manage timeouts and retransmissions. We discuss
-one that relates to RTT estimation here. Another extension, establishing a scaling factor the
-``AdvertizedWindow``, was described in Section 2.2., and a third,
+one that relates to RTT estimation here. Another extension, establishing a scaling factor for
+``AdvertisedWindow``, was described in Section 2.3., and a third,
 selective acknowledgment or SACK is discussed below.
 
 The TCP timestamp extension helps to improve TCP’s timeout mechanism. Instead of
@@ -764,7 +764,7 @@ which packets to retransmit under certain packet loss conditions.
 The key insight behind NewReno is that even without SACK, duplicate
 ACKs can convey information to the sender about how many packets have
 been dropped and which ones they were, so that the sender can make
-more intelligent choices and when to retransmit a packet. Furthermore,
+more intelligent choices about when to retransmit a packet. Furthermore,
 in the presence of multiple losses from a single window, NewReno can
 avoid the multiple halvings of the congestion window that occurred in
 prior versions.
