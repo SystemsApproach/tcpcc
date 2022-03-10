@@ -665,9 +665,10 @@ end-to-end path logically divided into the two segments depicted in
 Internet and the wireless last-hop over the Radio Access Network
 (RAN). This "special case" perspective is warranted because (1) the
 wireless link is typically the bottleneck due to the scarcity of radio
-spectrum, and (2) the bandwidth available in the RAN can be highly
+spectrum, (2) the bandwidth available in the RAN can be highly
 variable due to a combination of device mobility and radio
-interference.
+interference, and (3) the number of devices being served by a given
+base station fluctuates as devices move from one cell to another.
    
 .. _fig-mobile:
 .. figure:: figures/Slide12.png
