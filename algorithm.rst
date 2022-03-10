@@ -226,7 +226,7 @@ and hence reduces the risk of incorrect timeouts due to poor RTT estimates.
 
 This timestamp extension serves a second purpose, in that it also
 provides a way to create a 64-bit sequence number field, addressing
-the shortcomings of TCP's 32-bit timestamp outlined in Section 2.2.
+the shortcomings of TCP's 32-bit timestamp outlined in Section 2.3.
 Specifically, TCP decides whether to accept or reject a segment based
 on a logical 64-bit identifier that has the ``SequenceNum`` field in
 the low-order 32 bits and the timestamp in the high-order 32 bits.

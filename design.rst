@@ -742,7 +742,7 @@ an increased likelihood that queuing delays become an issue. For
 example, :numref:`Figure %s <fig-graph_16b>` shows the 99% latencies
 for four different algorithms when the network topology includes a
 10-Mbps bottleneck link and a 40ms RTT. One important observation
-about this result is that the second algorithm (RED) performs poorly
+about this result is that the second algorithm (red) performs poorly
 when there is less than one bandwidth-delay product of buffering
 available at the bottleneck router, calling attention to another
 variable that can influence your results.

@@ -32,6 +32,7 @@ Leffler
 Mahdavi
 Makefile
 Mbps
+Multipath
 Multiprotocol
 Nagle
 O'Malley
@@ -110,6 +111,7 @@ kbps
 kilobits
 latencies
 misdelivered
+multipath
 nd
 piecewise
 pre
@@ -123,6 +125,7 @@ retransmitted
 retransmitting
 rollout
 sawtooth
+subflow
 teardown
 throughputs
 timeframe
