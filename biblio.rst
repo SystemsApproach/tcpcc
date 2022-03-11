@@ -103,12 +103,12 @@ General-Purpose Algorithms
   <https://dl.acm.org/doi/10.1145/52324.52356>`__.  ACM SIGCOMM '88
   Symposium, August 1988.
 
-* Janey Hoe. `Improving the start-up behavior of a congestion control
+* J. Hoe. `Improving the start-up behavior of a congestion control
   scheme for TCP
-  <https://dl.acm.org/doi/10.1145/248156.248180>`__.  SIGCOMM '96.
-  August 1996.
+  <https://dl.acm.org/doi/10.1145/248156.248180>`__.  ACM  SIGCOMM '96
+  Symposium. August 1996.
 
-* L. Brakmo, S. O'Malley and L. Peterson
+* L. Brakmo, S. O'Malley, and L. Peterson
   `TCP Vegas: New Technique for Congestion Detection and Avoidance
   <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
   ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in *IEEE/ACM Transactions 
@@ -118,10 +118,19 @@ General-Purpose Algorithms
   Duality Model. <https://dl.acm.org/doi/10.1145/506147.506152>`__.
   Journal of the ACM, Volume 49, Issue 2, March 2002.
 
+* S. Ha, I. Rhee, and L. Xu. `CUBIC: a new TCP-friendly high-speed TCP variant 
+  <https://www.cs.princeton.edu/courses/archive/fall16/cos561/papers/Cubic08.pdf>`__. 
+  ACM SIGOPS Operating Systems Review, Volume 42, Issue 5, July 2008. 
+
 * N. Cardwell, Y. Cheng, C. S. Gunn, S. Yeganeh, V. Jacobson.
   `BBR: Congestion-based Congestion Control
   <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__. 
-  Communications of the ACM, Volume 60, Issue 2, February 2017.  
+  Communications of the ACM, Volume 60, Issue 2, February 2017.
+
+* B. Briscoe, *et al.* `Implementing the "Prague Requirements" for Low
+  Latency Low Loss Scalable Throughput (L4S)
+  <https://www.bobbriscoe.net/projects/latency/tcp-prague-netdev0x13.pdf>`__.
+  Linux NetDev 0x13 Conference, March 2019.
 
 Active Queue Management
 ---------------------------------
@@ -158,7 +167,7 @@ Datacenter
   <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.  
   ACM SIGCOMM, August 2010.
    
-* Radhika Mittal, et al. `TIMELY: RTT-based Congestion Control for the Datacenter
+* R. Mittal, *et al.* `TIMELY: RTT-based Congestion Control for the Datacenter
   <https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p537.pdf>`__.
   ACM SIGCOMM 2015.
 
@@ -187,15 +196,20 @@ Wireless
 
 * H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee. 
   `Understanding Bufferbloat in Cellular Networks 
-  <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__
+  <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__.
   ACM SIGCOMM Workshop on Cellular Networks, August 2012.
+
+* K. Liu and J. Y. B. Lee, `On Improving TCP Performance over Mobile
+  Data Networks <http://www.mclab.info/TMC2016.pdf>`__.
+  IEEE Transactions on Mobile Computing, 2016.
 
 * Y. Xie, F. Yi, and K. Jamieson. `PBE-CC: Congestion Control via
   Endpoint-Centric, Physical-Layer Bandwidth Measurements
   <https://arxiv.org/abs/2002.03475>`__. SIGCOMM 2020.  
 
-* Yihua Gao, et al. `Understanding On-device Bufferbloat For Cellular
-  Upload. <https://www-users.cse.umn.edu/~fengqian/paper/bufferbloat_imc16.pdf>`__.
+* Y. Gao, *et al.* `Understanding On-device Bufferbloat For Cellular
+  Upload <https://www-users.cse.umn.edu/~fengqian/paper/bufferbloat_imc16.pdf>`__.
+  ACM Internet Measurement Conference (IMC), November 2016.
 
 
 Realtime

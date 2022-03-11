@@ -756,7 +756,7 @@ which packets to retransmit under certain packet loss conditions.
 .. _reading_newreno:
 .. admonition::  Further Reading
 
-   Janey Hoe. `Improving the start-up behavior of a congestion control
+   J. Hoe. `Improving the start-up behavior of a congestion control
    scheme for TCP
    <https://dl.acm.org/doi/10.1145/248156.248180>`__.
    SIGCOMM '96. August 1996.
@@ -896,4 +896,11 @@ to the discussion of Section 3.3 as to whether "fairness" to incumbent
 algorithms is the right design goal. Ultimately, CUBIC was extensively
 analyzed, showed good performance under many conditions without
 causing undue harm, and was widely deployed.
+
+.. _reading_cubic:
+.. admonition::  Further Reading
+
+   S. Ha, I. Rhee, and L. Xu. `CUBIC: a new TCP-friendly high-speed TCP variant
+   <https://www.cs.princeton.edu/courses/archive/fall16/cos561/papers/Cubic08.pdf>`__.
+   ACM SIGOPS Operating Systems Review, July 2008.
 
