@@ -529,7 +529,11 @@ permit. The client can send information back to the server, such as
 how much buffered video it still has awaiting playback, to help the
 server choose a suitable quality and bandwidth stream. The cost of
 this approach is additional media storage on the server, but that cost
-has become rather unimportant in the modern streaming video era.
+has become rather unimportant in the modern streaming video era. Note
+that the "server" in this context is likely to be a node in a CDN
+(content distribution network). Hence, a video stream can take advantage of
+any improvement in the bandwidth available between a client and the
+CDN node serving it by shifting a higher quality level.
 
 Another limitation of TFRC as defined is that it uses loss as its
 primary signal of congestion but does not respond to the delay that
@@ -579,7 +583,7 @@ performance by using multiple interfaces simultaneously. This idea of
 multipath communication has been around for decades and led to a body
 of work at the IETF to standardize extensions to TCP to support
 end-to-end connections that leverage multiple paths between pairs of
-hosts. This is known as *Multipath TCP (MPTCP)*.
+hosts. This is known as *Multipath TCP (MPTCP)*. 
 
 A pair of hosts sending traffic over two or more paths simultaneously
 has implications for congestion control. For example, if both paths
@@ -587,8 +591,10 @@ share a common bottleneck link, then a naive implementation of one TCP
 connection per path would acquire twice as much share of the
 bottleneck bandwidth as a standard TCP connection. The designers of
 MPTCP set out to address this potential unfairness while also
-realizing the benefits of multiple paths. The high level goals of the
-congestion control approach for multipath transport are as follows:
+realizing the benefits of multiple paths. The proposed congestion
+control approach could equally be applied to other transports such as
+QUIC. The high level goals of congestion control for
+multipath transport are:
 
 1. Perform at least as well as a single path flow on its best available
    path.
@@ -597,19 +603,25 @@ congestion control approach for multipath transport are as follows:
 3. Move us much traffic as possible off the most congested path(s),
    consistent with the two preceding goals.
 
-While the details involve complex bookkeeping, the overall approach
-taken is straightforward. The congestion control algorithm roughly
-mimics that of TCP on a per-subflow basis, while trying to ensure that
-the three goals above are met. The core of the algorithm uses the
-following formula to increase the congestion window size of each
-individual subflow as ACKs are received on the subflow.
+It's worth noting that the idea of fairness to other TCP flows has
+some subtleties, which we touched on in Section 3.2.
+
+While the details of the multipath algorithm involve complex
+bookkeeping, the overall approach taken is straightforward. The
+congestion control algorithm roughly mimics that of TCP on a
+per-subflow basis, while trying to ensure that all three goals above
+are met. The core of the algorithm uses the following formula to
+increase the congestion window size of each individual subflow as ACKs
+are received on the subflow.
 
 .. math::
 
       \mathsf{MIN} (\frac{\alpha \times \mathsf{BytesAcked} \times \mathsf{MSS_{i}}}{\mathsf{CongestionWindowTotal}}, \frac{\mathsf{BytesAcked} \times \mathsf{MSS_{i}}}{\mathsf{CongestionWindow_{i}}} )
 
 
-The second argument to MIN mimics the increase that standard TCP would
+:math:`\mathsf{CongestionWindowTotal}` is the sum of congestion windows across all
+subflows, while :math:`\mathsf{CongestionWindow_{i}}` is the congestion window
+of subflow *i*. The second argument to MIN mimics the increase that standard TCP would
 obtain, thus ensuring that the subflow is no more aggressive than TCP
 (goal 2). The first argument uses the variable |alpha| to ensure that,
 in aggregate, the multipath flow obtains the same throughput as it
@@ -622,7 +634,7 @@ hence over time, more traffic moves onto the uncongested paths (goal
 
 While this is simple enough in retrospect, a lot of interesting
 analysis went into figuring out the right approach, as described in an
-NSDI paper by Wischik and colleagues.
+NSDI paper by Wischik and colleagues. 
 
    
 .. _reading_multipath:
