@@ -230,10 +230,7 @@ purposely sends packets at a rate that causes packet loss and then
 responds to it, and a conservative approach that tries to detect the
 onset of queue build-up and slow down before they actually overflow.
 We refer to the mechanisms of the first type as *control-based*, and
-we refer to mechanisms of the second type as *avoidance-based*.  (In
-some contexts, the two approaches are called *loss-based* and
-*delay-based*, respectively, based on the criteria used to adjust the
-congestion window.)
+we refer to mechanisms of the second type as *avoidance-based*.
 
 .. _reading_avoidance:
 .. admonition:: Further Reading 
@@ -249,8 +246,18 @@ K.K. Ramakrishnan Jain in 1988.  It is often overlooked—and the term
 is that the distinction represents an important difference, and so we
 will call it out when appropriate.  Admittedly, we will also fall back
 to the generic use of "congestion control" when the distinction is not
-critical to the discussion, but we will say "control-based" or
-"avoidance-based" when the distinction is relevant.
+critical to the discussion.
+
+Finally, note that the approaches we call "control-based" and
+"avoidance-based" are, in some contexts, referred to as *loss-based*
+and *delay-based*, respectively. This is according to the criteria
+each uses to signal that the congestion window needs to be adjusted;
+the former adjusts the window when it detects a "loss signal" and the
+latter adjusts the window when it detects a change in the "delay
+gradient". From this perspective, each of the algorithms introduced
+over the next four chapters effectively refines the fidelity of these
+signals in one way or another.
+
 
 3.2 Evaluation Criteria
 -----------------------
