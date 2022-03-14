@@ -248,15 +248,15 @@ will call it out when appropriate.  Admittedly, we will also fall back
 to the generic use of "congestion control" when the distinction is not
 critical to the discussion.
 
-Finally, note that the approaches we call "control-based" and
-"avoidance-based" are, in some contexts, referred to as *loss-based*
-and *delay-based*, respectively. This is according to the criteria
-each uses to signal that the congestion window needs to be adjusted;
-the former adjusts the window when it detects a "loss signal" and the
-latter adjusts the window when it detects a change in the "delay
-gradient". From this perspective, each of the algorithms introduced
-over the next four chapters effectively refines the fidelity of these
-signals in one way or another.
+Also note that the approaches we call "control-based" and
+"avoidance-based" are sometimes referred to as *loss-based* and
+*delay-based*, respectively, according to the criteria each uses as a
+signal that the congestion window needs to be adjusted. The former
+adjusts the window when it detects a loss and the latter adjusts the
+window when it detects a change in the delay gradient. When viewed
+from this perspective, each of the algorithms introduced over the next
+four chapters effectively refines the fidelity of these signals in one
+way or another.
 
 
 3.2 Evaluation Criteria
