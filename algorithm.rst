@@ -886,21 +886,21 @@ only convex).
 
 Interestingly, CUBIC is either more aggressive or less aggressive than
 earlier variants of TCP, depending on the conditions. Short RTT TCP
-Reno flows tend to be effective in acquiring bottleneck
-bandwidth, so CUBIC includes a "TCP-friendly" mode where it aims to be
-just as aggressive as TCP Reno. But in other circumstances—notably high
-bandwidth-delay networks—CUBIC will
-be able to obtain a bigger share of the bottleneck bandwidth because
-CUBIC is increasing its window size more quickly. This brings us back
-to the discussion of Section 3.3 as to whether "fairness" to incumbent
-algorithms is the right design goal. Ultimately, CUBIC was extensively
-analyzed, showed good performance under many conditions without
-causing undue harm, and was widely deployed.
+Reno flows tend to be effective in acquiring bottleneck bandwidth, so
+CUBIC includes a "TCP-friendly" mode where it aims to be just as
+aggressive as TCP Reno. But in other circumstances—notably high
+bandwidth-delay networks—CUBIC will be able to obtain a bigger share
+of the bottleneck bandwidth because CUBIC is increasing its window
+size more quickly. This brings us back to the discussion of Section
+3.3 as to whether "fairness" to incumbent algorithms is the right
+design goal. Ultimately, CUBIC was extensively analyzed, showed good
+performance under many conditions without causing undue harm, and has
+been widely deployed.
 
 .. _reading_cubic:
 .. admonition::  Further Reading
 
-   S. Ha, I. Rhee, and L. Xu. `CUBIC: a new TCP-friendly high-speed TCP variant
+   S. Ha, I. Rhee, and L. Xu. `CUBIC: a New TCP-friendly High-speed TCP Variant
    <https://www.cs.princeton.edu/courses/archive/fall16/cos561/papers/Cubic08.pdf>`__.
    ACM SIGOPS Operating Systems Review, July 2008.
 
