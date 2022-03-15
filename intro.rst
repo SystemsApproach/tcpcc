@@ -5,7 +5,7 @@ The Internet is considered an engineering success with few peers, and
 rightfully so. It has scaled to connect billions of devices, supports
 every imagined communications application, and accommodates
 transmission rates ranging from tens of bits-per-day to hundreds of
-gigabits-per-second. But at its core is a thorny technical challenge
+gigabits-per-second. But at its core, it remains a thorny technical challenge
 that has drawn widespread attention for the last 30-plus years, from both
 practitioners trying to make the Internet perform better and
 theoreticians wanting to understand its mathematical underpinnings:
@@ -426,7 +426,7 @@ Cloud datacenters became another "use case" for congestion-control
 mechanisms. Unlike the Internet in general, where end-to-end latencies
 are highly variable, the RTT in a datacenter is both predictable and
 relatively small (<10ms). And because the network is highly regular in
-structure (e.g., a leaf-spine fabric) it is well-understood where and
+structure (e.g., a leaf-spine fabric), it is well-understood where and
 under what circumstances congestion is likely to occur. This makes TCP
 running in a datacenter ripe for a purpose-tuned algorithm rather than
 having to use the general-purpose mechanism that runs on the global
