@@ -121,7 +121,7 @@ unchanged when :math:`\alpha` < ``Diff`` < :math:`\beta`.
 Intuitively, we can see that the farther away the actual throughput
 gets from the expected throughput, the more congestion there is in the
 network, which implies that the sending rate should be reduced. The
-β threshold triggers this decrease. On the other hand, when the
+:math:`\beta` threshold triggers this decrease. On the other hand, when the
 actual throughput rate gets too close to the expected throughput, the
 connection is in danger of not utilizing the available bandwidth. The
 :math:`\alpha` threshold triggers this increase. The overall goal is to keep
