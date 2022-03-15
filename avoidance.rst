@@ -111,12 +111,12 @@ ActualRate``.  Note that ``Diff`` is positive or 0 by definition,
 since the only way ``ActualRate > ExpectedRate`` is if the measured
 sample RTT is less than ``BaseRTT``. If that happens we change
 ``BaseRTT`` to the latest sampled RTT. We also define two thresholds,
-|alpha| < |beta|, corresponding to having too little and too much
-extra data in the network, respectively. When ``Diff`` < |alpha|, TCP
+:math:`\alpha` < :math:`\beta`, corresponding to having too little and too much
+extra data in the network, respectively. When ``Diff`` < :math:`\alpha`, TCP
 Vegas increases the congestion window linearly during the next RTT,
-and when ``Diff`` > |beta|, TCP Vegas decreases the congestion window
+and when ``Diff`` > :math:`\beta`, TCP Vegas decreases the congestion window
 linearly during the next RTT.  TCP Vegas leaves the congestion window
-unchanged when |alpha| < ``Diff`` < |beta|.
+unchanged when :math:`\alpha` < ``Diff`` < :math:`\beta`.
 
 Intuitively, we can see that the farther away the actual throughput
 gets from the expected throughput, the more congestion there is in the
@@ -124,8 +124,8 @@ network, which implies that the sending rate should be reduced. The
 β threshold triggers this decrease. On the other hand, when the
 actual throughput rate gets too close to the expected throughput, the
 connection is in danger of not utilizing the available bandwidth. The
-|alpha| threshold triggers this increase. The overall goal is to keep
-between |alpha| and |beta| extra bytes in the network.
+:math:`\alpha` threshold triggers this increase. The overall goal is to keep
+between :math:`\alpha` and :math:`\beta` extra bytes in the network.
 
 .. _fig-vegas:
 .. figure:: figures/f06-19-9780123850591.png
@@ -135,7 +135,7 @@ between |alpha| and |beta| extra bytes in the network.
    Trace of TCP Vegas congestion-avoidance mechanism.
    Top, congestion window; bottom, expected (colored line) and actual
    (black line) throughput. The shaded area is the region between the
-   |alpha| and |beta| thresholds.
+   :math:`\alpha` and :math:`\beta` thresholds.
 
 :numref:`Figure %s <fig-vegas>` traces the TCP Vegas
 congestion-avoidance algorithm. The top graph traces the congestion
@@ -145,9 +145,9 @@ actual throughput rates that govern how the congestion window is
 set. It is this bottom graph that best illustrates how the algorithm
 works. The colored line tracks the ``ExpectedRate``, while the black
 line tracks the ``ActualRate``. The wide shaded strip gives the region
-between the |alpha| and |beta| thresholds; the top of the shaded strip is
-|alpha| KBps away from ``ExpectedRate``, and the bottom of the shaded
-strip is |beta| KBps away from ``ExpectedRate``.  The goal is to keep the
+between the :math:`\alpha` and :math:`\beta` thresholds; the top of the shaded strip is
+:math:`\alpha` KBps away from ``ExpectedRate``, and the bottom of the shaded
+strip is :math:`\beta` KBps away from ``ExpectedRate``.  The goal is to keep the
 ``ActualRate`` between these two thresholds, within the shaded
 region. Whenever ``ActualRate`` falls below the shaded region (i.e.,
 gets too far from ``ExpectedRate``), TCP Vegas decreases the
@@ -158,16 +158,16 @@ Vegas increases the congestion window because it fears that it is
 underutilizing the network.
 
 Because the algorithm, as just presented, compares the difference
-between the actual and expected throughput rates to the |alpha| and |beta|
+between the actual and expected throughput rates to the :math:`\alpha` and :math:`\beta`
 thresholds, these two thresholds are defined in terms of KBps. However,
 it is perhaps more accurate to think in terms of how many extra
 *packet buffers* the connection is occupying in the network. For example, on a
 connection with a ``BaseRTT`` of 100 ms and a packet size of 1 KB, if
-|alpha| = 30 KBps and |beta| = 60 KBps, then we can think of |alpha| as specifying
+:math:`\alpha` = 30 KBps and :math:`\beta` = 60 KBps, then we can think of :math:`\alpha` as specifying
 that the connection needs to be occupying at least 3 extra buffers in
-the network and |beta| as specifying that the connection should occupy no
-more than 6 extra buffers in the network. This setting of |alpha|
-and |beta| worked well in practice when Vegas was first deployed, but
+the network and :math:`\beta` as specifying that the connection should occupy no
+more than 6 extra buffers in the network. This setting of :math:`\alpha`
+and :math:`\beta` worked well in practice when Vegas was first deployed, but
 as we'll see in the next section, these parameters continue to be tuned
 for changing circumstances.
 
@@ -202,7 +202,7 @@ aggressively during the phase when the algorithm is trying to find the
 available "in transit" bandwidth (before packets are buffered in the
 network), and then more conservatively as the algorithm starts to
 compete with other flows for buffers at the bottleneck router. FAST
-also recommended adjusting the value of |alpha| to roughly 30 packets.
+also recommended adjusting the value of :math:`\alpha` to roughly 30 packets.
 
 Beyond managing congestion in networks with large bandwidth-delay
 products, where keeping the pipe full is a substantial challenge,

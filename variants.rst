@@ -623,10 +623,10 @@ are received on the subflow.
 subflows, while :math:`\mathsf{CongestionWindow_{i}}` is the congestion window
 of subflow *i*. The second argument to MIN mimics the increase that standard TCP would
 obtain, thus ensuring that the subflow is no more aggressive than TCP
-(goal 2). The first argument uses the variable |alpha| to ensure that,
+(goal 2). The first argument uses the variable :math:`\alpha` to ensure that,
 in aggregate, the multipath flow obtains the same throughput as it
 would have done using its best available path (goal 1). The
-calculation of |alpha| is described in detail in RFC 6356.  Note that
+calculation of :math:`\alpha` is described in detail in RFC 6356.  Note that
 uncongested paths are able to grow their individual congestion
 windows more than congested paths as they do not suffer losses, and
 hence over time, more traffic moves onto the uncongested paths (goal
