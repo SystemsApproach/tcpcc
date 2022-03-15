@@ -569,7 +569,7 @@ sending side know that the advertised window is no longer 0? TCP
 *always* sends a segment in response to a received data segment, and
 this response contains the latest values for the ``Acknowledge`` and
 ``AdvertisedWindow`` fields, even if these values have not changed
-since the last time they were sent. The problem is this. Once the
+since the last time they were sent. The problem is this: Once the
 receive side has advertised a window size of 0, the sender is not
 permitted to send any more data, which means it has no way to discover
 that the advertised window is no longer 0 at some time in the
@@ -642,7 +642,7 @@ provides a simple, unified rule for deciding when to transmit:
 In other words, it’s always OK to send a full segment if the window
 allows. It’s also alright to immediately send a small amount of data
 if there are currently no segments in transit, but if there is
-anything in flight the sender must wait for an ACK before transmitting
+anything in flight, the sender must wait for an ACK before transmitting
 the next segment. Thus, an interactive application that continually
 writes one byte at a time will send data at a rate of one segment per
 RTT. Some segments will contain a single byte, while others will
