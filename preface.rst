@@ -41,6 +41,7 @@ effort to improve this book, including the following:
 - Giulio Micheloni
 - J vanBemmel
 - Omer Shapira
+- Nico Vibert  
 
 Please send
 us your comments and feedback using the `Issues Link
