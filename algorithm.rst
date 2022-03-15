@@ -9,7 +9,7 @@ will become clear at the end of the chapter.
 
 The general idea is straightforward. Having transmitted a set of
 packets according to its current estimate of the available bandwidth,
-a TCP sender reacts to two "signals" from the network. On the one
+a TCP sender reacts to two signals from the network. On the one
 hand, the arrival of an ACK signals that one of its packets
 has left the network and that it is therefore safe to transmit a new
 packet without adding to the level of congestion.  By using ACKs to
