@@ -224,7 +224,7 @@ allocation approach possible: FIFO queuing with tail drop. There was
 no awareness of flows or applications, so they simply accepted packets
 as they arrived, placed them in a queue whenever the outbound link
 capacity was less than the arrival rate, served the queue by the FIFO
-discipline, and dropped arriving packets if they queue was full
+discipline, and dropped arriving packets if their queue was full
 ("tail-drop"). This is still the most common form of queuing
 today; we will discuss other approaches to queuing including
 *Active Queue Management* in a later chapter.
