@@ -5,11 +5,11 @@ The Internet is considered an engineering success with few peers, and
 rightfully so. It has scaled to connect billions of devices, supports
 every imagined communications application, and accommodates
 transmission rates ranging from tens of bits-per-day to hundreds of
-gigabits-per-second. But at its core, it remains a thorny technical challenge
-that has drawn widespread attention for the last 30-plus years, from both
-practitioners trying to make the Internet perform better and
+gigabits-per-second. But at its core is a thorny technical challenge
+that has drawn widespread attention for the last 30-plus years, from
+both practitioners trying to make the Internet perform better and
 theoreticians wanting to understand its mathematical underpinnings:
-how the Internet’s resources are best allocated to all the competing
+How the Internet’s resources are best allocated to all the competing
 interests trying to use it.
 
 Resource allocation is a hard problem in any computer system, but
