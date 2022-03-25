@@ -15,31 +15,30 @@ Internet's smooth functioning depends have multiplied ever since.
 
 This book grew out of our own involvement in developing congestion
 control algorithms over the last three decades. There have been so
-many developments in congestion control over that time that it's
-nearly impossible to include all of them. What we have tried to do
-in this book is provide a framework for understanding congestion
-control as a problem space, and to categorize the many approaches into
-a few main themes. For example, our work on TCP Vegas opened up a
-line of research that continues today, where the aim is to avoid
-severe congestion rather than react after it has set in. We thus
-consider avoidance-based approaches as one of the main categories of
-congestion control.
+many developments in congestion control over that time that it’s
+nearly impossible to include all of them. What we have tried to do in
+this book is provide a framework for understanding congestion control
+as a systems problem, and to characterize the many approaches along a
+few main themes. For example, our work on TCP Vegas opened up a line
+of research that continues today, where the aim is to avoid severe
+congestion rather than react after it has set in. We thus consider
+avoidance-based approaches as one of the main categories of congestion
+control.
 
-This is an evolving manuscript. There are a number of significant
-efforts in congestion control that are not currently covered in the
-book as our goal is to help readers understand the problem space and
-the intuition behind various solutions, without being overwhelmed by
-the implementation details. That said, we have probably missed some
-important themes. And the approaches that we have covered,
-particularly in later chapters, are in many cases still evolving. We
-will update the book as needed.
+We expect this to be an evolving manuscript. There are many efforts in
+congestion control that are not currently covered, the algorithms that
+are covered continue to be refined, and new approaches will likely
+emerge to address new use cases.  We will update the book as necessary
+to reflect the state of the field. Please help by submitting your
+comments and feedback. We also welcome contributions to the on-line
+annotated bibliography.
 
-We extend our thanks to those who have contributed to the open source
-effort to improve this book, including the following:
+Finally, we extend our thanks to those who have contributed to the
+open source effort to improve this book. They include:
 
 - Bill Fisher
 - Giulio Micheloni
-- J vanBemmel
+- J van Bemmel
 - Omer Shapira
 - Nico Vibert  
 

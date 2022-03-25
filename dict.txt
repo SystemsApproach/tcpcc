@@ -4,6 +4,7 @@ Athuraliya
 BBR 
 BPF
 eBPF
+Bemmel
 Braden
 Brakmo
 Cardwell
@@ -35,6 +36,7 @@ Mbps
 Multipath
 Multiprotocol
 Nagle
+Nico
 O'Malley
 Malley
 OC
@@ -57,6 +59,7 @@ TCP
 TFRC
 TFRC
 Usenix
+Vibert
 VMware
 Westwood
 Yeganeh

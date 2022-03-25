@@ -268,9 +268,9 @@ ACK is received can be summarized as follows:
 
 .. math:: \mathsf{CongestionWindow}\  = \mathsf{CongestionWindow + (GAIN × off\_target × bytes\_newly\_acked × MSS / CongestionWindow)}
 
-where ``GAIN`` is a configuration parameter between 0 and 1, off\_target is
+where ``GAIN`` is a configuration parameter between 0 and 1, ``off_target`` is
 the gap between the measured queuing delay and the target, expressed
-as a fraction of the target, and bytes\_newly\_acked is the number of
+as a fraction of the target, and ``bytes_newly_acked`` is the number of
 bytes acknowledged in the current ACK. Thus, the congestion window
 grows more quickly the further the measured delay is below the target, but never
 faster one ``MSS`` per RTT. And it falls faster in proportion to how far the queue length is
