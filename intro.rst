@@ -9,7 +9,7 @@ gigabits-per-second. But at its core is a thorny technical challenge
 that has drawn widespread attention for the last 30-plus years, from
 both practitioners trying to make the Internet perform better and
 theoreticians wanting to understand its mathematical underpinnings:
-How the Internet’s resources are best allocated to all the competing
+how the Internet’s resources are best allocated to all the competing
 interests trying to use it.
 
 Resource allocation is a hard problem in any computer system, but
