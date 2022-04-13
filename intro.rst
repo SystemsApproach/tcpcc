@@ -480,7 +480,7 @@ release: e.g., TCP Tahoe, and later TCP Reno.
 .. admonition:: Further Reading
 
    S.J. Leffler, M.K. McKusick, M.J. Karels, and J.S Quarterman.  `The
-   Design and Implementation of the 4.3 BSD Unix Operating
+   Design and Implementation of the 4.3 BSD UNIX Operating System
    <https://www.goodreads.com/en/book/show/5770.The_Design_and_Implementation_of_the_4_3BSD_UNIX_Operating_System>`__.
    Addison-Wesley. January 1989.
 
