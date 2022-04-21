@@ -4,8 +4,8 @@ Chapter 1:  Introduction
 The Internet is considered an engineering success with few peers, and
 rightfully so. It has scaled to connect billions of devices, supports
 every imagined communications application, and accommodates
-transmission rates ranging from tens of bits-per-day to hundreds of
-gigabits-per-second. But at its core is a thorny technical challenge
+transmission rates ranging from tens of bits per day to hundreds of
+gigabits per second. But at its core is a thorny technical challenge
 that has drawn widespread attention for the last 30-plus years, from
 both practitioners trying to make the Internet perform better and
 theoreticians wanting to understand its mathematical underpinnings:

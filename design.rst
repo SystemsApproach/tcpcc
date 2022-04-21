@@ -665,7 +665,7 @@ terminates.
    :width: 500px 
    :align: center 
 
-   Goodput (bytes-per-second delivered end-to-end) realized by two
+   Goodput (bytes per second delivered end-to-end) realized by two
    flows running under the same congestion-control algorithm.
 
 It is also possible to look more closely at these two flows, for
@@ -695,7 +695,7 @@ first flow (Algorithm A).
    :width: 500px 
    :align: center 
 
-   Goodput (bytes-per-second delivered end-to-end) realized by two
+   Goodput (bytes per second delivered end-to-end) realized by two
    flows running under different congestion-control algorithms, with
    one flow receiving significantly less bandwidth than the other.
 
