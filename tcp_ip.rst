@@ -656,7 +656,7 @@ transmitted as soon as possible.
 --------------------------
 
 TCP was first deployed in the early 1980s, when backbone networks had
-link bandwidths measured in the tens of kilobits-per-second. It should
+link bandwidths measured in the tens of kilobits per second. It should
 not come as a surprise that significant attention has gone into
 adapting TCP for ever-increasing network speeds. In principle, the
 resulting changes are independent of the congestion control mechanisms
