@@ -1,5 +1,6 @@
 *.pdf
 *.tex
+venv-docs
 .DS_Store
 */.DS_Store
 figures-pdf/
@@ -8,5 +9,4 @@ figures-low_res/
 private/
 local/
 scripts/
-onosproject.github.io/
 _build/
