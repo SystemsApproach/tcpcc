@@ -488,7 +488,7 @@ reluctance to deploy new approaches. But such
 analysis suffers from three problems, as identified by Ranysha Ware and
 colleagues:
 
-* **Ideal-Driven Goal Posting:** A fairness-based threshold asserts
+* **Ideal-Driven Goalposting:** A fairness-based threshold asserts
   new mechanism B should equally share the bottleneck link with
   currently deployed mechanism A. This goal is too idealistic in
   practice, especially when A is sometimes unfair to its own flows.
@@ -544,7 +544,7 @@ simulation-based, with NS-3 being the most popular open source tool.
 
 Note that while the experiments described in this section measure real
 congestion control algorithms (which, of course, we have not yet
-described in any detail), the intent to outline how algorithms are
+described in any detail), the intent is to outline how algorithms are
 evaluated, and not to actually draw any conclusions about specific
 mechanisms.
 
@@ -733,7 +733,7 @@ the five algorithms, and the average goodput decreasing as the RPCs
 compete with more and more streams. Although not shown in :numref:`Figure
 %s <fig-graph_8b>`, the fourth algorithm (green), which performs best
 when all flows are stream-based, suffers a significant number of
-retransmissions when sharing the available bandwidth RPC calls.
+retransmissions when sharing the available bandwidth among RPC calls.
 
 The 10-KB results do have a significant outlier, with the third
 algorithm (yellow) performing significantly better; by a factor of
