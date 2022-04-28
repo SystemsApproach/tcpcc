@@ -40,7 +40,8 @@ open source effort to improve this book. They include:
 - Giulio Micheloni
 - J van Bemmel
 - Omer Shapira
-- Nico Vibert  
+- Nico Vibert
+- Vik Vanderlinden  
 
 Please send
 us your comments and feedback using the `Issues Link
