@@ -243,7 +243,7 @@ Implementations and Tools
 --------------------------------
 
 * S.J. Leffler, M.K. McKusick, M.J. Karels, and J.S Quarterman. `The
-  Design and Implementation of the 4.3 BSD Unix Operating  <https://www.goodreads.com/en/book/show/5770.The_Design_and_Implementation_of_the_4_3BSD_UNIX_Operating_System>`__. Addison-Wesley. January 1989.
+  Design and Implementation of the 4.3 BSD Unix Operating System  <https://www.goodreads.com/en/book/show/5770.The_Design_and_Implementation_of_the_4_3BSD_UNIX_Operating_System>`__. Addison-Wesley. January 1989.
 
 * `Netesto <https://github.com/facebook/fbkutils/tree/master/netesto>`__.
 
