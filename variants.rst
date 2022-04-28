@@ -64,7 +64,7 @@ The key challenge in this approach is to estimate the fraction of bytes
 encountering congestion. Each switch is simple. If a packet arrives and
 the switch sees the queue length (K) is above some threshold; e.g.,
 
-.. math:: \mathsf{K} > \mathsf{(RTT × C)\ /\ 7}
+.. math:: \mathsf{K} > \mathsf{(RTT} \times \mathsf{C)\ /\ 7}
 
 where C is the link rate in packets per second, then the switch sets the
 CE bit in the IP header. The complexity of RED is not required.
@@ -102,7 +102,8 @@ observation window.
 Specifically, a new variable called ``DCTCP.Alpha`` is initialized to
 1 and updated at the end of the observation window as follows:
 
-.. math:: \mathsf{DCTCP.Alpha} = \mathsf{DCTCP.Alpha × (1 - g) + g × M}
+.. math:: \mathsf{DCTCP.Alpha} = \mathsf{DCTCP.Alpha} \times
+          \mathsf{(1 - g) + g} \times \mathsf{M}
 
 ``M`` is the faction of bytes marked, and ``g`` is the estimation gain, a
 constant (set by the implementation) that determines how rapidly
@@ -113,7 +114,7 @@ causes gentle reaction to newly arrived congestion and more severe
 reaction to sustained congestion, as the congestion window is calculated
 as follows:
 
-.. math:: \mathsf{CongestionWindow} = \mathsf{CongestionWindow × (1 - DCTCP.Alpha\ /\ 2)}
+.. math:: \mathsf{CongestionWindow} = \mathsf{CongestionWindow} \times \mathsf{(1 - DCTCP.Alpha\ /\ 2)}
 
 To summarize, CE marking to indicate incipient congestion happens
 early and often, but the reaction to such marking is more measured
@@ -222,7 +223,7 @@ control algorithms should be evaluated alongside standard TCP to ensure
 they are not just stealing bandwidth from less aggressive TCP
 implementations.
 
-LEDBAT takes this idea in a the opposite direction by creating a
+LEDBAT takes this idea in the opposite direction by creating a
 congestion control protocol that is purposely *less* aggressive than
 TCP. The idea is to take advantage of bandwidth that is available when
 links are uncongested, but to quickly back off and leave the bandwidth
@@ -273,7 +274,7 @@ the gap between the measured queuing delay and the target, expressed
 as a fraction of the target, and ``bytes_newly_acked`` is the number of
 bytes acknowledged in the current ACK. Thus, the congestion window
 grows more quickly the further the measured delay is below the target, but never
-faster one ``MSS`` per RTT. And it falls faster in proportion to how far the queue length is
+faster than one ``MSS`` per RTT. And it falls faster in proportion to how far the queue length is
 above the target. ``CongestionWindow`` is also reduced in response to losses,
 timeouts, and long idle periods, much like with TCP.
 
@@ -508,7 +509,7 @@ While the concept of TFRC is solid, it has had limited deployment for
 a number of reasons. One is that a simpler solution for some types of
 streaming traffic emerged in the form of *DASH (Dynamic Adaptive
 Streaming over HTTP)*. DASH is only suitable for non-real-time media
-(e.g. watching movies) but that turns out to be a large percentage of
+(e.g., watching movies) but that turns out to be a large percentage of
 the media traffic that runs across the Internet—in fact, it is a large
 percentage of *all* Internet traffic.
 
