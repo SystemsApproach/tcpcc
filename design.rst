@@ -84,7 +84,7 @@ allocation, and then advise (or even police) end hosts as to how much
 capacity is available to each of them. Such an approach would certainly
 be limited by the time-scale in which the centralized controller could
 be responsive to changes in the network, but it has been successfully
-applied to the coarse-grained allocations decisions made by traffic
+applied to the coarse-grained allocation decisions made by traffic
 engineering mechanisms like B4 and SWAN.  Exactly where one draws a
 line between coarse-grain traffic engineering decisions and fine-grain
 congestion control decisions is not clear, but it's good to keep an
@@ -126,13 +126,13 @@ hosts, perhaps as part of the transport protocol). This is not
 strictly an either/or situation. Both locations are involved, and the
 real issue is where the majority of the burden falls. Individual
 routers always take responsibility for deciding which packets to
-forward and which packets to drop. Where there is a range of options
-is how much the router involves the end hosts in specifying how this
+forward and which packets to drop. However, there is a range of options
+in how much the router involves the end hosts in specifying how this
 decision is made, or learning how this decision was made.
 
 At one end of the spectrum, routers can allow hosts to reserve
 capacity and then ensure each flow's packets are delivered
-accordingly.  It might do this, for example, by implementing a
+accordingly. They might do this, for example, by implementing a
 signalling protocol along with Fair
 Queuing, accepting new flows only when there is sufficient capacity,
 and policing hosts to make sure their flows stay within their
@@ -703,7 +703,7 @@ These experiments can be repeated with three concurrent flows, but we
 turn next to evaluating how various algorithms treat different
 workloads. In particular, we are interested in the question of *size
 fairness*, that is, how a given algorithm treats back-to-back 10-KB or
-1-MB RPC calls when they have to compete with an ongoing stream-based
+1-MB RPC calls when they have to compete with ongoing stream-based
 flows. Some example results are shown in :numref:`Figure %s
 <fig-graph_8b>` (1-MB RPCs) and :numref:`Figure %s <fig-graph_8c>`
 (10-KB RPCs). The figures show the performance of five different
