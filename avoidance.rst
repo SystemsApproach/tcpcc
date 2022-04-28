@@ -39,7 +39,7 @@ throughput rate. The intuition can be seen in the trace of TCP Reno
 given in :numref:`Figure %s <fig-trace3>`. The top graph traces the
 connection’s congestion window; it shows the same information as the
 traces given in the previous chapter.  The middle and bottom graphs
-depict new information: The middle graph shows the average sending
+depict new information: the middle graph shows the average sending
 rate as measured at the source, and the bottom graph shows the average
 queue length as measured at the bottleneck router. All three graphs
 are synchronized in time. In the period between 4.5 and 6.0 seconds
@@ -261,7 +261,7 @@ to this issue in Chapter 7.
 
 Our final example is New Vegas (NV), an adaptation of Vegas's
 delay-based approach to datacenters, where link bandwidths are 10Gbps
-or higher and RTTs are typically measured in the ten's of
+or higher and RTTs are typically measured in the tens of
 microseconds. This is an important use case that we return to in
 Chapter 7; our goal here is to build some intuition.
 
@@ -298,7 +298,7 @@ increases ``CongestionWindow``. If the measurement is below the line, it means
 that we have seen equal performance in the past with a lower
 ``CongestionWindow``. In the example shown in :numref:`Figure %s <fig-nv>`, we see
 similar performance with ``CongestionWindow=12``, so we decrease ``CongestionWindow``. The
-decrease is done multiplicative, rather than instantaneously, in case
+decrease is done multiplicatively, rather than instantaneously, in case
 the new measurement is noisy. To filter out bad measurements, NV
 collects many measurements and then use the best one before making a
 congestion determination.
