@@ -226,7 +226,7 @@ and hence reduces the risk of incorrect timeouts due to poor RTT estimates.
 
 This timestamp extension serves a second purpose, in that it also
 provides a way to create a 64-bit sequence number field, addressing
-the shortcomings of TCP's 32-bit timestamp outlined in Section 2.3.
+the shortcomings of TCP's 32-bit sequence number outlined in Section 2.3.
 Specifically, TCP decides whether to accept or reject a segment based
 on a logical 64-bit identifier that has the ``SequenceNum`` field in
 the low-order 32 bits and the timestamp in the high-order 32 bits.
@@ -278,7 +278,7 @@ congestion goes down. Taken together, the mechanism is commonly called
 *additive increase/multiplicative decrease (AIMD)* due to the
 approach it adopts.
 
-The key question then becomes: How does the source determine that the
+The key question then becomes: how does the source determine that the
 network is congested and that it should decrease the congestion
 window?  The answer is based on the observation that the main reason
 packets are not delivered, and a timeout results, is that a packet was
@@ -650,7 +650,7 @@ of TCP with the fast retransmit mechanism. It is interesting to
 compare this trace with that given in :numref:`Figure %s
 <fig-trace1>`, where fast retransmit was not implemented—the long
 periods during which the congestion window stays flat and no packets
-are sent has been eliminated. In general, this technique is able to
+are sent have been eliminated. In general, this technique is able to
 eliminate about half of the coarse-grained timeouts on a typical TCP
 connection, resulting in roughly a 20% improvement in the throughput
 over what could otherwise have been achieved. Notice, however, that
