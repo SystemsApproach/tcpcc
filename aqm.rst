@@ -548,7 +548,7 @@ NIC support for virtualization become more and more common.
 This perspective is illustrated in :numref:`Figure %s
 <fig-ingress_egress>`, where both locations sit below TCP, and provide
 an opportunity to inject a second piece of congestion control logic
-into the end-to-end path. CoDel and ECN are examples of this idea: They
+into the end-to-end path. CoDel and ECN are examples of this idea: they
 have been implemented at the device queue level of the Linux kernel.
 	
 .. _fig-ingress_egress:
