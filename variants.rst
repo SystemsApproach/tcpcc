@@ -332,8 +332,8 @@ new approach. The protocol that emerged to fill this need was QUIC.
 
 QUIC originated at Google in 2012 and was subsequently developed as a
 proposed standard at the IETF. It has already seen a solid amount of
-deployment—it is in most Web browsers, many popular Web
-sites, and is even starting to be used for non-HTTP
+deployment—it is in most Web browsers, many popular 
+websites, and is even starting to be used for non-HTTP
 applications. Deployability was a key consideration for the designers
 of the protocol. There are a lot of moving parts to QUIC—its
 specification spans three RFCs of several hundred pages—but we focus
