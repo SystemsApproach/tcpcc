@@ -17,6 +17,7 @@ Peterson, Brakmo, and Davie
    :maxdepth: 2 
    :caption: Table of Contents 
 
+   foreword.rst
    preface.rst
    intro.rst
    tcp_ip.rst
