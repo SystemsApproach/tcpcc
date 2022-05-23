@@ -10,9 +10,9 @@ supporting transport-layer congestion control is also a multi-faceted,
 nuanced challenge. And congestion control is needed in just about
 every Internet scenario one can imagine: from the public Internet that
 spans the globe and carries all types of traffic, to long “fat” pipes
-carrying massive amounts of file-transfer data, to specialized data
-center networks, to private commercial backbone networks, to mobile
-and wireless networks.
+carrying massive amounts of file-transfer data, to specialized
+datacenter networks, to private commercial backbone networks, to
+mobile and wireless networks.
 
 With all of these challenges, how does one make sense of the many
 (many!) approaches towards congestion control that have been
@@ -27,8 +27,8 @@ used, and why? So many questions!
 
 To make sense of this and to answer all of these questions (and more)
 would require not just a book, but a great book!  And now fortunately,
-there is such a book—this book! The three authors of TCP Congestion
-Control: A Systems Approach are among the most knowledgeable
+there is such a book—this book! The three authors of *TCP Congestion
+Control: A Systems Approach* are among the most knowledgeable
 congestion control researchers on the planet—Brakmo and Peterson’s
 TCP Vegas protocol (you can learn more about that in section 5.1)
 pioneered the notion that endpoints could anticipate and avoid
