@@ -48,7 +48,7 @@ such as congestion control, in the either the application layer or in
 the network).
 
 This book is a needed and most welcome addition to the fabulous set of
-open-source, “systems approach” books that Larry, Bruce and others
+open source, “systems approach” books that Larry, Bruce and others
 have been developing.  I hope you read it cover-to-cover, consult it
 again later as you need it in the future, and enjoy it as much as I
 have.
