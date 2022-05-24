@@ -61,7 +61,7 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinx.ext.ifconfig',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.imgmath',
+    'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinxcontrib.spelling',
     "sphinx_multiversion",
@@ -121,8 +121,7 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_theme_options = {
-    'prev_next_buttons_location': 'both',
-    'rightsidebar': 'true'
+    'prev_next_buttons_location': 'both'
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
