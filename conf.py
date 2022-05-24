@@ -213,6 +213,8 @@ epub_cover = ('_static/cover.jpg', '')
 epub_show_urls = 'False'
 epub_use_index = False
 
+imgmath_font_size = 10
+
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
 #
