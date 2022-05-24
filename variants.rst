@@ -267,7 +267,7 @@ TCP's window in its additive increase phase.
 LEDBAT's algorithm for setting ``CongestionWindow`` when an
 ACK is received can be summarized as follows:
 
-.. math:: \mathsf{CongestionWindow}\  = \mathsf{CongestionWindow + (GAIN × off\_target × bytes\_newly\_acked × MSS / CongestionWindow)}
+.. math:: \mathsf{CongestionWindow}\  = \mathsf{CongestionWindow + (GAIN \times off\_target \times bytes\_newly\_acked \times MSS / CongestionWindow)}
 
 where ``GAIN`` is a configuration parameter between 0 and 1, ``off_target`` is
 the gap between the measured queuing delay and the target, expressed
