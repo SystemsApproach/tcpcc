@@ -50,7 +50,7 @@ author = u'Peterson, Brakmo, Davie'
 # needs_sphinx = '1.0'
 
 # make all warnings errors
-warning_is_error = True
+warning_is_error = False
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -61,7 +61,7 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinx.ext.ifconfig',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
+    'sphinx.ext.imgmath',
     'sphinx.ext.todo',
     'sphinxcontrib.spelling',
     "sphinx_multiversion",
@@ -121,7 +121,8 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_theme_options = {
-  'prev_next_buttons_location': 'both'
+    'prev_next_buttons_location': 'both',
+    'rightsidebar': 'true'
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
