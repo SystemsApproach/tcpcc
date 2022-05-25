@@ -19,7 +19,7 @@ deployed in the early 1980s.  By the end of the decade, however, with the
 Internet gaining serious use in universities (but predating
 the World Wide Web's invention by several years), the network began
 to experience a
-phenomenon known as *congestion collapse* . A solution—congestion
+phenomenon known as *congestion collapse*. A solution—congestion
 control—was developed and deployed in the late 1980s and the
 immediate crisis was addressed. The
 Internet community has been studying and refining its approach to
