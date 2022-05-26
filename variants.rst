@@ -735,7 +735,7 @@ point along the Internet segment is the actual bottleneck.
    L. Peterson and O. Sunay. `5G Mobile Networks: A Systems Approach
    <https://5G.systemsapproach.org>`__.  January 2020.
    
-   L. Peterson, C. Cascone, B. O'Connor, T. Vachuska, and
+   L. Peterson, C. Cascone, B. O'Connor, T. Vachuska,
    and B. Davie. `Software-Defined Networks: A Systems Approach
    <https://sdn.systemsapproach.org>`__.  November 2021.
 
