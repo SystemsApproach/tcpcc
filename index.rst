@@ -26,7 +26,6 @@ Peterson, Brakmo, and Davie
    avoidance.rst
    aqm.rst 
    variants.rst
-   biblio.rst
    README.rst
    authors.rst
    latest.rst
