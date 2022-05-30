@@ -58,7 +58,6 @@ warning_is_error = False
 extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.coverage',
-    'sphinx.ext.graphviz',
     'sphinx.ext.ifconfig',
     'sphinx.ext.intersphinx',
     'sphinx.ext.imgmath',
