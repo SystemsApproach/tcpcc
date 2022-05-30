@@ -560,10 +560,6 @@ protocol.
    <https://www.rfc-editor.org/info/rfc5348>`__.  
    RFC 5348, September 2008.
 
-   
-.. _reading_tcpeq:
-.. admonition::  Further Reading
-
    J. Padhye, V. Firoiu, D. Towsley, and J. Kurose.
    `Modeling TCP Throughput: A Simple Model and its Empirical Validation
    <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.  
