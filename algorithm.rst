@@ -242,7 +242,7 @@ for the purpose of ordering or acknowledging data.
 
 A better way to compute timeouts is a necessary building block, but it
 does not get at the heart of controlling congestion. The central
-challenge is computing an estimate of how much traffic the network
+challenge is computing an estimate of how much traffic
 this sender can safely transmit. To this end, TCP maintains a new
 state variable for each connection, which we refer to as
 ``CongestionWindow`` (but you will often see it called ``cwnd`` in the
