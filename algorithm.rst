@@ -112,8 +112,8 @@ RTT; it only measures ``SampleRTT`` for segments that have been sent
 only once.  But the algorithm also includes a second change to TCP’s
 timeout mechanism. Each time TCP retransmits, it sets the next timeout
 to be twice the last timeout, rather than basing it on the last
-``EstimatedRTT``. That is, Karn and Partridge proposed that RTT
-estimation uses exponential backoff. The motivation for using
+``EstimatedRTT``. That is, Karn and Partridge proposed that timeout
+calculation use exponential backoff. The motivation for using
 exponential backoff is that timeouts cause retransmission, and
 retransmitted segments are no longer contributing to an update in the
 RTT estimate. So the idea is to be more cautious in declaring that a
