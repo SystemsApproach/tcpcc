@@ -148,7 +148,8 @@ It then folds this new sample into the timeout calculation as follows:
 .. math:: \mathsf{Deviation = Deviation} + \delta \mathsf{(| Difference | - Deviation)}
 
 where :math:`\delta` is between 0 and 1. That is, we calculate both
-the mean RTT and the variation in that mean. TCP then computes the
+the weighted moving average of the RTT and the weighted moving average of its
+variation. TCP then computes the 
 timeout value as a function of both ``EstimatedRTT`` and ``Deviation``
 as follows:
 
@@ -367,12 +368,8 @@ detected by a timeout.
 Finally, since a timeout is an indication of congestion that triggers
 multiplicative decrease, TCP needs the most accurate timeout mechanism
 it can afford. We already covered TCP’s timeout mechanism in Section
-4.1, but two main things to remember about that mechanism are that
-(1) timeouts are set as a function of both the average RTT and the
-standard deviation in that average, and (2) due to the cost of
-measuring each transmission with an accurate clock, TCP only samples
-the round-trip time once per RTT (rather than once per packet) using a
-coarse-grained (500-ms) clock.
+4.1, but recall that timeouts are set as a function of both the
+average RTT and the deviation in that average.
 
 4.3 Slow Start
 --------------
