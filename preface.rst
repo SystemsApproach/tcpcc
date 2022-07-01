@@ -42,6 +42,7 @@ open source effort to improve this book. They include:
 - Omer Shapira
 - Nico Vibert
 - Vik Vanderlinden  
+- Vidhi Goel
 
 Please send
 us your comments and feedback using the `Issues Link
