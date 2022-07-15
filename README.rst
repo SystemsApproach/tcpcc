@@ -1,8 +1,8 @@
 About The Book
 ===============
 
-This `repository <https://github.com/SystemsApproach/tcpcc>`__ contains
-source for *TCP Congestion Control: A Systems Approach*, available under
+Source for *TCP Congestion Control: A Systems Approach* is available
+on GitHub under
 terms of the `Creative Commons (CC BY-NC-ND 4.0)
 <https://creativecommons.org/licenses/by-nc-nd/4.0>`__ license. The
 community is invited to contribute corrections, improvements, updates,
