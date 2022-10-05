@@ -30,3 +30,4 @@ Peterson, Brakmo, and Davie
    README.rst
    authors.rst
    latest.rst
+   print.rst
