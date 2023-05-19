@@ -14,7 +14,7 @@ our companion books that cover networking and emerging topics in more depth.
 * `Software-Defined Networks: A Systems Approach
   <https://amzn.to/3rmLdCP>`__
   
-* `5G Mobile Networks: A Systems Approach <https://amzn.to/3EjwMH0>`__
+* `Private 5G: A Systems Approach <https://amzn.to/3BBAQA6>`__
 
 * `Edge Cloud Operations: A Systems Approach <https://amzn.to/3MfvK13>`__
 
