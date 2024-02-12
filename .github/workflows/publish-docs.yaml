@@ -1,7 +1,9 @@
 name: Publish Docs Workflow
 run-name: ${{ github.actor }} is publishing document artifacts 🚀
-on: [push, workflow_dispatch]
-
+on: 
+  push:
+    branches: 
+      - master
 
           # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
