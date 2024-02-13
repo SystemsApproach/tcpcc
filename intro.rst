@@ -1,6 +1,6 @@
 Chapter 1:  Introduction
 ========================
-	
+
 The Internet is considered an engineering success with few peers, and
 rightfully so. It has scaled to connect billions of devices, supports
 every imagined communications application, and accommodates
@@ -26,7 +26,7 @@ Internet community has been studying and refining its approach to
 congestion control ever since. This book is about that journey.
 
 The most famous early efforts to manage congestion were undertaken by two
-researchers, Van Jacobson and Mike Karels. The resulting paper, 
+researchers, Van Jacobson and Mike Karels. The resulting paper,
 *Congestion Avoidance and Control*, published in 1988, is one of the
 most cited papers in networking of all time. There are
 good reasons for that. One is that congestion collapse really did
@@ -40,14 +40,14 @@ control has been an amazingly fruitful area of research for over three
 decades. Congestion control, and resource allocation more broadly, are
 wide open design spaces with plenty of room for innovation. Decades of
 research and implementation have built on the early foundations, and
-it seems fair to assume that new approaches 
+it seems fair to assume that new approaches
 or refinements to the existing approaches will continue to appear for
 as long as the Internet exists.
 
 In this book, we explore the design space for congestion control in
 the Internet and present a description of the major approaches to
 managing or avoiding congestion that
-have been developed over the last three decades. 
+have been developed over the last three decades.
 
 
 .. _reading_vj:
@@ -85,11 +85,11 @@ packet networks than for highways, but it is equally problematic [#]_.
    As load increases, throughput rises then falls at the point of
    congestion collapse.
 
-   
+
 .. [#] Networking people like making analogies between real-world
        congestion and network congestion, but it's important to
        recognize that analogies are imperfect.
-   
+
 This book focuses on congestion control for packet-switched
 networks. A fundamental aspect of packet switching is *multiplexing*,
 which is the means by which a system resource—such as a link or a
@@ -116,7 +116,7 @@ will make this more precise in later chapters.
 .. figure:: figures/Slide11.png
    :width: 400px
    :align: center
-   
+
    Multiplexing multiple logical flows over a single
    physical link.
 
@@ -134,7 +134,7 @@ queue is operating normally. A switch that has large numbers of
 packets in its queues all or most
 of the time is congested. We'll get to the definition of congestion
 collapse for networks later on, but it starts with congested switches,
-routers or links. 
+routers or links.
 
 For a deeper introduction to statistical multiplexing, and why it's
 the approach of choice for packet networks, we refer to the
@@ -254,7 +254,7 @@ traffic sent into the network. This interaction between the end-to-end
 protocol and the network during times of congestion formed the basis
 for much of today's congestion control and avoidance approaches. We'll
 get into the specifics of how these approaches work in subsequent
-chapters. 
+chapters.
 
 
 1.3 Theoretical Underpinnings
@@ -291,7 +291,7 @@ models, of which the following are two.
    <https://www.icir.org/vern/papers/poisson.TON.pdf>`__.
    IEEE/ACM Transactions on Networking, June 1995.
 
-         
+
    W. Leland *et al*,  `On the self-similar nature of Ethernet
    traffic
    <https://doi.org/10.1145/167954.166255>`__.
@@ -356,7 +356,7 @@ do. We return to this topic in Chapter 7.
    M. Mathis, J. Semke, J. Mahdavi, and T. Ott. `The Macroscopic
    Behavior of the TCP Congestion Avoidance Algorithm
    <https://dl.acm.org/doi/abs/10.1145/263932.264023>`__.
-   SIGCOMM CCR, 27(3), July 1997.                
+   SIGCOMM CCR, 27(3), July 1997.
 
 Finally, much of the theoretical work on congestion control has framed
 the problem as *"a distributed algorithm to share network resources
@@ -387,7 +387,7 @@ between optimizing a utility function and the pragmatic aspects of the
 mechanisms described in this book. Congestion control is an area of
 networking in which theory and practice have been productively linked
 to explore the solution space and develop robust approaches to the
-problem. 
+problem.
 
 1.4 Congestion Control Today
 ----------------------------
@@ -442,7 +442,7 @@ delivering the video switches from one quality of encoding to another
 (and hence from one bit-rate to another) in response to the measured
 congestion on the path to the receiver. This moves the congestion
 control loop up to the application layer, or rather, it adds a second
-control loop on top of the one already provided by TCP. 
+control loop on top of the one already provided by TCP.
 
 This quick tour of innovations is hardly exhaustive, and we will see
 more detail on these and other approaches in the coming chapters. The
@@ -486,24 +486,24 @@ release: e.g., TCP Tahoe, and later TCP Reno.
 
 .. sidebar:: Berkeley Unix
 
-	*Any student of the Internet should have an appreciation for
-	the role Berkeley Unix (aka BSD) played in the success of the
-	Internet. Unix, of course, originated at AT&T Bell Labs in the
-	early 1970s, but it was an investment by DARPA to support an
-	open source implementation of Unix—which was to include the
-	fledgling TCP/IP protocol stack—that proved to be
-	transformative.*
+       *Any student of the Internet should have an appreciation for
+       the role Berkeley Unix (aka BSD) played in the success of the
+       Internet. Unix, of course, originated at AT&T Bell Labs in the
+       early 1970s, but it was an investment by DARPA to support an
+       open source implementation of Unix—which was to include the
+       fledgling TCP/IP protocol stack—that proved to be
+       transformative.*
 
-	*At the time, the success of the Internet was not a foregone
-	conclusion. It was viewed by many as a research curiosity, and
-	certainly did not enjoy much support within the computing and
-	telecommunication incumbents of the day. It was largely because
-	universities (and their students) had access to an open
-	implementation of the Internet protocol stack, and affordable
-	hardware to run it on, that TCP/IP took root. Seeding
-	transformative technology through open source software and
-	readily available hardware has proven to be a powerful
-	strategy, of which BSD is an early success story.*
+       *At the time, the success of the Internet was not a foregone
+       conclusion. It was viewed by many as a research curiosity, and
+       certainly did not enjoy much support within the computing and
+       telecommunication incumbents of the day. It was largely because
+       universities (and their students) had access to an open
+       implementation of the Internet protocol stack, and affordable
+       hardware to run it on, that TCP/IP took root. Seeding
+       transformative technology through open source software and
+       readily available hardware has proven to be a powerful
+       strategy, of which BSD is an early success story.*
 
 BSD and its descendants continue to this day (notably as FreeBSD), but it was eventually
 overtaken by Linux, in the early 2000s, as the *de facto* open source,

@@ -27,14 +27,14 @@ Queuing Analysis
 * V. Paxson and S. Floyd. `Wide-Area Traffic: The Failure of Poisson
   Modeling <https://www.icir.org/vern/papers/poisson.TON.pdf>`__.
   IEEE/ACM Transactions on Networking, June 1995.
-         
+
 * W. Leland *et al*, `On the self-similar nature of Ethernet traffic
   <https://doi.org/10.1145/167954.166255>`__.
   ACM SIGCOMM '93 Symposium, August 1993.
 
-* J. Gettys. `Bufferbloat: Dark Buffers in the Internet 
+* J. Gettys. `Bufferbloat: Dark Buffers in the Internet
   <https://ieeexplore.ieee.org/document/5755608>`__.
-  IEEE Internet Computing, April 2011.  
+  IEEE Internet Computing, April 2011.
 
 Theoretical Underpinnings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,15 +60,15 @@ Theoretical Underpinnings
 
 Evaluation Criteria
 ~~~~~~~~~~~~~~~~~~~~
-  
+
 * R. Jain, D. Chiu, and W. Hawe. `A Quantitative Measure of Fairness
   and Discrimination for Resource Allocation in Shared Computer Systems
   <https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
   DEC Research Report TR-301, 1984.
 
-* Bob Briscoe. `Flow Rate Fairness: Dismantling a Religion 
-  <https://web.stanford.edu/class/cs244/papers/fair-ccr2007.pdf>`__. 
-  ACM SIGCOMM CCR, April 2007. 
+* Bob Briscoe. `Flow Rate Fairness: Dismantling a Religion
+  <https://web.stanford.edu/class/cs244/papers/fair-ccr2007.pdf>`__.
+  ACM SIGCOMM CCR, April 2007.
 
 * R. Ware, *et al*. `Beyond Jain's Fairness Index: Setting the Bar for
   the Deployment of Congestion Control Algorithms
@@ -78,20 +78,20 @@ Evaluation Criteria
 Architecture
 ~~~~~~~~~~~~~
 
-* J. Saltzer, D. Reed, and D. Clark. `End-to-End Arguments in System Design 
-  <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__. 
-  ACM Transactions on Computer Systems, Nov. 1984. 
+* J. Saltzer, D. Reed, and D. Clark. `End-to-End Arguments in System Design
+  <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__.
+  ACM Transactions on Computer Systems, Nov. 1984.
 
-* D. Clark, `The Design Philosophy of the DARPA Internet Protocols 
-  <https://dl.acm.org/doi/10.1145/52324.52336>`__. 
+* D. Clark, `The Design Philosophy of the DARPA Internet Protocols
+  <https://dl.acm.org/doi/10.1145/52324.52336>`__.
   ACM SIGCOMM, 1988.
 
-* S. Jain, *et al*. `B4: Experience with a 
-  Globally-Deployed Software Defined WAN 
+* S. Jain, *et al*. `B4: Experience with a
+  Globally-Deployed Software Defined WAN
   <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
   ACM SIGCOMM, August 2013.
 
-* J. Perry, *et al*. `Fastpass: A Centralized "Zero-Queue" Datacenter Network 
+* J. Perry, *et al*. `Fastpass: A Centralized "Zero-Queue" Datacenter Network
   <http://fastpass.mit.edu/Fastpass-SIGCOMM14-Perry.pdf>`__.
   ACM SIGCOMM, August 2014.
 
@@ -111,20 +111,20 @@ General-Purpose Algorithms
 * L. Brakmo, S. O'Malley, and L. Peterson
   `TCP Vegas: New Technique for Congestion Detection and Avoidance
   <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
-  ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in *IEEE/ACM Transactions 
+  ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in *IEEE/ACM Transactions
   on Networking,* October 1995).
 
 * S. Low, L. Peterson, and L. Wang. `Understanding TCP Vegas: A
   Duality Model. <https://dl.acm.org/doi/10.1145/506147.506152>`__.
   Journal of the ACM, Volume 49, Issue 2, March 2002.
 
-* S. Ha, I. Rhee, and L. Xu. `CUBIC: a new TCP-friendly high-speed TCP variant 
-  <https://www.cs.princeton.edu/courses/archive/fall16/cos561/papers/Cubic08.pdf>`__. 
-  ACM SIGOPS Operating Systems Review, Volume 42, Issue 5, July 2008. 
+* S. Ha, I. Rhee, and L. Xu. `CUBIC: a new TCP-friendly high-speed TCP variant
+  <https://www.cs.princeton.edu/courses/archive/fall16/cos561/papers/Cubic08.pdf>`__.
+  ACM SIGOPS Operating Systems Review, Volume 42, Issue 5, July 2008.
 
 * N. Cardwell, Y. Cheng, C. S. Gunn, S. Yeganeh, V. Jacobson.
   `BBR: Congestion-based Congestion Control
-  <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__. 
+  <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__.
   Communications of the ACM, Volume 60, Issue 2, February 2017.
 
 * B. Briscoe, *et al.* `Implementing the "Prague Requirements" for Low
@@ -153,9 +153,9 @@ Active Queue Management
   <https://datatracker.ietf.org/doc/html/rfc3168>`__.  RFC 3168,
   September 2001.
 
-* K. Nichols and V. Jacobson. `Controlling Queue Delay 
-  <https://queue.acm.org/detail.cfm?id=2209336>`__. 
-  ACM Queue, 10(5), May 2012. 
+* K. Nichols and V. Jacobson. `Controlling Queue Delay
+  <https://queue.acm.org/detail.cfm?id=2209336>`__.
+  ACM Queue, 10(5), May 2012.
 
 Domain-Specific Algorithms
 -------------------------------
@@ -164,9 +164,9 @@ Datacenter
 ~~~~~~~~~~~~~~~~
 
 * M. Alizadeh, *et al*. `Data Center TCP (DCTCP)
-  <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.  
+  <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.
   ACM SIGCOMM, August 2010.
-   
+
 * R. Mittal, *et al.* `TIMELY: RTT-based Congestion Control for the Datacenter
   <https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p537.pdf>`__.
   ACM SIGCOMM 2015.
@@ -180,22 +180,22 @@ Background Transfers
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * S. Shalunov, *et al*. `Low Extra Delay Background Transport (LEDBAT)
-  <https://www.rfc-editor.org/info/rfc6817>`__.  
+  <https://www.rfc-editor.org/info/rfc6817>`__.
   RFC 6817, December 2012.
 
-HTTP   
+HTTP
 ~~~~~~~~~~~~
 
 * J. Iyengar and I. Swett, Eds.
   `QUIC Loss Detection and Congestion Control
-  <https://www.rfc-editor.org/info/rfc9002>`__.  
+  <https://www.rfc-editor.org/info/rfc9002>`__.
   RFC 9002, May 2021.
 
 Wireless
 ~~~~~~~~~~~~~~
 
-* H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee. 
-  `Understanding Bufferbloat in Cellular Networks 
+* H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee.
+  `Understanding Bufferbloat in Cellular Networks
   <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__.
   ACM SIGCOMM Workshop on Cellular Networks, August 2012.
 
@@ -205,7 +205,7 @@ Wireless
 
 * Y. Xie, F. Yi, and K. Jamieson. `PBE-CC: Congestion Control via
   Endpoint-Centric, Physical-Layer Bandwidth Measurements
-  <https://arxiv.org/abs/2002.03475>`__. SIGCOMM 2020.  
+  <https://arxiv.org/abs/2002.03475>`__. SIGCOMM 2020.
 
 * Y. Gao, *et al.* `Understanding On-device Bufferbloat For Cellular
   Upload <https://www-users.cse.umn.edu/~fengqian/paper/bufferbloat_imc16.pdf>`__.
@@ -217,7 +217,7 @@ Realtime
 
 * S. Floyd, M. Handley, J. Padhye, and J. Widmer.
   `TCP Friendly Rate Control (TFRC): Protocol Specification
-  <https://www.rfc-editor.org/info/rfc5348>`__.  
+  <https://www.rfc-editor.org/info/rfc5348>`__.
   RFC 5348, September 2008.
 
 * J. Padhye, V. Firoiu, D. Towsley, and J. Kurose.
@@ -235,7 +235,7 @@ Multipath
 
 * C. Raiciu, M. Handley, and D. Wischik.
   `Coupled Congestion Control for Multipath Transport Protocols
-  <https://www.rfc-editor.org/info/rfc6356>`__.  
+  <https://www.rfc-editor.org/info/rfc6356>`__.
   RFC 6356, October 2011.
 
 

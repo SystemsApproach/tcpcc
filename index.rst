@@ -1,10 +1,10 @@
 .. image:: _static/SystemsApproachLogoURL.png
    :width: 300px
    :align: center
-   :target: https://systemsapproach.org		 
+   :target: https://systemsapproach.org
 
 |
-	    
+
 TCP Congestion Control: A Systems Approach
 =============================================
 
@@ -14,8 +14,8 @@ Peterson, Brakmo, and Davie
 |
 
 .. toctree::
-   :maxdepth: 2 
-   :caption: Table of Contents 
+   :maxdepth: 2
+   :caption: Table of Contents
 
    foreword.rst
    preface.rst
@@ -24,7 +24,7 @@ Peterson, Brakmo, and Davie
    design.rst
    algorithm.rst
    avoidance.rst
-   aqm.rst 
+   aqm.rst
    variants.rst
    biblio.rst
    README.rst

@@ -59,7 +59,7 @@ Dave Clark. But acknowledging this default decision is important for
 two reasons.
 
 .. _reading_design:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
        D. Clark, `The Design Philosophy of the DARPA Internet
        Protocols <https://dl.acm.org/doi/10.1145/52324.52336>`__.
@@ -91,10 +91,10 @@ congestion control decisions is not clear, but it's good to keep an
 open mind about the spectrum of options that are available.
 
 .. _reading_b4:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-   S. Jain, *et al*. `B4: Experience with a 
-   Globally-Deployed Software Defined WAN 
+   S. Jain, *et al*. `B4: Experience with a
+   Globally-Deployed Software Defined WAN
    <https://cseweb.ucsd.edu/~vahdat/papers/b4-sigcomm13.pdf>`__.
    ACM SIGCOMM, August 2013.
 
@@ -109,14 +109,14 @@ collaboration between MIT and Facebook researchers, is a good example
 of such a centralized approach.
 
 .. _reading_fastpass:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-   J. Perry, *et al*. `Fastpass: A Centralized "Zero-Queue" Datacenter Network 
+   J. Perry, *et al*. `Fastpass: A Centralized "Zero-Queue" Datacenter Network
    <http://fastpass.mit.edu/Fastpass-SIGCOMM14-Perry.pdf>`__.
    ACM SIGCOMM, August 2014.
 
 
-3.1.2 Router-Centric versus Host-Centric 
+3.1.2 Router-Centric versus Host-Centric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Given a distributed approach to resource allocation, the next question
@@ -233,12 +233,12 @@ We refer to the mechanisms of the first type as *control-based*, and
 we refer to mechanisms of the second type as *avoidance-based*.
 
 .. _reading_avoidance:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-	R. Jain and K. K. Ramakrishnan. `Congestion Avoidance in
-	Computer Networks with a Connectionless Network Layer:
-	Concepts, Goals and Methodology. <https://arxiv.org/pdf/cs/9809095.pdf>`__.
-	Computer Networking Symposium, April 1988.  
+       R. Jain and K. K. Ramakrishnan. `Congestion Avoidance in
+       Computer Networks with a Connectionless Network Layer:
+       Concepts, Goals and Methodology. <https://arxiv.org/pdf/cs/9809095.pdf>`__.
+       Computer Networking Symposium, April 1988.
 
 This distinction was first called out by Raj Jain and
 K.K. Ramakrishnan Jain in 1988.  It is often overlooked—and the term
@@ -289,10 +289,10 @@ throughput because upstream link bandwidth has been wasted on a packet
 that was not successfully delivered all the way to the destination.\ [#]_
 
 .. [#]
-	We sometimes use the term *goodput* instead of *throughput* to
-	emphasize that we care about data that is successfully delivered
-	through the network to the receiver, as opposed to just transmitted
-	by the sender.
+       We sometimes use the term *goodput* instead of *throughput* to
+       emphasize that we care about data that is successfully delivered
+       through the network to the receiver, as opposed to just transmitted
+       by the sender.
 
 The ratio of throughput to delay is a general metric for evaluating
 the effectiveness of a resource allocation scheme. This ratio is
@@ -314,7 +314,7 @@ being allowed into the network that either (a) increases in delay
 (denominator) due to queuing are starting to dominate any small gains
 in throughput, or (b) throughput (numerator) actually starts to drop
 due to packets being dropped.
-   
+
 .. _fig-power:
 .. figure:: figures/f06-03-9780123850591.png
    :width: 350px
@@ -359,7 +359,7 @@ fair shares.  Should we also consider the length of the paths being
 compared? For example, as illustrated in :numref:`Figure %s
 <fig-path-len>`, what is fair when one four-hop flow is competing with
 three one-hop flows?
-   
+
 .. _fig-path-len:
 .. figure:: figures/Slide10.png
    :width: 550px
@@ -395,7 +395,7 @@ case is
 
    \frac{n^2}{n \times n} = 1
 
-Now, suppose one flow receives a throughput of :math:`1 + \Delta`. 
+Now, suppose one flow receives a throughput of :math:`1 + \Delta`.
 Now the fairness index is
 
 .. math::
@@ -405,19 +405,19 @@ Now the fairness index is
 
 Note that the denominator exceeds the numerator by :math:`(n-1)\Delta^2`.
 Thus, whether the odd flow out was getting more or less than all the
-other flows (positive or negative :math:`\Delta`), the fairness index has 
+other flows (positive or negative :math:`\Delta`), the fairness index has
 now dropped below one. Another simple case to
 consider is where only *k* of the *n* flows receive equal throughput,
 and the remaining *n-k* users receive zero throughput, in which case the
 fairness index drops to \ *k/n*.
 
 .. _reading_jain:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-	R. Jain, D. Chiu, and W. Hawe. `A Quantitative Measure of Fairness
-	and Discrimination for Resource Allocation in Shared Computer Systems
-	<https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
-	DEC Research Report TR-301, 1984.
+       R. Jain, D. Chiu, and W. Hawe. `A Quantitative Measure of Fairness
+       and Discrimination for Resource Allocation in Shared Computer Systems
+       <https://www.cse.wustl.edu/~jain/papers/ftp/fairness.pdf>`__.
+       DEC Research Report TR-301, 1984.
 
 In the next section we revisit the notion of fairness as it applies to
 the deployment of new congestion control algorithms. As noted above,
@@ -521,7 +521,7 @@ the amount of harm that one flow causes another depends on factors
 such as its RTT, start time, and duration. Thus measures of harm need
 to take into account the range of impacts that different flows have on
 each other under the existing regime and aim to do no worse with a
-new algorithm. 
+new algorithm.
 
 3.4 Experimental Methodology
 --------------------------------
@@ -536,11 +536,11 @@ collection of software tools available on GitHub. The alternative is
 simulation-based, with NS-3 being the most popular open source tool.
 
 .. _reading_ns3:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-		`Netesto <https://github.com/facebook/fbkutils/tree/master/netesto>`__
+      `Netesto <https://github.com/facebook/fbkutils/tree/master/netesto>`__
 
-		`NS-3 Network Simulator <https://www.nsnam.org>`__
+      `NS-3 Network Simulator <https://www.nsnam.org>`__
 
 Note that while the experiments described in this section measure real
 congestion control algorithms (which, of course, we have not yet
@@ -576,7 +576,7 @@ specific configurations:
   bottleneck is a real switch with shallow buffers (1-2 MB). This is a
   good scenario to visualize the algorithm’s dynamics when looking at
   two to three flows.
-  
+
 * WAN with 40ms RTT and 10/100-Mbps bottleneck bandwidth, with an
   intermediate router introduced to reduce the link bandwidth to 10 or
   100 Mbps.  This scenario reflects a connection an end-user might
@@ -589,9 +589,9 @@ single switch. Delay is achieved for the second scenario using
 back.
 
 .. _fig-10gig:
-.. figure:: figures/Slide2.png 
-   :width: 350px 
-   :align: center 
+.. figure:: figures/Slide2.png
+   :width: 350px
+   :align: center
 
    Topology for 10-Gbps Tests, optionally with 10ms of delay introduced.
 
@@ -600,9 +600,9 @@ scenario, where the router is implemented by a server-based forwarder
 that throttles outgoing link bandwidth using ``tbf qdisc``.
 
 .. _fig-100meg:
-.. figure:: figures/Slide3.png 
-   :width: 550px 
-   :align: center 
+.. figure:: figures/Slide3.png
+   :width: 550px
+   :align: center
 
    Topology for 10-Mbps and 100-Mbps Tests with 10ms or 40ms of delay
    introduced.
@@ -612,7 +612,7 @@ fairness of algorithms with the following tests:
 
 * 2-flow Test: The first flow lasts 60 seconds, and the second flow lasts
   20 seconds and starts 22 seconds after the first one.
-  
+
 * 3-flow Test: The first flow lasts 60 seconds, the second flow lasts 40
   seconds and starts 12 seconds after the first one, the third flow lasts
   20 seconds and starts 26 seconds after the first one.
@@ -620,7 +620,7 @@ fairness of algorithms with the following tests:
 These tests make it possible to:
 
 * Examine how quickly existing flows adapt to new flows.
-  
+
 * Examine how quickly flows adapt to released bandwidth from terminating flows.
 
 * Measure fairness between flows with the same (or different) congestion algorithm(s).
@@ -635,11 +635,11 @@ Additional tests include a combination of streaming, plus 10-KB and
 penalized, and if so, by how much. These tests make it possible to:
 
 * Study behavior under increasing loads.
-  
+
 * Measure the performance (throughput and latency) of 1-MB and 10-KB
   flows, as well as how fairly is the available bandwidth divided
   between them.
-  
+
 * Identify conditions when the retransmissions or latency change
   abruptly, signalling an instability.
 
@@ -661,9 +661,9 @@ flow does quickly adapt to the released bandwidth once the second flow
 terminates.
 
 .. _fig-graph_1a:
-.. figure:: figures/Graph_1A.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_1A.png
+   :width: 500px
+   :align: center
 
    Goodput (bytes per second delivered end-to-end) realized by two
    flows running under the same congestion-control algorithm.
@@ -675,9 +675,9 @@ different algorithms would have different "patterns" to congestion
 windows over time, as we will see in the next chapter.
 
 .. _fig-graph_1b:
-.. figure:: figures/Graph_1B.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_1B.png
+   :width: 500px
+   :align: center
 
    Congestion window (measured in bytes) for two flows competing for
    bandwidth under the same congestion-control algorithm.
@@ -691,9 +691,9 @@ second flow (Algorithm B) aggressively takes bandwidth away from the
 first flow (Algorithm A).
 
 .. _fig-graph_6c:
-.. figure:: figures/Graph_6C.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_6C.png
+   :width: 500px
+   :align: center
 
    Goodput (bytes per second delivered end-to-end) realized by two
    flows running under different congestion-control algorithms, with
@@ -711,21 +711,21 @@ algorithms (represented by different colors), across test runs with 1,
 2, 4, 8, and 16 concurrent streaming flows.
 
 .. _fig-graph_8b:
-.. figure:: figures/Graph_8B.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_8B.png
+   :width: 500px
+   :align: center
 
-   Average goodput (measured in Gbps) realized by a sequence of 
-   1-MB RPC calls for five different algorithms, when competing with 
+   Average goodput (measured in Gbps) realized by a sequence of
+   1-MB RPC calls for five different algorithms, when competing with
    a varied number of TCP streams.
 
 .. _fig-graph_8c:
-.. figure:: figures/Graph_8C.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_8C.png
+   :width: 500px
+   :align: center
 
-   Average goodput (measured in Gbps) realized by a sequence of 
-   10-KB RPC calls for five different algorithms, when competing with 
+   Average goodput (measured in Gbps) realized by a sequence of
+   10-KB RPC calls for five different algorithms, when competing with
    a varied number of TCP streams.
 
 The 1-MB results are unsurprising, with no significant outliers across
@@ -755,14 +755,14 @@ available at the bottleneck router, calling attention to another
 variable that can influence your results.
 
 .. _fig-graph_16b:
-.. figure:: figures/Graph_16B.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Graph_16B.png
+   :width: 500px
+   :align: center
 
    99th percentile latencies for 10-KB RPC calls when competing with a
    single streaming flow on a 40ms WAN, measured for a different
    number of buffers at the bottleneck router.
-   
+
 We conclude this discussion of experimental methodology by permitting
 ourselves one summary evaluation statement. When looking across a set
 of algorithms and a range of topology/traffic scenarios, we conclude

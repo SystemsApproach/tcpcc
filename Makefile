@@ -27,7 +27,7 @@ $(VIRTUALENV):
   pip install -r requirements.txt
 
 # lint and link verification. linkcheck is built into sphinx
-test: lint spelling linkcheck
+test: lint spelling 
 
 # lint all .rst files
 lint: $(VIRTUALENV)

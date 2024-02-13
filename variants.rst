@@ -30,14 +30,14 @@ aspects of the datacenter environment that warrant an approach that
 differs from more traditional TCP. These include:
 
 * Round trip time for intra-DC traffic are small;
-  
+
 * Buffers in datacenter switches are also typically small;
-  
+
 * All the switches are under common administrative control, and thus
   can be required to meet certain standards;
-  
+
 * A great deal of traffic has low latency requirements;
-  
+
 * That traffic competes with high bandwidth flows.
 
 It should be noted that DCTCP is not just a version of TCP, but
@@ -58,7 +58,7 @@ the congestion window based on this estimate. The standard TCP algorithm
 still kicks in should a packet actually be lost. The approach is
 designed to keep queues short by reacting early to congestion while
 not over-reacting to the point that they run empty and sacrifice
-throughput. 
+throughput.
 
 The key challenge in this approach is to estimate the fraction of bytes
 encountering congestion. Each switch is simple. If a packet arrives and
@@ -94,7 +94,7 @@ At the end of each observation window (a period usually chosen to be
 approximately the RTT), the sender computes the fraction of bytes that
 encountered congestion during that window as the
 ratio of the bytes marked with CE to total bytes transmitted. DCTCP
-grows the congestion window in exactly the 
+grows the congestion window in exactly the
 same way as the standard algorithm, but it reduces the window in
 proportion to how many bytes encountered congestion during the last
 observation window.
@@ -130,7 +130,7 @@ is a "test of time" award winner from SIGCOMM.
 
    M. Alizadeh, *et al*. `Data
    Center TCP (DCTCP)
-   <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.  
+   <http://dl.acm.org/citation.cfm?doid=1851182.1851192>`__.
    ACM SIGCOMM, August 2010.
 
 There has been considerable research since DCTCP to optimize TCP for
@@ -194,7 +194,7 @@ hardware, making On-Ramp easy to deploy.
 
 .. _reading_onramp:
 .. admonition::  Further Reading
-   
+
    S. Liu, *et al*. `Breaking the Transience-Equilibrium Nexus: A New
    Approach to Datacenter Packet Transport
    <https://www.usenix.org/system/files/nsdi21-liu.pdf>`__.
@@ -202,7 +202,7 @@ hardware, making On-Ramp easy to deploy.
 
    Y. Geng, *et al*. `Exploiting a Natural Network Effect for Scalable,
    Fine-grained Clock Synchronization
-   <https://www.usenix.org/system/files/conference/nsdi18/nsdi18-geng.pdf>`__. 
+   <https://www.usenix.org/system/files/conference/nsdi18/nsdi18-geng.pdf>`__.
    Usenix NSDI '18, April 2018.
 
 7.2 Background Transport (LEDBAT)
@@ -251,7 +251,7 @@ The sender monitors the measured delay, and estimates the fixed
 component (which would be due to speed of light and other fixed
 delays) to be the lowest value seen over a certain (configurable) time
 interval. Estimates from the more distant past are eliminated
-to allow for the possibility of a new routing path changing the fixed delay.  Any delay larger than this 
+to allow for the possibility of a new routing path changing the fixed delay.  Any delay larger than this
 minimum is assumed to be due to queuing delay.
 
 Having established a "base" delay, the sender subtracts this from the
@@ -262,7 +262,7 @@ congestion window is allowed to grow, and when the delay is above
 target, the congestion window is reduced, with the rate of growth and
 decrease being proportional to the distance from the target. The
 growth rate is capped to be no faster than the growth of standard
-TCP's window in its additive increase phase. 
+TCP's window in its additive increase phase.
 
 LEDBAT's algorithm for setting ``CongestionWindow`` when an
 ACK is received can be summarized as follows:
@@ -283,7 +283,7 @@ free, but avoids creating long standing queues, as it aims to keep the
 delay around the target (which is a configurable number, suggested to
 be on the order of 100 ms). If other traffic starts to compete with
 LEDBAT traffic, LEDBAT will back off as it aims to prevent the queue getting
-longer. 
+longer.
 
 LEDBAT is defined as an experimental protocol by the IETF, and allows
 a considerable degree of implementation flexibility such as the choice
@@ -295,7 +295,7 @@ parameters. Further details can be found in the RFC.
 .. admonition::  Further Reading
 
    S. Shalunov, *et al*. `Low Extra Delay Background Transport (LEDBAT)
-   <https://www.rfc-editor.org/info/rfc6817>`__.  
+   <https://www.rfc-editor.org/info/rfc6817>`__.
    RFC 6817, December 2012.
 
 
@@ -332,7 +332,7 @@ new approach. The protocol that emerged to fill this need was QUIC.
 
 QUIC originated at Google in 2012 and was subsequently developed as a
 proposed standard at the IETF. It has already seen a solid amount of
-deployment—it is in most Web browsers, many popular 
+deployment—it is in most Web browsers, many popular
 websites, and is even starting to be used for non-HTTP
 applications. Deployability was a key consideration for the designers
 of the protocol. There are a lot of moving parts to QUIC—its
@@ -347,7 +347,7 @@ different senders may use different algorithms. The baseline algorithm
 in the QUIC specification is similar to TCP NewReno, but a sender can
 unilaterally choose a different algorithm to use, such as CUBIC. QUIC
 provides all the machinery to detect lost packets in support of
-various congestion control algorithms. 
+various congestion control algorithms.
 
 A number of design features of QUIC make the detection of loss and
 congestion more robust than in TCP. For example, whereas TCP uses the
@@ -403,12 +403,12 @@ packets are sent to elicit further ACKs, thus exposing gaps in the
 received packet stream. The "probe timeout
 interval" is calculated to be just long enough to account for all the
 delays that an ACK might have encountered, using both the estimated RTT
-and an estimate of its variance. 
+and an estimate of its variance.
 
 QUIC is a most interesting development in the world of transport
 protocols. Many of the limitations of TCP have been known for decades,
 but QUIC represents one of the most successful efforts to date to
-stake out a different point in the design space. It has also 
+stake out a different point in the design space. It has also
 built in decades worth of experience refining TCP congestion control
 into the baseline specification. Because QUIC was
 inspired by experience with HTTP and the Web—which arose long after
@@ -424,7 +424,7 @@ congestion control is covered in the separate RFC 9002.
 
    J. Iyengar and I. Swett, Eds.
    `QUIC Loss Detection and Congestion Control
-   <https://www.rfc-editor.org/info/rfc9002>`__.  
+   <https://www.rfc-editor.org/info/rfc9002>`__.
    RFC 9002, May 2021.
 
 
@@ -503,7 +503,7 @@ Exactly how the application responds to a change in rate will of
 course depend on the application. The basic idea would be that an
 application can choose among a set of coding rates, and it picks the
 highest quality that can be accommodated with the rate that TFRC
-dictates. 
+dictates.
 
 While the concept of TFRC is solid, it has had limited deployment for
 a number of reasons. One is that a simpler solution for some types of
@@ -557,15 +557,15 @@ protocol.
 
    S. Floyd, M. Handley, J. Padhye, and J. Widmer.
    `TCP Friendly Rate Control (TFRC): Protocol Specification
-   <https://www.rfc-editor.org/info/rfc5348>`__.  
+   <https://www.rfc-editor.org/info/rfc5348>`__.
    RFC 5348, September 2008.
 
    J. Padhye, V. Firoiu, D. Towsley, and J. Kurose.
    `Modeling TCP Throughput: A Simple Model and its Empirical Validation
-   <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.  
+   <https://conferences.sigcomm.org/sigcomm/1998/tp/paper25.pdf>`__.
    ACM SIGCOMM, September 1998.
 
-   
+
 7.5 Multipath Transport
 ----------------------------
 
@@ -580,7 +580,7 @@ performance by using multiple interfaces simultaneously. This idea of
 multipath communication has been around for decades and led to a body
 of work at the IETF to standardize extensions to TCP to support
 end-to-end connections that leverage multiple paths between pairs of
-hosts. This is known as *Multipath TCP (MPTCP)*. 
+hosts. This is known as *Multipath TCP (MPTCP)*.
 
 A pair of hosts sending traffic over two or more paths simultaneously
 has implications for congestion control. For example, if both paths
@@ -631,9 +631,9 @@ hence over time, more traffic moves onto the uncongested paths (goal
 
 While this is simple enough in retrospect, a lot of interesting
 analysis went into figuring out the right approach, as described in an
-NSDI paper by Wischik and colleagues. 
+NSDI paper by Wischik and colleagues.
 
-   
+
 .. _reading_multipath:
 .. admonition::  Further Reading
 
@@ -647,7 +647,7 @@ NSDI paper by Wischik and colleagues.
    <https://datatracker.ietf.org/doc/html/rfc6356>`__.
    RFC 6356, October 2011.
 
-      
+
 
 
 7.6 Mobile Cellular Networks
@@ -675,7 +675,7 @@ spectrum; (2) the bandwidth available in the RAN can be highly
 variable due to a combination of device mobility and radio
 interference; and (3) the number of devices being served by a given
 base station fluctuates as devices move from one cell to another.
-   
+
 .. _fig-mobile:
 .. figure:: figures/Slide12.png
    :width: 500px
@@ -697,12 +697,12 @@ process, introduces significant delay and jitter. This is another
 example of the bufferbloat problem identified in Section 6.3.
 
 .. _reading_basestation:
-.. admonition::  Further Reading 
+.. admonition::  Further Reading
 
-   H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee. 
-   `Understanding Bufferbloat in Cellular Networks 
+   H. Jiang, Z. Liu, Y. Wang, K. Lee and I. Rhee.
+   `Understanding Bufferbloat in Cellular Networks
    <https://conferences.sigcomm.org/sigcomm/2012/paper/cellnet/p1.pdf>`__
-   ACM SIGCOMM Workshop on Cellular Networks, August 2012. 
+   ACM SIGCOMM Workshop on Cellular Networks, August 2012.
 
 The Jiang paper suggests possible solutions, and generally observes
 that delay-based approaches like Vegas outperform loss-based
@@ -730,7 +730,7 @@ point along the Internet segment is the actual bottleneck.
 
    L. Peterson and O. Sunay. `5G Mobile Networks: A Systems Approach
    <https://5G.systemsapproach.org>`__.  January 2020.
-   
+
    L. Peterson, C. Cascone, B. O'Connor, T. Vachuska,
    and B. Davie. `Software-Defined Networks: A Systems Approach
    <https://sdn.systemsapproach.org>`__.  November 2021.

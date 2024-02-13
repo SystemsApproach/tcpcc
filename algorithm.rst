@@ -1,6 +1,6 @@
 Chapter 4:  Control-Based Algorithms
 ====================================
-	
+
 This chapter describes the dominant congestion-control algorithm in
 use today on the Internet. The approach was introduced in 1988 by Van
 Jacobson and Mike Karels, and refined multiple times over the years.
@@ -149,7 +149,7 @@ It then folds this new sample into the timeout calculation as follows:
 
 where :math:`\delta` is between 0 and 1. That is, we calculate both
 the weighted moving average of the RTT and the weighted moving average of its
-variation. TCP then computes the 
+variation. TCP then computes the
 timeout value as a function of both ``EstimatedRTT`` and ``Deviation``
 as follows:
 
@@ -259,7 +259,7 @@ using the variables defined in Chapter 2, TCP’s effective window is
 revised as follows:
 
 .. math:: \mathsf{MaxWindow = MIN(CongestionWindow, AdvertisedWindow)}
-	  
+
 .. math:: \mathsf{EffectiveWindow = MaxWindow -  (LastByteSent - LastByteAcked)}
 
 That is, ``MaxWindow`` replaces ``AdvertisedWindow`` in the calculation
@@ -307,7 +307,7 @@ packet, which we know from Chapter 2 to be the ``MSS``.
    :width: 200px
    :align: center
 
-   Packets in transit during additive increase, with one 
+   Packets in transit during additive increase, with one
    packet being added each RTT.
 
 A congestion-control strategy that only decreases the window size is
@@ -352,8 +352,8 @@ faster rate than it is willing to increase its congestion window. One
 could imagine an additive increase/additive decrease strategy in
 which the window would be increased by 1 packet when an ACK arrives
 and decreased by 1 when a timeout occurs, but this turns out to be too
-aggressive. Responding quickly to congestion 
-is important to stability. 
+aggressive. Responding quickly to congestion
+is important to stability.
 
 An intuitive explanation for why TCP decreases the window aggressively
 and increases it conservatively is that the consequences of having too
@@ -542,8 +542,8 @@ enough capacity to support 16 packets from this source. The likely
 result is that 16 of the 32 packets sent under the new congestion
 window will be dropped by the network; actually, this is the
 worst-case outcome, since some of the packets will be buffered in some
-router. This problem will become increasingly severe as the 
-bandwidth-delay product of networks increases. For example, a 
+router. This problem will become increasingly severe as the
+bandwidth-delay product of networks increases. For example, a
 bandwidth-delay product of 1.8 MB means that each connection has the
 potential to lose up to 1.8 MB of data at the beginning of each
 connection. Of course, this assumes that both the source and the
@@ -609,7 +609,7 @@ lost, the sender waits until it sees some number of duplicate ACKs (in
 practice, three) and
 then retransmits the missing packet. The built-in assumption here,
 which is well tested in practice, is that out-of-order packets are
-less common by far than lost packets. 
+less common by far than lost packets.
 
 .. _fig-tcp-fast:
 .. figure:: figures/f06-12-9780123850591.png
@@ -636,10 +636,10 @@ including packet 6 back to the source.
    :width: 600px
    :align: center
 
-   Trace of TCP with fast retransmit. Colored line 
-   = CongestionWindow; solid bullet = timeout; hash marks = time 
-   when each packet is transmitted; vertical bars = time when a 
-   packet that was eventually retransmitted was first 
+   Trace of TCP with fast retransmit. Colored line
+   = CongestionWindow; solid bullet = timeout; hash marks = time
+   when each packet is transmitted; vertical bars = time when a
+   packet that was eventually retransmitted was first
    transmitted.
 
 :numref:`Figure %s <fig-trace2>` illustrates the behavior of a version
@@ -693,7 +693,7 @@ packet it received prior to any lost packets. You can think of the
 receiver having a collection of received packets where any lost
 packets are represented by holes in the received byte stream. With the
 original specification, it's only possible to tell the sender where
-the first hole starts, even if several packets have 
+the first hole starts, even if several packets have
 been lost. Intuitively, this lack of detail could limit the sender's
 ability to respond effectively to packet loss. The approach taken to
 address this is called *selective acknowledgments* or *SACK*.
@@ -705,7 +705,7 @@ Without SACK, there are only two reasonable strategies for a sender to
 adopt when segments are received out-of-order. The pessimistic
 strategy responds to a duplicate ACK or a timeout by retransmitting not just the segment
 that was clearly lost (the first packet missing at the receiver), but
-any segments transmitted subsequently.  In effect, 
+any segments transmitted subsequently.  In effect,
 the pessimistic strategy assumes the worst: that all those segments
 were lost. The disadvantage of the pessimistic strategy is that it may
 unnecessarily retransmit segments that were successfully received the
@@ -739,7 +739,7 @@ be expected (since cumulative ACK and SACK are the same thing when only
 one packet is dropped). This scenario became more likely over time as
 bandwidth-delay products increased, leaving more packets in the pipe
 for a given RTT. Hence SACK, which became a proposed IETF standard in
-1996, was a timely addition to TCP. 
+1996, was a timely addition to TCP.
 
 
 4.5.2 NewReno
@@ -787,7 +787,7 @@ with respect to the subtleties of TCP's retransmission mechanism),
 adding to the challenge of getting new algorithms into deployment.
 
 
-4.6 TCP CUBIC 
+4.6 TCP CUBIC
 --------------
 
 It should be clear by now that trying to find the appropriate rate at
@@ -834,51 +834,51 @@ upon BIC in a number of ways, one of which was to use a smooth curve described
 by a cubic function rather than the piecewise linear function of BIC. More on
 this below.
 
-Another important aspect of CUBIC’s approach is to adjust its congestion 
-window at regular intervals, based on the amount of time that has 
-elapsed since the last congestion event (e.g., the arrival of a 
-duplicate ACK), rather than only when ACKs arrive (the latter being a 
+Another important aspect of CUBIC’s approach is to adjust its congestion
+window at regular intervals, based on the amount of time that has
+elapsed since the last congestion event (e.g., the arrival of a
+duplicate ACK), rather than only when ACKs arrive (the latter being a
 function of RTT). This allows CUBIC to behave fairly when long-RTT
-flows compete with 
+flows compete with
 short-RTT flows, which have ACKs arriving more frequently. This
 is an interesting departure from prior versions of TCP, in which a
 flow with a short RTT holds a definite advantage in terms of the
 share of a bottleneck link it will obtain.
 
 .. _fig-cubic:
-.. figure:: figures/Slide9.png 
-   :width: 500px 
-   :align: center 
+.. figure:: figures/Slide9.png
+   :width: 500px
+   :align: center
 
-   Generic cubic function illustrating the change in the congestion 
-   window as a function of time. 
+   Generic cubic function illustrating the change in the congestion
+   window as a function of time.
 
-The cubic function, shown in :numref:`Figure %s <fig-cubic>`, has three 
-phases: slowing growth, flatten plateau, increasing growth. The maximum congestion 
-window size achieved just before the last congestion event is the initial target 
+The cubic function, shown in :numref:`Figure %s <fig-cubic>`, has three
+phases: slowing growth, flatten plateau, increasing growth. The maximum congestion
+window size achieved just before the last congestion event is the initial target
 (denoted :math:`\mathsf{W}_{max}`). You can see how the window growth starts
 fast but slows as you get close to :math:`\mathsf{W}_{max}`; then there is a
 phase of cautious growth when close to :math:`\mathsf{W}_{max}`, and finally a
-phase of probing for a new achievable :math:`\mathsf{W}_{max}`. 
+phase of probing for a new achievable :math:`\mathsf{W}_{max}`.
 
-Specifically, CUBIC computes the congestion window (``CongestionWindow``) as a function of time 
-(t) since the last congestion event 
+Specifically, CUBIC computes the congestion window (``CongestionWindow``) as a function of time
+(t) since the last congestion event
 
 .. math::
 
    \mathsf{CongestionWindow(t)} = \mathsf{C} \times \mathsf{(t-K)}^{3} + \mathsf{W}_{max}
 
-where 
+where
 
 .. math::
 
    \mathsf{K} =  \sqrt[3]{\mathsf{W}_{max} \times (1 - \beta{})/\mathsf{C}}
 
-C is a scaling constant and :math:`\beta` is the multiplicative 
-decrease factor.  CUBIC sets the latter to 0.7 rather than the 0.5 
-that standard TCP uses. Looking back at :numref:`Figure %s 
-<fig-cubic>`, CUBIC is often described as shifting between a concave 
-function to being convex (whereas standard TCP’s additive function is 
+C is a scaling constant and :math:`\beta` is the multiplicative
+decrease factor.  CUBIC sets the latter to 0.7 rather than the 0.5
+that standard TCP uses. Looking back at :numref:`Figure %s
+<fig-cubic>`, CUBIC is often described as shifting between a concave
+function to being convex (whereas standard TCP’s additive function is
 only convex).
 
 Interestingly, CUBIC is either more aggressive or less aggressive than
