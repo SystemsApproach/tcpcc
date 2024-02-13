@@ -27,7 +27,7 @@ of the approach, published by K.K. Ramakrishnan and Raj Jain, was
 presented at the same SIGCOMM as the Jacobson/Karels paper in 1988.
 
 .. _reading_decbit:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
       K.K. Ramakrishnan and R. Jain.
       `A Binary Feedback Scheme for
@@ -92,11 +92,11 @@ and Van Jacobson in the early 1990s, differs from the DECbit scheme in
 two major ways.
 
 .. _reading_red:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-	S. Floyd and V.  Jacobson `Random Early Detection (RED)
-	Gateways for Congestion Avoidance <http://www.icir.org/floyd/papers/early.twocolumn.pdf>`__.
-	IEEE/ACM Transactions on Networking. August 1993.
+      S. Floyd and V.  Jacobson `Random Early Detection (RED)
+      Gateways for Congestion Avoidance <http://www.icir.org/floyd/papers/early.twocolumn.pdf>`__.
+      IEEE/ACM Transactions on Networking. August 1993.
 
 The first is that rather than explicitly sending a congestion
 notification message to the source, RED is most commonly implemented
@@ -330,9 +330,9 @@ approaches based on RED have, however, been applied with some success
 in datacenters.
 
 .. _reading_rfc:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-      R. Braden, *et al*. 
+      R. Braden, *et al*.
       `Recommendations on Queue Management and Congestion Avoidance in the Internet
       <https://tools.ietf.org/html/rfc2309>`__.
       RFC 2309, April 1998.
@@ -361,7 +361,7 @@ key insights that emerged over decades of experience with TCP and
 AQM.
 
 .. _reading_codel:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
       K. Nichols and V. Jacobson.
       `Controlling Queue Delay
@@ -401,10 +401,10 @@ for long periods without draining are referred to, unsurprisingly, as
 \"bad queue\", as shown in :numref:`Figure %s <fig-good-bad>` (b).
 
 .. _reading_bloat:
-.. admonition::  Further Reading 
+.. admonition::  Further Reading
 
-   J. Gettys. `Bufferbloat: Dark Buffers in the Internet 
-   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE 
+   J. Gettys. `Bufferbloat: Dark Buffers in the Internet
+   <https://ieeexplore.ieee.org/document/5755608>`__. IEEE
    Internet Computing, April 2011.
 
 In a sense, then, the challenge for an AQM algorithm is to distinguish
@@ -451,7 +451,7 @@ An additional subtlety is that CoDel drops a slowly increasing percentage of
 traffic as long as the observed sojourn time remains above the target. As
 discussed further in Section 7.4, TCP throughput has been shown to
 depend inversely on the square root of loss rate. Thus, as long as the
-sojourn time stays above the target, CoDel steadily 
+sojourn time stays above the target, CoDel steadily
 increases its drop rate in proportion to the square root
 of the number of drops since the target was exceeded. The effect of
 this, in theory, is to cause a linear decrease in throughput of the
@@ -538,19 +538,19 @@ are likely to become increasingly important as virtual switches and
 NIC support for virtualization become more and more common.
 
 .. [#]
-	Confusingly, the *ingress queue* from the perspective of the
-	network path is the outbound (egress) queue on the sending host
-	and, the *egress queue* from the perspective of the network
-	path is the inbound (ingress) queue on the receiving host. As
-	shown in :numref:`Figure %s <fig-ingress_egress>`, we use the
-	terms ingress and egress from the network's perspective.
+    Confusingly, the *ingress queue* from the perspective of the
+    network path is the outbound (egress) queue on the sending host
+    and, the *egress queue* from the perspective of the network
+    path is the inbound (ingress) queue on the receiving host. As
+    shown in :numref:`Figure %s <fig-ingress_egress>`, we use the
+    terms ingress and egress from the network's perspective.
 
 This perspective is illustrated in :numref:`Figure %s
 <fig-ingress_egress>`, where both locations sit below TCP, and provide
 an opportunity to inject a second piece of congestion control logic
 into the end-to-end path. CoDel and ECN are examples of this idea: they
 have been implemented at the device queue level of the Linux kernel.
-	
+
 .. _fig-ingress_egress:
 .. figure:: figures/Slide15.png
    :width: 500px
@@ -584,7 +584,7 @@ side-stepping the hurdle of waiting for the relevant Linux kernel to
 be deployed.
 
 .. _reading_bpf:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
       The Linux Kernel.
       `BPF Documentation

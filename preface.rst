@@ -41,7 +41,7 @@ open source effort to improve this book. They include:
 - J van Bemmel
 - Omer Shapira
 - Nico Vibert
-- Vik Vanderlinden  
+- Vik Vanderlinden
 - Vidhi Goel
 
 Please send

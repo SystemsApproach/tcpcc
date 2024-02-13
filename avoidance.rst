@@ -12,12 +12,12 @@ of comparative studies and alternative designs that would persist for
 the next 25+ years.
 
 .. _reading_vegas:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
       L. Brakmo, S. O'Malley and L. Peterson
       `TCP Vegas: New Technique for Congestion Detection and Avoidance
       <https://sites.cs.ucsb.edu/~almeroth/classes/F05.276/papers/vegas.pdf>`__.
-      ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in IEEE/ACM Transactions 
+      ACM SIGCOMM '94 Symposium. August 1994. (Reprinted in IEEE/ACM Transactions
       on Networking, October 1995).
 
 Whereas every approach described to date sees packet loss as a
@@ -217,9 +217,9 @@ solution.
 .. _reading_fast:
 .. admonition:: Further Reading
 
-	S. Low, L. Peterson, and L. Wang. `Understanding TCP Vegas: A
-	Duality Model. <https://dl.acm.org/doi/10.1145/506147.506152>`__.
-	Journal of the ACM, Volume 49, Issue 2, March 2002.
+     S. Low, L. Peterson, and L. Wang. `Understanding TCP Vegas: A
+     Duality Model. <https://dl.acm.org/doi/10.1145/506147.506152>`__.
+     Journal of the ACM, Volume 49, Issue 2, March 2002.
 
 
 5.2.2 TCP Westwood
@@ -304,7 +304,7 @@ collects many measurements and then use the best one before making a
 congestion determination.
 
 
-5.3 TCP BBR 
+5.3 TCP BBR
 ---------------
 
 BBR (Bottleneck Bandwidth and RTT) is a new TCP congestion control
@@ -414,16 +414,16 @@ implementations of BBR are now being tried in different environments,
 including within Google's internal backbone and in the broader
 Internet, experience is being gathered to further refine the design. The
 IETF's Congestion Control Working Group is hosting discussions on the
-ongoing design and experimentation. 
+ongoing design and experimentation.
 
 
 .. _reading_bbr:
 .. admonition:: Further Reading
 
-	N. Cardwell, Y. Cheng, C. S. Gunn, S. Yeganeh, V. Jacobson. `BBR: Congestion-based
-        Congestion Control
-        <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__. 
-	Communications of the ACM, Volume 60, Issue 2, February 2017.
+     N. Cardwell, Y. Cheng, C. S. Gunn, S. Yeganeh, V. Jacobson. `BBR: Congestion-based
+     Congestion Control
+     <https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext>`__.
+     Communications of the ACM, Volume 60, Issue 2, February 2017.
 
- 
+
 

@@ -6,7 +6,7 @@ About The Book
   :alt: deployment status button
   :target: https://github.com/SystemsApproach/tcpcc/actions/
 
-| 
+|
 
 
 Source for *TCP Congestion Control: A Systems Approach* is available
@@ -23,9 +23,9 @@ parties. Please reach out to
 If you make use of this work, the attribution should include the
 following information:
 
-| *Title: TCP Congestion Control: A Systems Approach* 
-| *Authors: Larry Peterson, Lawrence Brakmo, and Bruce Davie* 
-| *Source:* https://github.com/SystemsApproach/tcpcc 
+| *Title: TCP Congestion Control: A Systems Approach*
+| *Authors: Larry Peterson, Lawrence Brakmo, and Bruce Davie*
+| *Source:* https://github.com/SystemsApproach/tcpcc
 | *License:* \ `CC BY-NC-ND 4.0 <https://creativecommons.org/licenses/by-nc-nd/4.0>`__
 
 Read the Book
@@ -48,11 +48,11 @@ Build the Book
 
 To build a web-viewable version, you first need to download the source:
 
-.. code:: shell 
+.. code:: shell
 
    $ mkdir ~/systemsapproach
    $ cd ~/systemsapproach
-   $ git clone https://github.com/SystemsApproach/tcpcc.git 
+   $ git clone https://github.com/SystemsApproach/tcpcc.git
    $ cd tcpcc
 
 The build process is stored in the Makefile and requires Python be

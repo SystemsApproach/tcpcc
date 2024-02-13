@@ -2,8 +2,8 @@ Chapter 2:  Background
 ======================
 
 ..
-	This chapter still includes too much detail.
-        For my taste, including the IP header is overkill - bsd
+    This chapter still includes too much detail.
+    For my taste, including the IP header is overkill - bsd
 
 To understand the Internet's approach to congestion, it's necessary to
 first talk about the assumptions and design decisions built into the
@@ -11,14 +11,14 @@ Internet architecture. This chapter does that, and in doing so, gives
 enough detail about the TCP/IP protocol stack to understand the
 specifics of the congestion control mechanisms introduced in later
 chapters. For more complete coverage of TCP and IP, we recommend the
-following. 
+following.
 
 .. _reading_tcpip:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
       `Computer Networks: A Systems Approach
       <https://book.systemsapproach.org>`__, 2020.
-		
+
 2.1  Best-Effort Packet Delivery
 -------------------------------------
 
@@ -37,11 +37,11 @@ generally viewed as consistent with the *end-to-end argument*
 articulated by Saltzer, Reed, and Clark.
 
 .. _reading_e2e:
-.. admonition:: Further Reading 
+.. admonition:: Further Reading
 
-	J. Saltzer, D. Reed, and D. Clark. `End-to-End Arguments in System Design
-	<https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__.
-	ACM Transactions on Computer Systems, Nov. 1984.
+     J. Saltzer, D. Reed, and D. Clark. `End-to-End Arguments in System Design
+     <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>`__.
+     ACM Transactions on Computer Systems, Nov. 1984.
 
 One consequence of this design is that a given source may have ample
 capacity to send traffic into the network at some rate, but somewhere
@@ -104,14 +104,14 @@ at different granularities. For example, a flow can be host-to-host
 process-to-process (i.e., have the same source/destination host/port
 pairs). :numref:`Figure %s <fig-flow>` illustrates several flows
 passing through a series of routers.
-   
+
 .. _fig-flow:
 .. figure:: figures/Slide8.png
    :width: 450px
    :align: center
 
    Multiple flows passing through a set of routers.
-   
+
 Because multiple related packets flow through each router, it
 sometimes makes sense to maintain some state information for each
 flow, which can be used to make resource allocation decisions about
@@ -129,7 +129,7 @@ handle the packet.
 
 .. sidebar:: Quality-of-Service
 
-	*With best-effort service, all packets are given essentially
+        *With best-effort service, all packets are given essentially
         equal treatment, with end hosts given no opportunity to ask
         the network that some packets or flows be given certain
         guarantees or preferential service. Defining a service model
@@ -138,7 +138,7 @@ handle the packet.
         stream—results in an architecture that supports multiple
         qualities of service (QoS).*
 
-	*There is actually a spectrum of possibilities, ranging from a
+        *There is actually a spectrum of possibilities, ranging from a
         purely best-effort service model to one in which individual
         flows receive quantitative guarantees of QoS. There are
         extensions to the Internet's service model that includes
@@ -212,7 +212,7 @@ more complex scheduling disciplines.
 
 .. sidebar:: Fair Queuing
 
-	*Fair Queuing (FQ) is an alternative to FIFO queuing, commonly
+        *Fair Queuing (FQ) is an alternative to FIFO queuing, commonly
         used to implement QoS guarantees.  The idea of FQ is to
         maintain a separate queue for each flow currently being
         handled by the router (for some flow granularity). The router
@@ -224,7 +224,7 @@ more complex scheduling disciplines.
         its share of the network’s capacity at the expense of other
         flows.*
 
-	*FQ can be used in conjunction with an end-to-end
+        *FQ can be used in conjunction with an end-to-end
         congestion-control mechanism. It simply segregates traffic so
         that ill-behaved traffic sources do not interfere with those
         that are faithfully implementing the end-to-end algorithm. FQ
@@ -322,7 +322,7 @@ packet into a receive buffer, and the receiving process reads from
 this buffer at its leisure.  This situation is illustrated in
 :numref:`Figure %s <fig-tcp-stream>`, which, for simplicity, shows
 data flowing in only one direction.
- 
+
 .. _fig-tcp-stream:
 .. figure:: figures/f05-03-9780123850591.png
    :width: 500px
@@ -397,7 +397,7 @@ establishment phase.
 TCP’s variant of the sliding window algorithm serves two main
 purposes: (1) it guarantees the reliable, in-order delivery of data,
 and (2) it enforces flow control between the sender and the receiver.
-To implement flow control, 
+To implement flow control,
 the receiver chooses a sliding window size and *advertises* it to the sender
 using the ``AdvertisedWindow`` field in the TCP header. The sender is
 then limited to having no more than a value of ``AdvertisedWindow``
@@ -433,7 +433,7 @@ data is stored and the sequence number for that byte.
 ..
       Let's double check all of this as we seem to get it wrong
       periodically
-      
+
 
 Looking first at the sending side, three pointers are maintained into
 the send buffer, each with an obvious meaning: ``LastByteAcked``,
@@ -478,7 +478,7 @@ control works first, because the windowing mechanism used to implement
 flow control turns out to have an important role in congestion control
 too. Windowing provides the sender with clear instructions on how much
 data can be "in flight" (not yet acknowledged) which is essential for
-both problems. 
+both problems.
 
 In what follows, we reintroduce the fact that both buffers are of some
 finite size, denoted ``SendBufferSize`` and ``RcvBufferSize``,
@@ -628,7 +628,7 @@ The central question Nagle answers is this: How long does the sender
 wait when the effective window is open less than ``MSS``? If we wait
 too long, then we hurt interactive applications. If we don’t wait long
 enough, then we risk sending a bunch of tiny packets and falling into
-the silly window syndrome. 
+the silly window syndrome.
 
 While TCP could use a clock-based timer—for example, one that fires
 every 100 ms—Nagle introduced an elegant *self-clocking* solution. The
@@ -734,7 +734,7 @@ receiver is free to not open the window as large as the
 which the receiver has enough buffer space to handle as much data as the
 largest possible ``AdvertisedWindow`` allows.
 
-In this case, it is not just the network bandwidth but the 
+In this case, it is not just the network bandwidth but the
 bandwidth-delay product that dictates how big the ``AdvertisedWindow`` field
 needs to be—the window needs to be opened far enough to allow a full
 bandwidth-delay product’s worth of data to be transmitted. Assuming an
@@ -742,12 +742,12 @@ RTT of 100 ms (a typical number for a cross-country connection in the
 United States), :numref:`Table %s <tab-adv-win>` gives the bandwidth-delay
 product for several network technologies. Note that for the OC-n links
 we've used the available link bandwidth after removing SONET
-overhead. 
+overhead.
 
 .. _tab-adv-win:
 .. table::  Required Window Size for 100-ms RTT
    :align: center
-   :widths: auto   
+   :widths: auto
 
    +--------------------------+---------------------------+
    | Bandwidth                | Bandwidth × Delay Product |
