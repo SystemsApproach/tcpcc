@@ -34,6 +34,20 @@ following information:
 | *Source:* https://github.com/SystemsApproach/tcpcc
 | *License:* \ `CC BY-NC-ND 4.0 <https://creativecommons.org/licenses/by-nc-nd/4.0>`__
 
+This book incorporates introductory and background content from:
+
+| *Title: Computer Networks: A Systems Approach*
+| *Authors: Larry Peterson and Bruce Davie*
+| *Source:* https://github.com/SystemsApproach/book
+| *License:* \ `CC BY 4.0 <https://creativecommons.org/licenses/by/4.0>`__
+
+Designations used by companies to distinguish their products are often
+claimed as trademarks or registered trademarks. In all instances in
+which Systems Approach, LLC, is aware of a claim, the product names
+appear in initial capital or all capital letters. Readers, however,
+should contact the appropriate companies for more complete information
+regarding trademarks and registration.
+
 Read the Book
 -------------
 
@@ -88,6 +102,3 @@ other things, you’ll learn about posting *Issues* that you’d like to see
 addressed, and issuing *Pull Requests* to merge your improvements back
 into GitHub.
 
-If you’d like to contribute and are looking for something that needs
-attention, see the `wiki <https://github.com/SystemsApproach/tcpcc/wiki>`__
-for the current TODO list.
