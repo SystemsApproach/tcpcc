@@ -9,15 +9,18 @@ print and e-books. This book is available via Amazon: `TCP Congestion Control: A
 `Book Series: <https://systemsapproach.org/books/>`__ Also check out
 our companion books that cover networking and emerging topics in more depth.
 
-* `Computer Networks: A Systems Approach <https://amzn.to/3CtG81U>`__
+* `Network Security: A Systems Approach <https://systemsapproach.org/books/#securitybook>`__
 
-* `Software-Defined Networks: A Systems Approach
-  <https://amzn.to/3rmLdCP>`__
+* `What We Talk About When We Talk About Systems: Essays on the
+  Systems Approach <https://systemsapproach.org/books/#essaybook>`__
 
-* `Private 5G: A Systems Approach <https://amzn.to/3BBAQA6>`__
+* `Software-Defined Networks: A Systems Approach <https://systemsapproach.org/books/#sdnbook>`__
 
-* `Edge Cloud Operations: A Systems Approach <https://amzn.to/3MfvK13>`__
+* `Edge Cloud Operations: A Systems Approach
+  <https://systemsapproach.org/books/#opsbook>`__
 
-.. * `TCP Congestion Control: A Systems Approach <https://amzn.to/3UTYi3T>`__
+* `Private 5G: A Systems Approach <https://systemsapproach.org/books/#5gbook>`__
+
+
 
 As participants in the Amazon Associate program we may earn income from qualifying purchases using the links above.
